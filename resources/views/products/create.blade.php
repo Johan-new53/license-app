@@ -127,10 +127,10 @@
                 </div>
             </div>
             <br>
-            <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="col-xs-2 col-sm-2 col-md-2">
                 <div class="form-group">
                     <strong>Last bidding:</strong>
-                    <input type="text" name="last_bidding" class="form-control" placeholder="yyyy">
+                    <input type="date" name="last_bidding" value="1900-01-01" class="form-control" placeholder="Last bidding">                    
                 </div>
             </div>
             <br>
@@ -308,3 +308,33 @@
 </div>
 </form>
 @endsection
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const email1 = document.querySelector('input[name="tgl_email1"]');
+        const email2 = document.querySelector('input[name="tgl_email2"]');
+        const email3 = document.querySelector('input[name="tgl_email3"]');
+
+        function formatDate(date) {
+            let year = date.getFullYear();
+            let month = String(date.getMonth() + 1).padStart(2, '0');
+            let day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        email1.addEventListener('change', function () {
+            if (!this.value) return;
+
+            // tgl_email2 = tgl_email1 + 30 days
+            let date2 = new Date(this.value);
+            date2.setDate(date2.getDate() + 30);
+            email2.value = formatDate(date2);
+
+            // tgl_email3 = tgl_email2 + 30 days
+            let date3 = new Date(date2);
+            date3.setDate(date3.getDate() + 30);
+            email3.value = formatDate(date3);
+        });
+    });
+</script>

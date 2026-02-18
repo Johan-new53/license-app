@@ -69,7 +69,7 @@
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Last bidding:</strong>
-            {{ $product->last_bidding }}
+            {{ \Carbon\Carbon::parse($product->last_bidding)->format('d-M-Y') }}            
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">

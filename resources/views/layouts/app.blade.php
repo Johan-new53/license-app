@@ -3,6 +3,11 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
     <link rel="icon" type="image/png" href="{{ asset('siloam.png') }}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,91 +30,132 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    Home
+
+                <!-- BRAND / HOME -->
+                <a class="navbar-brand" href="{{ url('/') }}" title="Home">
+                    <i class="fa-solid fa-house fa-lg"></i>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+
+                <!-- TOGGLER MOBILE -->
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar me-auto -->
-                    <ul class="navbar-nav "></ul>
 
-                    <!-- Right Side Of Navbar ms-auto -->
-                    <ul class="navbar-nav ">
-                        <!-- Authentication Links -->
+                    <!-- LEFT MENU -->
+                    <ul class="navbar-nav me-auto"></ul>
+
+                    <!-- RIGHT MENU -->
+                    <ul class="navbar-nav align-items-center gap-2">
+
+                        <!-- LOGIN (GUEST) -->
                         @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-                           
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}"
+                                title="Login">
+                                    <i class="fa-solid fa-right-to-bracket fa-lg"></i>
+                                </a>
+                            </li>
                         @else
-                            @can('permission-list')
-                                <li><a class="nav-link" href="{{ route('permissions.index') }}">Manage Permission</a></li>
-                            @endcan
-                            @can('role-list')
-                                <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
-                            @endcan
-                            @can('user-list')
-                                <li><a class="nav-link" href="{{ route('users.index') }}">Manage User</a></li>
-                            @endcan
+
+                            <!-- PRODUCT -->
                             @can('product-list')
-                                <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('products.index') }}"
+                                title="Products">
+                                    <i class="fa-solid fa-box fa-lg"></i>
+                                </a>
+                            </li>
                             @endcan
 
-                            <div class="collapse navbar-collapse d-flex">
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" 
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                        {{ Auth::user()->name }}
+                            <!-- FINANCE -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                data-bs-toggle="dropdown"
+                                title="Finance">
+                                    <i class="fa-solid fa-book fa-lg"></i>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-end">
+                                
+                                    @can('hardcopy-list')
+                                    <a class="dropdown-item" href="{{ route('hardcopys.index') }}">                                        
+                                        <i class="fa-solid fa-book-bookmark fa-lg"></i> Hard Copy
                                     </a>
-                                    
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{  route('users.change', Auth::user()->id) }}"
-                                        onclick="event.preventDefault();
-                                                        document.getElementById('chg-form').submit();">
-                                            {{ __('Change Password') }}
-                                        </a>                                                                                
+                                    @endcan       
+                                </div>
+                            </li>
 
-                                        <form id="chg-form" action="{{  route('users.change', Auth::user()->id) }}" method="GET" class="d-none">
+
+
+                            <!-- USER ACCESS -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                data-bs-toggle="dropdown"
+                                title="User Access">
+                                    <i class="fa-solid fa-gear fa-lg"></i>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    @can('permission-list')
+                                    <a class="dropdown-item" href="{{ route('permissions.index') }}">
+                                        <i class="fa-solid fa-key me-2"></i> Permission
+                                    </a>
+                                    @endcan
+
+                                    @can('role-list')
+                                    <a class="dropdown-item" href="{{ route('roles.index') }}">
+                                        <i class="fa-solid fa-user-shield me-2"></i> Role
+                                    </a>
+                                    @endcan
+
+                                    @can('user-list')
+                                    <a class="dropdown-item" href="{{ route('users.index') }}">
+                                        <i class="fa-solid fa-users me-2"></i> User
+                                    </a>
+                                    @endcan
+                                </div>
+                            </li>
+
+                            <!-- USER PROFILE -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                    data-bs-toggle="dropdown"
+                                    title="{{ Auth::user()->name }}">
+                                        <i class="fa-solid fa-user-circle fa-lg"></i>
+                                    </a>
+
+                                    <div class="dropdown-menu dropdown-menu-end">
+
+                                        <a class="dropdown-item"
+                                        href="{{ route('users.change', Auth::id()) }}">
+                                            <i class="fa-solid fa-key me-2"></i> Change Password
+                                        </a>
+
+                                        <form method="POST" action="{{ route('logout') }}">
                                             @csrf
-                                        </form>
-
-                                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
-                                                        document.getElementById('logout-form').submit();">
-                                            {{ __('Logout') }}
-                                        </a>                                                                                
-
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                            @csrf
+                                            <button type="submit"
+                                                    class="dropdown-item text-danger w-100 text-start">
+                                                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                                            </button>
                                         </form>
 
                                     </div>
-
-                                    
-                                       
-
-                                    
                                 </li>
-                            </ul>
-                            </div>
 
-                            
+
                         @endguest
                     </ul>
                 </div>
-                
-
-
             </div>
         </nav>
+
+
+
+
 
         <main class="py-4">
             <div class="container">

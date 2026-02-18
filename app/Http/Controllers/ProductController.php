@@ -6,7 +6,8 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Response;
+
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {

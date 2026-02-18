@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CsvImportController;
+use App\Http\Controllers\EmailStatusController;
+use App\Http\Controllers\HardcopyController;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -35,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
+    Route::resource('hardcopys', HardcopyController::class);
     
     
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
@@ -43,7 +46,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/export-products', [ProductController::class, 'export']);
     Route::get('/searchitem',[ProductController::class, 'searchitem']);
     Route::get('/searchname',[UserController::class, 'searchname']);
-    Route::post('/import-csv', [CsvImportController::class, 'import']);
+    Route::post('/import-csv', [CsvImportController::class, 'import']);   
+
+    Route::get('/email-status', [EmailStatusController::class, 'send']);
+
+    
+    
 
 
 });

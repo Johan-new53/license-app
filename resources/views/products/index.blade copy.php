@@ -31,14 +31,6 @@
             </a>
         @endcan
 
-        @can('product-email-status')
-            {{-- <a class="btn btn-success btn-sm" href="/email-status"> --}}
-            
-            <a class="btn btn-success btn-sm" href="">
-                <i class="fa fa-plus"></i> Email Status
-            </a>
-        @endcan
-
     </div>
     <div class="col-lg-8 margin-tb d-flex justify-content-between align-items-center mb-3 ">
         <h2 style="margin: 10px;">Item: </h2>
@@ -94,7 +86,17 @@
                             <i class="fa-solid fa-trash"></i> Delete
                         </button>
                     @endcan
-                    
+
+                    @can('product-edit')
+                        
+                        
+                        <button type="button"
+                                class="btn btn-primary btn-sm sendEmailBtn"
+                                data-id="{{ $product->id }}">
+                                <i class="fa-solid fa-envelope"></i> Email
+                        </button>
+
+                    @endcan
 
                 </form>
             </td>
@@ -109,6 +111,21 @@
 @endsection
 
 
+<script>
+document.getElementById('sendEmailBtn').addEventListener('click', function () {
+    if (!confirm('Send email now?')) return;
 
-
-
+    fetch('send_email.php', {
+        method: 'POST'
+    })
+    .then(res => res.text())
+    .then(data => {
+        alert('Email sent successfully!');
+        console.log(data);
+    })
+    .catch(err => {
+        alert('Failed to send email');
+        console.error(err);
+    });
+});
+</script>

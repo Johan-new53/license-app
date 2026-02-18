@@ -121,17 +121,61 @@ class CsvImportController extends Controller
                 else {    
                     $updated_at = \Carbon\Carbon::createFromFormat('m/d/Y H:i', $row['updated_at'])->format('Y-m-d H:i');
                 }
+
+                if ($row['qty'] =="")
+                {
+                    $qty=0;
+                }
+                else {    
+                    $qty = str_replace([','], '', $row['qty']);
+                    
+                }
+
+                if ($row['used'] =="")
+                {
+                    $used=0;
+                }
+                else {    
+                    $used = str_replace([','], '', $row['used']);
+                    
+                }
+
+                if ($row['remaining'] =="")
+                {
+                    $remaining=0;
+                }
+                else {                        
+                    $remaining = str_replace([','], '', $row['remaining']);
+                }
+         
+
+                 if ($row['last_bidding'] =="")
+                {
+                    $last_bidding="1900-01-01";
+                }
+                else {    
+                    $last_bidding = \Carbon\Carbon::createFromFormat('m/d/Y', $row['last_bidding'])->format('Y-m-d');
+                }
+                
+                if ($row['amount_excl_vat'] =="")
+                {
+                    $amount_excl_vat=0;
+                }
+                else {    
+                    $amount_excl_vat = str_replace([','], '', $row['amount_excl_vat']);                    
+                }
+
                 Product::create([                    
                     'id'=> $row['id'],
                     'item'=> $row['item'],
                     'category'=> $row['category'],
                     'description'=> $row['description'],
-                    'qty'=> $row['qty'],
-                    'used'=> $row['used'],
-                    'remaining'=> $row['remaining'],
+                    'qty'=> $qty,
+                    'used'=> $used,
+                    'remaining'=> $remaining,
                     'start_date'=> $start_date,
                     'end_date'=> $end_date,
-                    'last_bidding'=> $row['last_bidding'],
+                    'last_bidding'=> $last_bidding,
                     'next_bidding'=> $next_bidding,
                     'renewal_date'=> $renewal_date,
                     'tgl_email1'=> $tgl_email1,
@@ -140,7 +184,7 @@ class CsvImportController extends Controller
                     'request_date'=> $request_date,
                     'vendor'=> $row['vendor'],
                     'mata_uang'=> $row['mata_uang'],
-                    'amount_excl_vat'=> $row['amount_excl_vat'],
+                    'amount_excl_vat'=> $amount_excl_vat,
                     'pr'=> $row['pr'],
                     'po'=> $row['po'],
                     'pic'=> $row['pic'],
