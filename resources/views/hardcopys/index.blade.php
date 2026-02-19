@@ -44,6 +44,7 @@
             <th>Invoice Date</th>
             <th>Document No.</th>
             <th>Description</th>
+            <th>Status</th>
             <th width="280px">Action</th>
         </tr>
         @foreach ($hardcopys as $hardcopy)
@@ -52,24 +53,29 @@
             <td>{{ $hardcopy->invoice_date->format('d-m-Y') }}</td>
             <td>{{ $hardcopy->doc_no }}</td>
             <td>{{ $hardcopy->description }}</td>
+            <td>{{ $hardcopy->status }}</td>
             <td>
                 <form action="{{ route('hardcopys.destroy',$hardcopy->id) }}" method="POST">
                     <a class="btn btn-info btn-sm" href="{{ route('hardcopys.show',$hardcopy->id) }}">
                         <i class="fa-solid fa-list"></i> Show
                     </a>
                     @can('hardcopy-edit')
+                        @if ($hardcopy->status<>'paid')
                         <a class="btn btn-primary btn-sm" href="{{ route('hardcopys.edit',$hardcopy->id) }}">
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </a>
+                        @endif
                     @endcan
 
                     @csrf
                     @method('DELETE')
 
                     @can('hardcopy-delete')
+                        @if ($hardcopy->status<>'paid')
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this item?')">
                             <i class="fa-solid fa-trash"></i> Delete
                         </button>
+                        @endif
                     @endcan
                     
 
