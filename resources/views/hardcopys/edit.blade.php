@@ -55,12 +55,12 @@
                 type="button" role="tab" aria-controls="data4" aria-selected="false">Amount</button>
         </li>
 
-        
+
     </ul>
 
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active p-3" id="data1" role="tabpanel" aria-labelledby="data1-tab">
-            
+
             <div class="col-xs-4 col-sm-4 col-md-4">
             <strong>Requesting Department * :</strong>
             <select name="id_dept" class="form-control select2" required>
@@ -74,13 +74,13 @@
             </select>
             </div>
             <br>
-           
-            <div class="col-xs-4 col-sm-4 col-md-4">   
+
+            <div class="col-xs-4 col-sm-4 col-md-4">
                     <strong>Hospital unit dan Rekening sumber * :</strong>
                     <select name="id_rek_sumber" class="form-control select2" required>
                         <option value="">-- Pilih --</option>
                         @foreach ($hu_rek_sumbers as $hu_rek_sumber)
-                            <option value="{{ $hu_rek_sumber->id }}"                                
+                            <option value="{{ $hu_rek_sumber->id }}"
                                 {{ old('id_rek_sumber', $finance->id_rek_sumber) == $hu_rek_sumber->id ? 'selected' : '' }}>
                                 {{ $hu_rek_sumber->nama }}
                             </option>
@@ -89,7 +89,7 @@
             </div>
             <br>
 
-            <div class="col-xs-4 col-sm-4 col-md-4">   
+            <div class="col-xs-4 col-sm-4 col-md-4">
                     <strong>Payable To * :</strong>
                     <select name="id_payable_h" class="form-control select2" required>
                         <option value="">-- Pilih --</option>
@@ -100,11 +100,11 @@
                             </option>
                         @endforeach
                     </select>
-            </div>            
+            </div>
             <br>
         </div>
         <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
-         
+
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>Nama Rekening Tujuan * :</strong>
@@ -112,7 +112,7 @@
                 </div>
             </div>
             <br>
-            <div class="col-xs-4 col-sm-4 col-md-4">   
+            <div class="col-xs-4 col-sm-4 col-md-4">
                         <strong>Bank Tujuan * :</strong>
                         <select name="id_bank" class="form-control select2" required>
                             <option value="">-- Pilih --</option>
@@ -123,7 +123,7 @@
                                 </option>
                             @endforeach
                         </select>
-                </div>          
+                </div>
             <br>
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
@@ -139,25 +139,27 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">   
+        <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">
 
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
-                    <strong>Document Number(s) * :</strong>   <br>    
-                    <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678,456789123)</strong>   <br>             
-                    <input type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" placeholder="">
+                    <strong>Document Number(s) * :</strong><br>
+                    <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678,456789123)</strong><br>
+
+                    <input id="doc_no" type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" placeholder="">
+                    <div id="docNoResult" class="mt-2"></div>
                 </div>
             </div>
             <br>
 
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
-                    <strong>Description * :</strong>                    
+                    <strong>Description * :</strong>
                     <input type="text" name="description" value="{{ $finance->description }}" class="form-control" placeholder="">
                 </div>
             </div>
             <br>
-            <div class="col-xs-4 col-sm-4 col-md-4">   
+            <div class="col-xs-4 col-sm-4 col-md-4">
                         <strong>Currency * :</strong>
                         <select name="id_currency" class="form-control select2" required>
                             <option value="">-- Pilih --</option>
@@ -168,26 +170,26 @@
                                 </option>
                             @endforeach
                         </select>
-                </div>          
+                </div>
             <br>
-          
+
             <br>
-            
+
         </div>
 
-         <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">   
+         <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
-                    <strong>Dpp * :</strong>   <br>                        
+                    <strong>Dpp * :</strong>   <br>
                     <input type="number" id="dpp" name="dpp" value="{{ $finance->dpp }}" class="form-control" placeholder="">
                 </div>
             </div>
-            <br> 
+            <br>
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
-                    <strong>Ppn% (0,1,11) * :</strong>   <br>                        
+                    <strong>Ppn% (0,1,11) * :</strong>   <br>
                     <input type="number" id="ppn_persen" name="persen_ppn" value="{{ $finance->persen_ppn }}" class="form-control" placeholder="">
                 </div>
             </div>
@@ -195,15 +197,15 @@
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
-                    <strong>Nilai Ppn * :</strong>   <br>                        
+                    <strong>Nilai Ppn * :</strong>   <br>
                     <input type="number" id="nilai_ppn" name="nilai_ppn" value="{{ $finance->nilai_ppn }}" class="form-control" placeholder="" readonly>
                 </div>
-            </div> 
+            </div>
             <br>
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
-                    <strong>PPH * :</strong>   <br>                        
+                    <strong>PPH * :</strong>   <br>
                     <input type="number" id="pph" name="pph" value="{{ $finance->pph }}" class="form-control" placeholder="">
                 </div>
             </div>
@@ -211,27 +213,35 @@
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
-                    <strong>Total Amount * :</strong>   <br>                        
+                    <strong>Total Amount * :</strong>   <br>
                     <input type="number" id="total_amount" name="total_amount" value="{{ $finance->total_amount }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
             <br>
-           
-            
+
+
         </div>
 
-        
+
 
 <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                    <button type="submit" class="btn btn-primary btn-sm mb-3 mt-2">
+                    <button id="submit" type="submit" class="btn btn-primary btn-sm mb-3 mt-2">
                         <i class="fa-solid fa-floppy-disk"></i> Submit
                     </button>
-</div>     
-       
+</div>
+
 
 </div>
 </form>
- 
+
+<script>
+  window.DOCNO_CHECK = {
+    url: "{{ route('checkDocNo') }}",
+    type: "hardcopy",
+    ignore_id: {{ $finance->id }}
+  };
+</script>
+<script src="{{ asset('js/docno-check.js') }}"></script>
 <script>
 
 function hitungTotal() {
@@ -242,7 +252,7 @@ function hitungTotal() {
     let ppnNilai = ppnPersen / 100 * dpp;
     let total = dpp + ppnNilai + pph;
 
-    
+
     document.getElementsByName('nilai_ppn')[0].value = ppnNilai;
     document.getElementsByName('total_amount')[0].value = total;
 }
