@@ -16,7 +16,7 @@ use App\Models\Matauang;
 use App\Models\Vendor;
 use App\Http\Controllers\Controller;
 
-class SubmissionController extends Controller
+class SoftcopyController extends Controller
 {
     
 
