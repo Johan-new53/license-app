@@ -12,6 +12,7 @@ use App\Http\Controllers\CsvImportController;
 use App\Http\Controllers\EmailStatusController;
 use App\Http\Controllers\HardcopyController;
 use App\Http\Controllers\SoftcopyController;
+use App\Http\Controllers\CheckNoController;
 
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
@@ -19,7 +20,7 @@ Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosof
 
 // Redirect root URL to /home if logged in, or to login otherwise
 Route::get('/', function () {
-    
+
 
     if (Auth::check()) {
         return redirect()->route('home');
@@ -41,20 +42,22 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('hardcopys', HardcopyController::class);
     Route::resource('softcopys', SoftcopyController::class);
-    
-    
+
+
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
     Route::put('/users/{id}/update_pwd', [UserController::class, 'update_pwd'])->name('users.update_pwd');
+
+    Route::post('/check-doc-no', [CheckNoController::class, 'checkDocNo'])->name('checkDocNo');
 
     Route::get('/export-products', [ProductController::class, 'export']);
     Route::get('/searchitem',[ProductController::class, 'searchitem']);
     Route::get('/searchname',[UserController::class, 'searchname']);
-    Route::post('/import-csv', [CsvImportController::class, 'import']);   
+    Route::post('/import-csv', [CsvImportController::class, 'import']);
 
     Route::get('/email-status', [EmailStatusController::class, 'send']);
 
-    
-    
+
+
 
 
 });

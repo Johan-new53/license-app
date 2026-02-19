@@ -15,10 +15,11 @@ use App\Models\Bank;
 use App\Models\Matauang;
 use App\Models\Vendor;
 use App\Http\Controllers\Controller;
+use App\Services\docNoCheckService;
 
 class HardcopyController extends Controller
 {
-    
+
 
     function __construct()
     {
@@ -29,11 +30,11 @@ class HardcopyController extends Controller
         $this->middleware('permission:hardcopy-export', ['only' => ['export']]);
     }
 
-    
+
 
     public function index(): View
     {
-        
+
         $hardcopys = Finance::where('user_entry', auth()->id())
         ->orderBy('id', 'desc')
         ->paginate(6);
@@ -44,7 +45,7 @@ class HardcopyController extends Controller
 
     public function create()
     {
-       
+
         $departments = Department::where('valid', 1)
         ->orderBy('nama')
         ->get();
@@ -84,15 +85,24 @@ class HardcopyController extends Controller
           'doc_no' => 'required',
           'description' => 'required',
           'id_currency' => 'required',
-          'dpp' => 'required',                 
-           
+          'dpp' => 'required',
+
         ]);
+
+        $docNoCheckService = new DocNoCheckService();
+        $check = $docNoCheckService->check($request->doc_no, 'hardcopy');
+        if (!empty($check['exists'])) {
+            return back()
+                ->withInput()
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+        }
 
         $data = $request->all();
         $data['user_entry'] = auth()->id();
         $data['type'] = 'hardcopy';
         $data['status'] = 'request';
         Finance::create($data);
+
 
         return redirect()->route('hardcopys.index')
                 ->with('success', 'Ap Hardcopy created successfully.');
@@ -105,7 +115,7 @@ class HardcopyController extends Controller
                 ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
                 ->join('m_payableto_h', 'finances.id_payable_h', '=', 'm_payableto_h.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')                
+                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
                 ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
@@ -128,7 +138,7 @@ class HardcopyController extends Controller
                 ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
                 ->join('m_payableto_h', 'finances.id_payable_h', '=', 'm_payableto_h.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')                
+                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
                 ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
@@ -166,10 +176,10 @@ class HardcopyController extends Controller
             ->get();
 
             return view('hardcopys.edit', compact('finance','departments','hu_rek_sumbers','payableto_hs','rek_tujuans','banks','currencys','vendors'));
-            
+
         }
 
-       
+
     public function update(Request $request, $id)
     {
         $finance = Finance::findOrFail($id);
@@ -187,6 +197,14 @@ class HardcopyController extends Controller
             'dpp' => 'required',
         ]);
 
+        $docNoCheckService = new DocNoCheckService();
+        $check = $docNoCheckService->check($request->doc_no, 'hardcopy', $finance->id);
+        if (!empty($check['exists'])) {
+            return back()
+                ->withInput()
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+        }
+
         $data = $request->all();
         $finance->update($data);
 
@@ -195,7 +213,7 @@ class HardcopyController extends Controller
     }
 
 
-    
+
     public function destroy($id): RedirectResponse
     {
         $finance = Finance::findOrFail($id);
