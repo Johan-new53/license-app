@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CsvImportController;
 use App\Http\Controllers\EmailStatusController;
 use App\Http\Controllers\HardcopyController;
+use App\Http\Controllers\SoftcopyController;
+
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -38,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
     Route::resource('hardcopys', HardcopyController::class);
+    Route::resource('softcopys', SoftcopyController::class);
     
     
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
