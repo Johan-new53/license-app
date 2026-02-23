@@ -13,6 +13,7 @@ use App\Http\Controllers\EmailStatusController;
 use App\Http\Controllers\HardcopyController;
 use App\Http\Controllers\SoftcopyController;
 use App\Http\Controllers\CheckNoController;
+use App\Http\Controllers\ImportController;
 
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
@@ -43,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('hardcopys', HardcopyController::class);
     Route::resource('softcopys', SoftcopyController::class);
 
+    Route::get('/import', [ImportController::class, 'index'])->name('import');
+    Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');
 
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
     Route::put('/users/{id}/update_pwd', [UserController::class, 'update_pwd'])->name('users.update_pwd');
