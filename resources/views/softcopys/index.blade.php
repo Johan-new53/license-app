@@ -13,10 +13,10 @@
 <div class="row">
 <form action="" method="get">
     <div class="col-lg-12 margin-tb d-flex justify-content-between align-items-center mb-3">
-        <h2>Hard Copy</h2>
-        @can('hardcopy-create')
-            <a class="btn btn-success btn-sm" href="{{ route('hardcopys.create') }}">
-                <i class="fa fa-plus"></i> Create New Hard Copy
+        <h2>Soft Copy</h2>
+        @can('softcopy-create')
+            <a class="btn btn-success btn-sm" href="{{ route('softcopys.create') }}">
+                <i class="fa fa-plus"></i> Create New Soft Copy
             </a>
         @endcan
         
@@ -34,7 +34,7 @@
 @endif
 
 @php
-    $i = ($hardcopys->currentPage() - 1) * $hardcopys->perPage();
+    $i = ($softcopys->currentPage() - 1) * $softcopys->perPage();
 @endphp
 
 <div class="table-responsive">
@@ -47,21 +47,21 @@
             <th>Status</th>
             <th width="280px">Action</th>
         </tr>
-        @foreach ($hardcopys as $hardcopy)
+        @foreach ($softcopys as $softcopy)
         <tr>
             <td>{{ ++$i }}</td>            
-            <td>{{ $hardcopy->invoice_date->format('d-m-Y') }}</td>
-            <td>{{ $hardcopy->doc_no }}</td>
-            <td>{{ $hardcopy->description }}</td>
-            <td>{{ $hardcopy->status }}</td>
+            <td>{{ $softcopy->invoice_date->format('d-m-Y') }}</td>
+            <td>{{ $softcopy->doc_no }}</td>
+            <td>{{ $softcopy->description }}</td>
+            <td>{{ $softcopy->status }}</td>
             <td>
-                <form action="{{ route('hardcopys.destroy',$hardcopy->id) }}" method="POST">
-                    <a class="btn btn-info btn-sm" href="{{ route('hardcopys.show',$hardcopy->id) }}">
+                <form action="{{ route('softcopys.destroy',$softcopy->id) }}" method="POST">
+                    <a class="btn btn-info btn-sm" href="{{ route('softcopys.show',$softcopy->id) }}">
                         <i class="fa-solid fa-list"></i> Show
                     </a>
-                    @can('hardcopy-edit')
-                        @if ($hardcopy->status<>'paid' and $hardcopy->status<>'approve 1' and $hardcopy->status<>'approve 2' )
-                        <a class="btn btn-primary btn-sm" href="{{ route('hardcopys.edit',$hardcopy->id) }}">
+                    @can('softcopy-edit')
+                        @if ($softcopy->status<>'paid' and $softcopy->status<>'approve 1' and $softcopy->status<>'approve 2' )
+                        <a class="btn btn-primary btn-sm" href="{{ route('softcopys.edit',$softcopy->id) }}">
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </a>
                         @endif
@@ -70,8 +70,8 @@
                     @csrf
                     @method('DELETE')
 
-                    @can('hardcopy-delete')
-                        @if ($hardcopy->status<>'paid' and $hardcopy->status<>'approve 1' and $hardcopy->status<>'approve 2' )
+                    @can('softcopy-delete')
+                        @if ($softcopy->status<>'paid' and $softcopy->status<>'approve 1' and $softcopy->status<>'approve 2' )
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this item?')">
                             <i class="fa-solid fa-trash"></i> Delete
                         </button>
@@ -88,7 +88,7 @@
 <br>
 
 
-{{ $hardcopys->links('pagination::bootstrap-5') }}
+{{ $softcopys->links('pagination::bootstrap-5') }}
 @endsection
 
 

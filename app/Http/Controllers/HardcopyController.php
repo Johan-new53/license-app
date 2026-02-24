@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Finance;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-
+use App\Http\Controllers\Controller;
+use App\Models\Bank;
 use App\Models\Department;
+use App\Models\Finance;
 use App\Models\Hu_reksumber;
+use App\Models\Matauang;
 use App\Models\Payableto_h;
 use App\Models\Rektujuan;
-use App\Models\Bank;
-use App\Models\Matauang;
 use App\Models\Vendor;
-use App\Http\Controllers\Controller;
-use App\Services\docNoCheckService;
+use App\Services\DocNoCheckService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
 
 class HardcopyController extends Controller
 {
@@ -36,6 +36,7 @@ class HardcopyController extends Controller
     {
 
         $hardcopys = Finance::where('user_entry', auth()->id())
+        ->where('type', 'hardcopy')
         ->orderBy('id', 'desc')
         ->paginate(6);
 
