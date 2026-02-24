@@ -48,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('hardcopys', HardcopyController::class);
     Route::resource('softcopys', SoftcopyController::class);
 
+    Route::get('/import', [ImportController::class, 'index'])->name('import');
+    Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');
 
     //MASTER DATA
     Route::resource('bank', BankController::class);

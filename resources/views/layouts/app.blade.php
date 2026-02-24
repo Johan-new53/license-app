@@ -23,7 +23,7 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body>
@@ -80,12 +80,25 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end">
-                                
+
                                     @can('hardcopy-list')
-                                    <a class="dropdown-item" href="{{ route('hardcopys.index') }}">                                        
+                                    <a class="dropdown-item" href="{{ route('hardcopys.index') }}">
                                         <i class="fa-solid fa-book-bookmark fa-lg"></i> Hard Copy
                                     </a>
-                                    @endcan       
+                                    
+                                    @endcan  
+                                     @can('softcopy-list')
+                                    <a class="dropdown-item" href="{{ route('softcopys.index') }}">                                        
+                                        <i class="fa-solid fa-book-bookmark fa-lg"></i> Soft Copy
+                                    </a>
+                                    @endcan     
+
+                                    @endcan
+                                      @can('finance-import')
+                                      <a class="dropdown-item" href="{{ route('import') }}">
+                                          <i class="fa-solid fa-book-bookmark fa-lg"></i> Import
+                                      </a>
+                                    @endcan
                                 </div>
                             </li>
 
@@ -210,9 +223,9 @@
                 </div>
             </div>
         </main>
-        
+
     </div>
 
-  
+
 </body>
 </html>

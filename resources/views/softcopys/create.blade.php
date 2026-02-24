@@ -10,10 +10,10 @@
     <div class="row">
         <div class="col-lg-12 margin-tb">
             <div class="pull-left">
-                <h2>Add New Hard Copy</h2>
+                <h2>Add New Soft Copy</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-primary btn-sm" href="{{ route('hardcopys.index') }}">
+                <a class="btn btn-primary btn-sm" href="{{ route('softcopys.index') }}">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
             </div>
@@ -31,7 +31,8 @@
         </div>
     @endif
 
-<form action="{{ route('hardcopys.store') }}" method="POST">
+
+<form action="{{ route('softcopys.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
 
@@ -88,11 +89,11 @@
             <br>
             <div class="col-xs-4 col-sm-4 col-md-4">
                     <strong>Payable To * :</strong>
-                    <select name="id_payable_h" class="form-control select2" required>
+                    <select name="id_payable_s" class="form-control select2" required>
                         <option value="">-- Pilih --</option>
-                        @foreach ($payableto_hs as $payableto_h)
-                            <option value="{{ $payableto_h->id }}">
-                                {{ $payableto_h->nama }}
+                        @foreach ($payableto_ss as $payableto_s)
+                            <option value="{{ $payableto_s->id }}">
+                                {{ $payableto_s->nama }}
                             </option>
                         @endforeach
                     </select>
@@ -165,9 +166,17 @@
                             @endforeach
                         </select>
                 </div>
+            <br>            
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>Upload File (PDF/JPG/PNG) * :</strong>
+                    <input type="file" name="file_softcopy" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.docx,xlsx,pptx,.doc,xls,ppt" >
+                    <small class="text-muted">File number limit 1 Single file size limit: 1GB Allowed file types: Word, Excel, PPT, PDF, Image</small>
+                </div>
+            </div>
             <br>
 
-            <br>
+          
 
         </div>
 
@@ -231,7 +240,7 @@
 <script>
   window.DOCNO_CHECK = {
     url: "{{ route('checkDocNo') }}",
-    type: "hardcopy", "softcopy",
+    type: "hardcopy","softcopy",
   };
 </script>
 <script src="{{ asset('js/docno-check.js') }}"></script>

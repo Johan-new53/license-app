@@ -250,7 +250,7 @@ function hitungTotal() {
     let pph = parseFloat(document.getElementById('pph').value) || 0;
 
     let ppnNilai = ppnPersen / 100 * dpp;
-    let total = dpp + ppnNilai + pph;
+    let total = dpp + ppnNilai - pph;
 
 
     document.getElementsByName('nilai_ppn')[0].value = ppnNilai;
