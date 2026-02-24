@@ -14,7 +14,11 @@ use App\Http\Controllers\HardcopyController;
 use App\Http\Controllers\SoftcopyController;
 use App\Http\Controllers\CheckNoController;
 use App\Http\Controllers\ImportController;
-
+use App\Http\Controllers\BankController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ReksumberController;
+use App\Http\Controllers\MatauangController;
+use App\Http\Controllers\RektujuanController;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -47,6 +51,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/import', [ImportController::class, 'index'])->name('import');
     Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');
 
+    //MASTER DATA
+    Route::resource('bank', BankController::class);
+    Route::resource('department', DepartmentController::class);
+    Route::resource('reksumber', ReksumberController::class);
+    Route::resource('matauang', MatauangController::class);
+    Route::resource('rektujuan', RektujuanController::class);
+
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
     Route::put('/users/{id}/update_pwd', [UserController::class, 'update_pwd'])->name('users.update_pwd');
 
@@ -58,9 +69,4 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/import-csv', [CsvImportController::class, 'import']);
 
     Route::get('/email-status', [EmailStatusController::class, 'send']);
-
-
-
-
-
 });

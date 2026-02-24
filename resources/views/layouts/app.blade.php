@@ -104,6 +104,46 @@
 
 
 
+                            <!--Master Data-->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                data-bs-toggle="dropdown"
+                                title="Master Data">
+                                    <i class="fa-solid fa-database fa-lg"></i>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    @can('bank-list')
+                                    <a class="dropdown-item" href="{{ route('bank.index') }}">
+                                        <i class="fa-solid fa-building-columns me-2"></i> Bank
+                                    </a>
+                                    @endcan
+                                    @can('dept-list')
+                                    <a class="dropdown-item" href="{{ route('department.index') }}">
+                                        <i class="fa-solid fa-building me-2"></i> Department
+                                    </a>
+                                    @endcan
+
+                                    @can('reksumber-list')
+                                    <a class="dropdown-item" href="{{ route('reksumber.index') }}">
+                                        <i class="fa-solid fa-wallet me-2"></i> Rekening Sumber
+                                    </a>
+                                    @endcan
+
+                                    @can('matauang-list')
+                                    <a class="dropdown-item" href="{{ route('matauang.index') }}">
+                                        <i class="fa-solid fa-coins me-2"></i> Mata Uang
+                                    </a>
+                                    @endcan
+
+                                    @can('rektujuan-list')
+                                    <a class="dropdown-item" href="{{ route('rektujuan.index') }}">
+                                        <i class="fa-solid fa-money-bill-transfer me-2"></i> Rekening Tujuan
+                                    </a>
+                                    @endcan
+                                </div>
+                            </li>
+
                             <!-- USER ACCESS -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#"
