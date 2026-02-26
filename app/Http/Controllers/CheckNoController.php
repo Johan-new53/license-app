@@ -15,7 +15,10 @@ class CheckNoController extends Controller
         $ignoreId = $request->input('ignore_id');
         $ignoreId = $ignoreId !== null ? (int) $ignoreId : null;
 
-        // normalize
+        // optional dynamic filter
+        $filterField = $request->input('filter_field');
+        $filterValue = $request->input('filter_value');
+
         $clean = collect(explode(',', $raw))
             ->map(fn($v) => trim($v))
             ->filter()
@@ -24,16 +27,24 @@ class CheckNoController extends Controller
 
         $exists = [];
         if (!empty($clean)) {
-            $check = $service->check(implode(',', $clean), $documentType, $ignoreId);
-            $exists = $check['exists'] ?? [];
+            $check = $service->check(
+                implode(',', $clean),
+                $documentType,
+                $ignoreId,
+                $filterField,
+                $filterValue
+            );
         }
 
         return response()->json([
             'checked_count' => count($clean),
             'document_type' => $documentType,
             'ignore_id' => $ignoreId,
+            'filter_field' => $filterField,
+            'filter_value' => $filterValue,
             'invalid' => [],
-            'exists' => $exists,
+            'exists' => $check['exists'] ?? [],
+            'makers' => $check['makers'] ?? [],
         ]);
     }
 }

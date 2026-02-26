@@ -231,7 +231,9 @@
 <script>
   window.DOCNO_CHECK = {
     url: "{{ route('checkDocNo') }}",
-    type: "hardcopy", "softcopy",
+    type: "all", // "hardcopy" / "softcopy" / "all"
+    filter_field: "id_dept", // bersifat optional contoh: "id_dept" (sesuaikan dengan nama field filter di form)
+    filter_label: "Departemen", // label untuk pesan error (sesuaikan dengan nama field filter di form)
   };
 </script>
 <script src="{{ asset('js/docno-check.js') }}"></script>
