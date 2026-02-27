@@ -85,16 +85,19 @@
                                     <a class="dropdown-item" href="{{ route('hardcopys.index') }}">
                                         <i class="fa-solid fa-book-bookmark fa-lg"></i> Hard Copy
                                     </a>
-                                    
-                                    @endcan  
-                                     @can('softcopy-list')
-                                    <a class="dropdown-item" href="{{ route('softcopys.index') }}">                                        
+                                    @endcan
+
+                                    @can('softcopy-list')
+                                    <a class="dropdown-item" href="{{ route('softcopys.index') }}">
                                         <i class="fa-solid fa-book-bookmark fa-lg"></i> Soft Copy
                                     </a>
                                     @endcan     
 
                                     
                                       @can('finance-import')
+                                    @endcan
+
+                                    @can('finance-import')
                                       <a class="dropdown-item" href="{{ route('import') }}">
                                           <i class="fa-solid fa-book-bookmark fa-lg"></i> Import
                                       </a>
