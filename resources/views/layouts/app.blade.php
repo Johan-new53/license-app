@@ -93,7 +93,7 @@
                                     </a>
                                     @endcan     
 
-                                    @endcan
+                                    
                                       @can('finance-import')
                                       <a class="dropdown-item" href="{{ route('import') }}">
                                           <i class="fa-solid fa-book-bookmark fa-lg"></i> Import

@@ -89,11 +89,11 @@
             <br>
             <div class="col-xs-4 col-sm-4 col-md-4">
                     <strong>Payable To * :</strong>
-                    <select name="id_payable_s" class="form-control select2" required>
+                    <select name="id_payable" class="form-control select2" required>
                         <option value="">-- Pilih --</option>
-                        @foreach ($payableto_ss as $payableto_s)
-                            <option value="{{ $payableto_s->id }}">
-                                {{ $payableto_s->nama }}
+                        @foreach ($payabletos as $payableto)
+                            <option value="{{ $payableto->id }}">
+                                {{ $payableto->nama }}
                             </option>
                         @endforeach
                     </select>
@@ -102,32 +102,20 @@
         </div>
         <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
 
-            <div class="col-xs-6 col-sm-6 col-md-6">
-                <div class="form-group">
-                    <strong>Nama Rekening Tujuan * :</strong>
-                    <input type="text" name="nama_rekening_tujuan" class="form-control" placeholder="Nama Rekening Tujuan">
-                </div>
-            </div>
-            <br>
+            
             <div class="col-xs-4 col-sm-4 col-md-4">
-                        <strong>Bank Tujuan * :</strong>
-                        <select name="id_bank" class="form-control select2" required>
+                        <strong>Rekening Tujuan * :</strong>
+                        <select name="id_rek_tujuan" class="form-control select2" required>
                             <option value="">-- Pilih --</option>
-                            @foreach ($banks as $bank)
-                                <option value="{{ $bank->id }}">
-                                    {{ $bank->nama }}
+                            @foreach ($rek_tujuans as $rek_tujuan)
+                                <option value="{{ $rek_tujuan->id }}">
+                                    {{ $rek_tujuan->nama }}
                                 </option>
                             @endforeach
                         </select>
                 </div>
             <br>
-            <div class="col-xs-6 col-sm-6 col-md-6">
-                <div class="form-group">
-                    <strong>No Rekening Tujuan * :</strong>
-                    <input type="text" name="no_rek_tujuan" class="form-control" placeholder="">
-                </div>
-            </div>
-            <br>
+           
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
@@ -169,9 +157,9 @@
             <br>            
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
-                    <strong>Upload File (PDF/JPG/PNG) * :</strong>
+                    <strong>Upload File (PDF) * :</strong>
                     <input type="file" name="file_softcopy" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.docx,xlsx,pptx,.doc,xls,ppt" >
-                    <small class="text-muted">File number limit 1 Single file size limit: 1GB Allowed file types: Word, Excel, PPT, PDF, Image</small>
+                    <small class="text-muted">File number limit 1 Single file size limit: 200MB Allowed file types: PDF</small>
                 </div>
             </div>
             <br>

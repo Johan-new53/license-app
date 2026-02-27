@@ -8,13 +8,15 @@ use App\Models\Department;
 use App\Models\Finance;
 use App\Models\Hu_reksumber;
 use App\Models\Matauang;
-use App\Models\Payableto_h;
+
 use App\Models\Rektujuan;
 use App\Models\Vendor;
 use App\Services\DocNoCheckService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Payableto;
+
 
 
 class HardcopyController extends Controller
@@ -53,7 +55,8 @@ class HardcopyController extends Controller
         $hu_rek_sumbers = Hu_reksumber::where('valid', 1)
         ->orderBy('nama')
         ->get();
-        $payableto_hs = Payableto_h::where('valid', 1)
+        $payabletos = Payableto::where('valid', 1)
+        ->where('type', 'hardcopy')
         ->orderBy('nama')
         ->get();
          $rek_tujuans= Rektujuan::where('valid', 1)
@@ -67,11 +70,9 @@ class HardcopyController extends Controller
         ->orderBy('nama')
         ->get();
 
-        $vendors= Vendor::where('valid', 1)
-        ->orderBy('name')
-        ->get();
+       
 
-        return view('hardcopys.create', compact('departments','hu_rek_sumbers','payableto_hs','rek_tujuans','banks','currencys','vendors'));
+        return view('hardcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys'));
     }
 
       public function store(Request $request): RedirectResponse
@@ -79,7 +80,7 @@ class HardcopyController extends Controller
         request()->validate([
           'id_dept' => 'required',
           'id_rek_sumber' => 'required',
-          'id_payable_h' => 'required',
+          'id_payable' => 'required',
           'nama_rekening_tujuan' => 'required',
           'id_bank' => 'required',
           'no_rek_tujuan' => 'required',
@@ -115,14 +116,14 @@ class HardcopyController extends Controller
                 ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
                 ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
-                ->join('m_payableto_h', 'finances.id_payable_h', '=', 'm_payableto_h.id')
+                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
                 ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
                 ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
                     'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto_h.nama as nama_payable',
+                    'm_payableto.nama as nama_payable',
                     'm_bank.nama as nama_bank',
                     'm_currency.nama as nama_currency'
                 )
@@ -138,14 +139,14 @@ class HardcopyController extends Controller
                 ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
                 ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
-                ->join('m_payableto_h', 'finances.id_payable_h', '=', 'm_payableto_h.id')
+                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
                 ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
                 ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
                     'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto_h.nama as nama_payable',
+                    'm_payableto.nama as nama_payable',
                     'm_bank.nama as nama_bank',
                     'm_currency.nama as nama_currency'
                 )
@@ -158,7 +159,7 @@ class HardcopyController extends Controller
             $hu_rek_sumbers = Hu_reksumber::where('valid', 1)
             ->orderBy('nama')
             ->get();
-            $payableto_hs = Payableto_h::where('valid', 1)
+            $payabletos = Payableto::where('valid', 1)
             ->orderBy('nama')
             ->get();
             $rek_tujuans= Rektujuan::where('valid', 1)
@@ -176,7 +177,7 @@ class HardcopyController extends Controller
             ->orderBy('name')
             ->get();
 
-            return view('hardcopys.edit', compact('finance','departments','hu_rek_sumbers','payableto_hs','rek_tujuans','banks','currencys','vendors'));
+            return view('hardcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','vendors'));
 
         }
 
@@ -188,7 +189,7 @@ class HardcopyController extends Controller
         $validated = $request->validate([
             'id_dept' => 'required',
             'id_rek_sumber' => 'required',
-            'id_payable_h' => 'required',
+            'id_payable' => 'required',
             'nama_rekening_tujuan' => 'required',
             'id_bank' => 'required',
             'no_rek_tujuan' => 'required',
