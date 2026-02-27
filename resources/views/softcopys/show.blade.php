@@ -44,23 +44,12 @@
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Nama Rekening Tujuan:</strong>
-            {{ $finance->nama_rekening_tujuan }}
+            {{ $finance->nama_rek_tujuan }}
         </div>
     </div>
 
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Bank Tujuan :</strong>
-            {{ $finance->nama_bank }}
-        </div>
-    </div>
+   
 
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>No Rekening Tujuan:</strong>
-            {{ $finance->no_rek_tujuan }}
-        </div>
-    </div>
 
     
     <div class="col-xs-12 col-sm-12 col-md-12">

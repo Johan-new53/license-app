@@ -91,6 +91,10 @@
                                     <a class="dropdown-item" href="{{ route('softcopys.index') }}">
                                         <i class="fa-solid fa-book-bookmark fa-lg"></i> Soft Copy
                                     </a>
+                                    @endcan     
+
+                                    
+                                      @can('finance-import')
                                     @endcan
 
                                     @can('finance-import')

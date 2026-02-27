@@ -88,11 +88,11 @@
             <br>
             <div class="col-xs-4 col-sm-4 col-md-4">
                     <strong>Payable To * :</strong>
-                    <select name="id_payable_h" class="form-control select2" required>
+                    <select name="id_payable" class="form-control select2" required>
                         <option value="">-- Pilih --</option>
-                        @foreach ($payableto_hs as $payableto_h)
-                            <option value="{{ $payableto_h->id }}">
-                                {{ $payableto_h->nama }}
+                        @foreach ($payabletos as $payableto)
+                            <option value="{{ $payableto->id }}">
+                                {{ $payableto->nama }}
                             </option>
                         @endforeach
                     </select>
@@ -154,6 +154,16 @@
                 </div>
             </div>
             <br>
+
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Activity code * :</strong>
+                    <input type="text" name="activity_code" class="form-control" placeholder="">
+                </div>
+            </div>
+            <br>
+
+
             <div class="col-xs-4 col-sm-4 col-md-4">
                         <strong>Currency * :</strong>
                         <select name="id_currency" class="form-control select2" required>

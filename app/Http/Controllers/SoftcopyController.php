@@ -10,11 +10,11 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\Department;
 use App\Models\Hu_reksumber;
 
-use App\Models\Payableto_s;
+use App\Models\Payableto;
 use App\Models\Rektujuan;
 use App\Models\Bank;
 use App\Models\Matauang;
-use App\Models\Vendor;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
@@ -54,7 +54,8 @@ class SoftcopyController extends Controller
         $hu_rek_sumbers = Hu_reksumber::where('valid', 1)
         ->orderBy('nama')
         ->get();
-        $payableto_ss = Payableto_s::where('valid', 1)
+        $payabletos = Payableto::where('valid', 1)
+        ->where('type', 'softcopy')
         ->orderBy('nama')
         ->get();
          $rek_tujuans= Rektujuan::where('valid', 1)
@@ -68,11 +69,8 @@ class SoftcopyController extends Controller
         ->orderBy('nama')
         ->get();
 
-        $vendors= Vendor::where('valid', 1)
-        ->orderBy('name')
-        ->get();
-
-        return view('softcopys.create', compact('departments','hu_rek_sumbers','payableto_ss','rek_tujuans','banks','currencys','vendors'));
+       
+        return view('softcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys'));
     }
 
       public function store(Request $request): RedirectResponse
@@ -81,15 +79,13 @@ class SoftcopyController extends Controller
         request()->validate([
           'id_dept' => 'required',
           'id_rek_sumber' => 'required',
-          'id_payable_s' => 'required',
-          'nama_rekening_tujuan' => 'required',
-          'id_bank' => 'required',
-          'no_rek_tujuan' => 'required',
+          'id_payable' => 'required',
+          'id_rek_tujuan' => 'required',         
           'doc_no' => 'required',
           'description' => 'required',
           'id_currency' => 'required',
           'dpp' => 'required', 
-          'file_softcopy' => 'mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx,pdf|max:1048576',                
+          'file_softcopy' => 'mimes:pdf|max:204800',                
            
         ]);
         
@@ -118,16 +114,17 @@ class SoftcopyController extends Controller
                 ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
                 ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
-                ->join('m_payableto_s', 'finances.id_payable_s', '=', 'm_payableto_s.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
+                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+                
                 ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->join('m_rek_tujuan', 'finances.id_rek_tujuan', '=', 'm_rek_tujuan.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
                     'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto_s.nama as nama_payable',
-                    'm_bank.nama as nama_bank',
-                    'm_currency.nama as nama_currency'
+                    'm_payableto.nama as nama_payable',                    
+                    'm_currency.nama as nama_currency',
+                    'm_rek_tujuan.nama as nama_rek_tujuan'
                 )
                 ->where('finances.id', $id)                
                 ->firstOrFail();
@@ -141,15 +138,15 @@ class SoftcopyController extends Controller
                 ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
                 ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
-                ->join('m_payableto_s', 'finances.id_payable_s', '=', 'm_payableto_s.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')                
+                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+                              
                 ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
                     'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto_s.nama as nama_payable',
-                    'm_bank.nama as nama_bank',
+                    'm_payableto.nama as nama_payable',
+                    
                     'm_currency.nama as nama_currency'
                 )
                 ->where('finances.id', $id)
@@ -161,25 +158,20 @@ class SoftcopyController extends Controller
             $hu_rek_sumbers = Hu_reksumber::where('valid', 1)
             ->orderBy('nama')
             ->get();
-            $payableto_ss = Payableto_s::where('valid', 1)
+            $payabletos = Payableto::where('valid', 1)
+            ->where('type', 'softcopy')
             ->orderBy('nama')
             ->get();
             $rek_tujuans= Rektujuan::where('valid', 1)
             ->orderBy('nama')
             ->get();
-            $banks= Bank::where('valid', 1)
-            ->orderBy('nama')
-            ->get();
-
+           
             $currencys= Matauang::where('valid', 1)
             ->orderBy('nama')
             ->get();
+           
 
-            $vendors= Vendor::where('valid', 1)
-            ->orderBy('name')
-            ->get();
-
-            return view('softcopys.edit', compact('finance','departments','hu_rek_sumbers','payableto_ss','rek_tujuans','banks','currencys','vendors'));
+            return view('softcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','currencys'));
             
         }
 
@@ -191,15 +183,13 @@ class SoftcopyController extends Controller
         $validated = $request->validate([
                 'id_dept' => 'required',
                 'id_rek_sumber' => 'required',
-                'id_payable_s' => 'required',
-                'nama_rekening_tujuan' => 'required',
-                'id_bank' => 'required',
-                'no_rek_tujuan' => 'required',
+                'id_payable' => 'required',               
+                'id_rek_tujuan' => 'required',
                 'doc_no' => 'required',
                 'description' => 'required',
                 'id_currency' => 'required',
                 'dpp' => 'required',
-                'file_softcopy' => 'mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx,pdf|max:1048576',
+                'file_softcopy' => 'mimes:pdf|max:204800',
             ]);
 
 
