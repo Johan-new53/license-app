@@ -14,7 +14,7 @@
 
   function normalize(raw) {
     return (raw || '')
-      .split(',')
+      .split(';')
       .map(s => s.trim())
       .filter(Boolean);
   }

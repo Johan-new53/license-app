@@ -19,7 +19,7 @@ class CheckNoController extends Controller
         $filterField = $request->input('filter_field');
         $filterValue = $request->input('filter_value');
 
-        $clean = collect(explode(',', $raw))
+        $clean = collect(explode(';', $raw))
             ->map(fn($v) => trim($v))
             ->filter()
             ->values()
@@ -28,7 +28,7 @@ class CheckNoController extends Controller
         $exists = [];
         if (!empty($clean)) {
             $check = $service->check(
-                implode(',', $clean),
+                implode(';', $clean),
                 $documentType,
                 $ignoreId,
                 $filterField,

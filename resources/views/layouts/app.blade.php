@@ -91,9 +91,15 @@
                                     <a class="dropdown-item" href="{{ route('softcopys.index') }}">
                                         <i class="fa-solid fa-book-bookmark fa-lg"></i> Soft Copy
                                     </a>
-                                    @endcan     
+                                    @endcan
 
-                                    
+                                    @can('automate-list')
+                                    <a class="dropdown-item" href="{{ route('automates.index') }}">
+                                        <i class="fa-solid fa-book-bookmark fa-lg"></i> Automate
+                                    </a>
+                                    @endcan
+
+
                                       @can('finance-import')
                                     @endcan
 
@@ -142,6 +148,12 @@
                                     @can('rektujuan-list')
                                     <a class="dropdown-item" href="{{ route('rektujuan.index') }}">
                                         <i class="fa-solid fa-money-bill-transfer me-2"></i> Rekening Tujuan
+                                    </a>
+                                    @endcan
+
+                                    @can('category-list')
+                                    <a class="dropdown-item" href="{{ route('category.index') }}">
+                                        <i class="fa-solid fa-list me-2"></i> Category
                                     </a>
                                     @endcan
                                 </div>

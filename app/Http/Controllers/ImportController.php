@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Finance;
 use App\Models\Department;
 use App\Models\Hu_reksumber;
-use App\Models\Payableto_h;
+use App\Models\Payableto;
 use App\Models\Bank;
 use App\Models\Matauang;
 use DB;
@@ -58,9 +58,10 @@ class ImportController extends Controller
             if (count(array_filter($r, fn($v) => $v !== null && $v !== '')) === 0) continue;
 
             $typeRaw = $cell($r, 'type'); // aman kalau null
+            $typeNorm = $typeRaw ? strtolower(str_replace(' ', '', (string)$typeRaw)) : null;
 
             $inserts[] = [
-                'type' => $typeRaw ? strtolower(str_replace(' ', '', (string)$typeRaw)) : null,
+                'type' => $typeNorm,
                 'po_no' => $cell($r, 'PO Number'),
                 'id_category' => null,
 
@@ -70,7 +71,10 @@ class ImportController extends Controller
 
                 'id_dept' => $this->findIdByName(Department::class, $cell($r, 'Requesting Department')),
                 'id_rek_sumber' => $this->findIdByName(Hu_reksumber::class, $cell($r, 'Hospital Unit & Rekening Sumber')),
-                'id_payable_h' => $this->findIdByName(Payableto_h::class, $cell($r, 'Payable To')),
+                'id_payable' => $this->findPayableIdByNameAndType(
+                    $cell($r, 'Payable To'),
+                    $typeNorm
+                ),
 
                 'nama_rekening_tujuan' => $cell($r, 'Nama Rekening Tujuan'),
                 'id_bank' => $this->findIdByName(Bank::class, $cell($r, 'Bank Tujuan')),
@@ -103,10 +107,6 @@ class ImportController extends Controller
 
                 'created_at' => $now,
                 'updated_at' => $now,
-
-                // belum mapping:
-                'id_payable_s' => null,
-                'id_payable_a' => null,
             ];
         }
 
@@ -185,7 +185,6 @@ class ImportController extends Controller
 
     private function normDocNo(?string $text, bool $asArray = false, bool $newlineAsSeparator = true, bool $dropDashOnly = true)
     {
-        // handle null / kosong
         if ($text === null) {
             return $asArray ? [] : null;
         }
@@ -195,26 +194,25 @@ class ImportController extends Controller
             return $asArray ? [] : null;
         }
 
-        // buang quote pembungkus di awal/akhir (misal: "a;b;c")
+        // buang quote pembungkus
         $text = trim($text, "\"'");
 
         // samakan line ending
         $text = str_replace(["\r\n", "\r"], "\n", $text);
 
-        // jadikan separator utama: ; dan TAB => koma
-        $text = str_replace([";", "\t"], ",", $text);
+        // jadikan separator utama: TAB dan koma => ;
+        $text = str_replace(["\t", ","], ";", $text);
 
-        // newline mau dianggap pemisah juga?
+        // newline dianggap separator juga
         if ($newlineAsSeparator) {
-            $text = str_replace("\n", ",", $text);
+            $text = str_replace("\n", ";", $text);
         }
 
-        // pecah berdasarkan koma
-        $parts = explode(",", $text);
+        // pecah berdasarkan ;
+        $parts = explode(";", $text);
 
         $out = [];
         foreach ($parts as $p) {
-            // trim spasi dan quote di tiap token
             $p = trim($p);
             $p = trim($p, "\"'");
 
@@ -224,7 +222,8 @@ class ImportController extends Controller
             $out[] = $p;
         }
 
-        return $asArray ? $out : implode(",", $out);
+        // gabungkan pakai ;
+        return $asArray ? $out : implode(";", $out);
     }
 
     private function findIdByName($modelClass, $name)
@@ -234,6 +233,24 @@ class ImportController extends Controller
         $name = trim($name);
 
         $row = $modelClass::whereRaw('LOWER(nama) = ?', [strtolower($name)])
+            ->where('valid', 1)
+            ->first();
+
+        return $row?->id;
+    }
+
+    private function findPayableIdByNameAndType($name, ?string $typeNorm)
+    {
+        if (!$name) return null;
+
+        $name = trim((string) $name);
+        if ($name === '') return null;
+
+        if (!$typeNorm) return null;
+
+        $row = Payableto::query()
+            ->whereRaw('LOWER(nama) = ?', [strtolower($name)])
+            ->whereRaw('LOWER(REPLACE(type, " ", "")) = ?', [$typeNorm])
             ->where('valid', 1)
             ->first();
 
