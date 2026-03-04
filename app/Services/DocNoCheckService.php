@@ -21,7 +21,7 @@ class DocNoCheckService
         ?string $filterField = null,
         $filterValue = null
     ): array {
-        $tokens = collect(explode(',', $input))
+        $tokens = collect(explode(';', $input))
             ->map(fn($v) => trim($v))
             ->filter()
             ->values();
@@ -70,7 +70,7 @@ class DocNoCheckService
         $q->where(function ($sub) use ($clean) {
             foreach ($clean as $n) {
                 $safe = preg_quote($n, '/');
-                $sub->orWhereRaw("doc_no REGEXP ?", ["(^|,){$safe}(,|$)"]);
+                $sub->orWhereRaw("doc_no REGEXP ?", ["(^|;){$safe}(;|$)"]);
             }
         });
 
@@ -81,7 +81,7 @@ class DocNoCheckService
         $makers = [];
 
         foreach ($rows as $row) {
-            foreach (explode(',', (string) $row->doc_no) as $t) {
+            foreach (explode(';', (string) $row->doc_no) as $t) {
                 $t = trim($t);
 
                 if (in_array($t, $clean, true)) {

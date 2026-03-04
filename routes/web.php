@@ -12,6 +12,7 @@ use App\Http\Controllers\CsvImportController;
 use App\Http\Controllers\EmailStatusController;
 use App\Http\Controllers\HardcopyController;
 use App\Http\Controllers\SoftcopyController;
+use App\Http\Controllers\AutomateController;
 use App\Http\Controllers\CheckNoController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\BankController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ReksumberController;
 use App\Http\Controllers\MatauangController;
 use App\Http\Controllers\RektujuanController;
+use App\Http\Controllers\CategoryController;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -47,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('hardcopys', HardcopyController::class);
     Route::resource('softcopys', SoftcopyController::class);
+    Route::resource('automates', AutomateController::class);
 
     Route::get('/import', [ImportController::class, 'index'])->name('import');
     Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');
@@ -57,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('reksumber', ReksumberController::class);
     Route::resource('matauang', MatauangController::class);
     Route::resource('rektujuan', RektujuanController::class);
+    Route::resource('category', CategoryController::class);
 
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
     Route::put('/users/{id}/update_pwd', [UserController::class, 'update_pwd'])->name('users.update_pwd');
