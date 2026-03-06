@@ -69,4 +69,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/import-csv', [CsvImportController::class, 'import']);
 
     Route::get('/email-status', [EmailStatusController::class, 'send']);
+
+    Route::get('/get-ppn/{id}', function ($id) {
+    return \App\Models\Ppn::findOrFail($id);
+    })->name('get.ppn');
+
+    
 });
