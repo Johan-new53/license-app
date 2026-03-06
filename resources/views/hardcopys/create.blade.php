@@ -189,23 +189,37 @@
                     <input type="number" id="dpp" name="dpp" class="form-control" placeholder="">
                 </div>
             </div>
-            <br>
+         
+
+            <div class="col-xs-3 col-sm-3 col-md-3">
+            <strong>Ppn (Pilih 0,1,11,Other) * :</strong>
+            <select name="id_ppn" id="id_ppn" class="form-control select2" required>
+                <option value="">-- Pilih --</option>
+                @foreach ($ppns as $ppn)
+                    <option value="{{ $ppn->id }}"
+                        data-ppn="{{ $ppn->ppn }}"
+                        data-flag="{{ $ppn->flag_ubah }}">
+                        {{ $ppn->nama }}
+                    </option>
+                @endforeach
+            </select>
+            </div>
+
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
-                    <strong>Ppn% (0,1,11) * :</strong>   <br>
-                    <input type="number" id="ppn_persen" name="persen_ppn" class="form-control" value=0 placeholder="">
+                    <strong>Ppn% </strong>   <br>
+                    <input type="number" id="ppn_persen" name="persen_ppn" class="form-control" value=0 placeholder="" readonly>
                 </div>
             </div>
-            <br>
-
+      
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Nilai Ppn * :</strong>   <br>
                     <input type="number" id="nilai_ppn" name="nilai_ppn" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-            <br>
+      
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -213,7 +227,7 @@
                     <input type="number" id="pph" name="pph" class="form-control" value=0 placeholder="">
                 </div>
             </div>
-            <br>
+      
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -221,7 +235,7 @@
                     <input type="number" id="total_amount" name="total_amount" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-            <br>
+       
 
 
         </div>
@@ -247,25 +261,62 @@
   };
 </script>
 <script src="{{ asset('js/docno-check.js') }}"></script>
+
 <script>
 
 function hitungTotal() {
     let dpp = parseFloat(document.getElementById('dpp').value) || 0;
     let ppnPersen = parseFloat(document.getElementById('ppn_persen').value) || 0;
     let pph = parseFloat(document.getElementById('pph').value) || 0;
+    let nilaiPpnInput = document.getElementById('nilai_ppn');
 
-    let ppnNilai = ppnPersen / 100 * dpp;
+    let ppnNilai = 0;
+
+    if (nilaiPpnInput.readOnly) {
+        ppnNilai = (ppnPersen / 100) * dpp;
+        nilaiPpnInput.value = ppnNilai;
+    } else {
+        ppnNilai = parseFloat(nilaiPpnInput.value) || 0;
+    }
+
     let total = dpp + ppnNilai - pph;
 
-
-    document.getElementsByName('nilai_ppn')[0].value = ppnNilai;
-    document.getElementsByName('total_amount')[0].value = total;
+    document.getElementById('total_amount').value = total;
 }
 
 // trigger saat input berubah
 document.getElementById('dpp').addEventListener('input', hitungTotal);
 document.getElementById('ppn_persen').addEventListener('input', hitungTotal);
 document.getElementById('pph').addEventListener('input', hitungTotal);
+
+document.getElementById('id_ppn').addEventListener('change', function() {
+
+    let selected = this.options[this.selectedIndex];
+
+    let persen = parseFloat(selected.getAttribute('data-ppn')) || 0;
+    let flag = parseInt(selected.getAttribute('data-flag')) || 0;
+
+    let ppnPersenInput = document.getElementById('ppn_persen');
+    let nilaiPpnInput = document.getElementById('nilai_ppn');
+
+    // set persen
+    ppnPersenInput.value = persen;
+
+    // atur readonly dulu (PENTING urutan ini)
+    if (flag === 0) {
+        nilaiPpnInput.readOnly = true;
+        nilaiPpnInput.value = 0; // reset dulu supaya bersih
+    } else {
+        nilaiPpnInput.readOnly = false;
+        nilaiPpnInput.value = 0; // reset juga supaya tidak bawa nilai lama
+    }
+
+    // hitung ulang setelah semua set
+    hitungTotal();
+});
+
+document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
+
 </script>
 
 @endsection
