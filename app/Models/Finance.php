@@ -25,4 +25,9 @@ class Finance extends Model
     {
         return $this->belongsTo(User::class, 'user_entry');
     }
+
+    public function payableto()
+    {
+        return $this->belongsTo(Payableto::class, 'id_payable');
+    }
 }

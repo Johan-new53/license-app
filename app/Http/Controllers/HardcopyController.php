@@ -34,16 +34,62 @@ class HardcopyController extends Controller
 
 
 
-    public function index(): View
+    public function index(Request $request): View
     {
+        $statusOptions = Finance::query()
+            ->where('user_entry', auth()->id())
+            ->where('type', 'hardcopy')
+            ->whereNotNull('status')
+            ->select('status')
+            ->distinct()
+            ->orderBy('status')
+            ->pluck('status');
 
-        $hardcopys = Finance::where('user_entry', auth()->id())
-        ->where('type', 'hardcopy')
-        ->orderBy('id', 'desc')
-        ->paginate(6);
+        $payabletos = Payableto::where('valid', 1)
+            ->where('type', 'hardcopy')
+            ->orderBy('nama')
+            ->get();
 
-        return view('hardcopys.index', compact('hardcopys'))
-            ->with('i', (request()->input('page', 1) - 1) * 6);
+        $query = Finance::query()
+            ->where('user_entry', auth()->id())
+            ->where('type', 'hardcopy');
+
+        // filter tanggal invoice_date
+        if ($request->filled('date_from')) {
+            $query->whereDate('invoice_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('invoice_date', '<=', $request->date_to);
+        }
+
+        // Filter payable To
+        if ($request->filled('id_payable')) {
+            $query->where('id_payable', $request->id_payable);
+        }
+
+        // filter doc_no
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', 'like', '%' . $request->doc_no . '%');
+        }
+
+        // filter deskripsi
+        if ($request->filled('description')) {
+            $query->where('description', 'like', '%' . $request->description . '%');
+        }
+
+        // filter status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $hardcopys = $query
+            ->with('payableto')
+            ->orderBy('id', 'desc')
+            ->paginate(6)
+            ->appends($request->query());
+
+        return view('hardcopys.index', compact('hardcopys', 'statusOptions', 'payabletos'))
+            ->with('i', ($hardcopys->currentPage() - 1) * $hardcopys->perPage());
     }
 
     public function create()
@@ -70,7 +116,7 @@ class HardcopyController extends Controller
         ->orderBy('nama')
         ->get();
 
-       
+
 
         return view('hardcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys'));
     }
