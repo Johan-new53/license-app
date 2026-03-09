@@ -8,15 +8,16 @@ use App\Models\Department;
 use App\Models\Finance;
 use App\Models\Hu_reksumber;
 use App\Models\Matauang;
-
+use App\Models\Ppn;
 use App\Models\Rektujuan;
-use App\Models\Vendor;
+
 use App\Services\DocNoCheckService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Payableto;
-
+use App\Models\History_approval;
+use Illuminate\Support\Facades\DB;
 
 
 class HardcopyController extends Controller
@@ -116,9 +117,13 @@ class HardcopyController extends Controller
         ->orderBy('nama')
         ->get();
 
+         $ppns= Ppn::where('valid', 1)
+        ->orderBy('id')
+        ->get();
 
+       
 
-        return view('hardcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys'));
+        return view('hardcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
     }
 
       public function store(Request $request): RedirectResponse
@@ -148,8 +153,21 @@ class HardcopyController extends Controller
         $data = $request->all();
         $data['user_entry'] = auth()->id();
         $data['type'] = 'hardcopy';
-        $data['status'] = 'request';
-        Finance::create($data);
+        $data['status'] = 'requested';
+        
+       
+
+        DB::transaction(function () use ($data) {
+        $finance = Finance::create($data);
+            History_approval::create([
+                'id_finance' => $finance->id,
+                'status' => 'requested',
+                'keterangan' => 'requested',
+                'user_entry' => auth()->id(),
+            ]);
+
+        });
+
 
 
         return redirect()->route('hardcopys.index')
@@ -165,13 +183,15 @@ class HardcopyController extends Controller
                 ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
                 ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
                 ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->join('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
                     'm_hu_rek_sumber.nama as nama_rek_sumber',
                     'm_payableto.nama as nama_payable',
                     'm_bank.nama as nama_bank',
-                    'm_currency.nama as nama_currency'
+                    'm_currency.nama as nama_currency',
+                    'm_ppn.nama as nama_ppn'
                 )
                 ->where('finances.id', $id)
                 ->first();
@@ -219,11 +239,12 @@ class HardcopyController extends Controller
             ->orderBy('nama')
             ->get();
 
-            $vendors= Vendor::where('valid', 1)
-            ->orderBy('name')
+            $ppns= Ppn::where('valid', 1)
+            ->orderBy('id')
             ->get();
 
-            return view('hardcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','vendors'));
+           
+            return view('hardcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
 
         }
 
