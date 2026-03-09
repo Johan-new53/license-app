@@ -35,6 +35,10 @@
             <input type="email" name="email" class="form-control" placeholder="Email" value="{{ old('email', $user->email) }}">
         </div>
         <div class="col-12 mb-3">
+            <label><strong>Level:</strong></label>
+            <input type="number" name="level" class="form-control" placeholder="level" value="{{ old('level', $user->level) }}">
+        </div>
+        <div class="col-12 mb-3">
             <label><strong>Password:</strong></label>
             <input type="password" name="password" class="form-control" placeholder="Password">
         </div>

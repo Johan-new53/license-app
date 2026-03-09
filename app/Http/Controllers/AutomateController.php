@@ -155,7 +155,7 @@ class AutomateController extends Controller
         $data = $request->all();
         $data['user_entry'] = auth()->id();
         $data['type'] = 'automate';
-        $data['status'] = 'request';
+        $data['status'] = 'requested';
         $data['input_file'] = $path ?? null;
 
         Finance::create($data);

@@ -21,6 +21,7 @@ use App\Http\Controllers\ReksumberController;
 use App\Http\Controllers\MatauangController;
 use App\Http\Controllers\RektujuanController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Approval1Controller;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -50,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('hardcopys', HardcopyController::class);
     Route::resource('softcopys', SoftcopyController::class);
     Route::resource('automates', AutomateController::class);
+    Route::resource('approvals', Approval1Controller::class);
 
     Route::get('/import', [ImportController::class, 'index'])->name('import');
     Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');

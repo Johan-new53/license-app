@@ -42,6 +42,12 @@
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
+                <strong>Level:</strong>
+                <input type="number" name="level" value=0 placeholder="" class="form-control">
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
                 <strong>Password:</strong>
                 <input type="password" name="password" placeholder="Password" class="form-control">
             </div>
