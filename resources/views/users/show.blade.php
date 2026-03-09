@@ -17,6 +17,10 @@
         <strong>Email:</strong>
         <p>{{ $user->email }}</p>
     </div>
+    <div class="col-12 mb-3">
+        <strong>Level:</strong>
+        <p>{{ $user->level }}</p>
+    </div>
     <div class="col-12">
         <strong>Roles:</strong><br>
         @if($user->getRoleNames()->isNotEmpty())

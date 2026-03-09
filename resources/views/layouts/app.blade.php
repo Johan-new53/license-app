@@ -99,9 +99,13 @@
                                     </a>
                                     @endcan
 
-
-                                      @can('finance-import')
+                                     @can('approval-list')
+                                    <a class="dropdown-item" href="{{ route('approvals.index') }}">
+                                        <i class="fa-solid fa-book-bookmark fa-lg"></i> Approval 
+                                    </a>
                                     @endcan
+
+
 
                                     @can('finance-import')
                                       <a class="dropdown-item" href="{{ route('import') }}">
