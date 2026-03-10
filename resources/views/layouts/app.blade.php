@@ -101,7 +101,7 @@
 
                                      @can('approval-list')
                                     <a class="dropdown-item" href="{{ route('approvals.index') }}">
-                                        <i class="fa-solid fa-book-bookmark fa-lg"></i> Approval 
+                                        <i class="fa-solid fa-book-bookmark fa-lg"></i> Approval
                                     </a>
                                     @endcan
 
@@ -158,6 +158,12 @@
                                     @can('category-list')
                                     <a class="dropdown-item" href="{{ route('category.index') }}">
                                         <i class="fa-solid fa-list me-2"></i> Category
+                                    </a>
+                                    @endcan
+
+                                    @can('ppn-list')
+                                    <a class="dropdown-item" href="{{ route('ppn.index') }}">
+                                        <i class="fa-solid fa-list me-2"></i> PPN
                                     </a>
                                     @endcan
                                 </div>
