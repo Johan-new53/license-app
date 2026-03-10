@@ -121,7 +121,7 @@ class HardcopyController extends Controller
         ->orderBy('id')
         ->get();
 
-       
+
 
         return view('hardcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
     }
@@ -154,8 +154,8 @@ class HardcopyController extends Controller
         $data['user_entry'] = auth()->id();
         $data['type'] = 'hardcopy';
         $data['status'] = 'requested';
-        
-       
+
+
 
         DB::transaction(function () use ($data) {
         $finance = Finance::create($data);
@@ -243,7 +243,7 @@ class HardcopyController extends Controller
             ->orderBy('id')
             ->get();
 
-           
+
             return view('hardcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
 
         }
@@ -275,6 +275,7 @@ class HardcopyController extends Controller
         }
 
         $data = $request->all();
+        $data['status'] = 'requested';
         $finance->update($data);
 
         return redirect()->route('hardcopys.index')

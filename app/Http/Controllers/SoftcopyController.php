@@ -17,11 +17,10 @@ use App\Models\Matauang;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Services\DocNoCheckService;
 
 class SoftcopyController extends Controller
 {
-
-
     function __construct()
     {
         $this->middleware('permission:softcopy-list|softcopy-create|softcopy-edit|softcopy-delete', ['only' => ['index','show']]);
@@ -31,11 +30,8 @@ class SoftcopyController extends Controller
         $this->middleware('permission:softcopy-export', ['only' => ['export']]);
     }
 
-
-
     public function index(Request $request): View
     {
-
         $statusOptions = Finance::query()
             ->where('user_entry', auth()->id())
             ->where('type', 'softcopy')
@@ -119,7 +115,7 @@ class SoftcopyController extends Controller
         return view('softcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys'));
     }
 
-      public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
 
         request()->validate([
@@ -134,6 +130,14 @@ class SoftcopyController extends Controller
           'file_softcopy' => 'mimes:pdf|max:204800',
 
         ]);
+
+        $docNoCheckService = new DocNoCheckService();
+        $check = $docNoCheckService->check($request->doc_no, 'softcopy');
+        if (!empty($check['exists'])) {
+            return back()
+                ->withInput()
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+        }
 
         if ($request->hasFile('file_softcopy')) {
             $file = $request->file('file_softcopy');
@@ -239,7 +243,16 @@ class SoftcopyController extends Controller
             ]);
 
 
+        $docNoCheckService = new DocNoCheckService();
+        $check = $docNoCheckService->check($request->doc_no, 'softcopy', $finance->id);
+        if (!empty($check['exists'])) {
+            return back()
+                ->withInput()
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+        }
+
         $data = $request->all();
+        $data['status'] = 'requested';
 
         if ($request->hasFile('file_softcopy')) {
 

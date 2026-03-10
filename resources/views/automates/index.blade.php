@@ -132,7 +132,7 @@
                     </a>
 
                     @can('automate-edit')
-                        @if ($automate->status!='paid' && $automate->status!='approve 1' && $automate->status!='approve 2')
+                        @if ($automate->status!='paid' && $automate->status!='approved 1' && $automate->status!='approved 2')
                         <a class="btn btn-primary btn-sm"
                            href="{{ route('automates.edit',$automate->id) }}">
                             <i class="fa-solid fa-pen-to-square"></i>
@@ -144,7 +144,7 @@
                     @method('DELETE')
 
                     @can('automate-delete')
-                        @if ($automate->status!='paid' && $automate->status!='approve 1' && $automate->status!='approve 2')
+                        @if ($automate->status!='paid' && $automate->status!='approved 1' && $automate->status!='approved 2')
                         <button type="submit"
                                 class="btn btn-danger btn-sm"
                                 onclick="return confirm('Are you sure you want to delete this item?')">

@@ -132,7 +132,7 @@
                     </a>
 
                     @can('softcopy-edit')
-                        @if ($softcopy->status!='paid' && $softcopy->status!='approve 1' && $softcopy->status!='approve 2')
+                        @if ($softcopy->status!='paid' && $softcopy->status!='approved 1' && $softcopy->status!='approved 2')
                         <a class="btn btn-primary btn-sm"
                            href="{{ route('softcopys.edit',$softcopy->id) }}">
                             <i class="fa-solid fa-pen-to-square"></i>
@@ -144,7 +144,7 @@
                     @method('DELETE')
 
                     @can('softcopy-delete')
-                        @if ($softcopy->status!='paid' && $softcopy->status!='approve 1' && $softcopy->status!='approve 2')
+                        @if ($softcopy->status!='paid' && $softcopy->status!='approved 1' && $softcopy->status!='approved 2')
                         <button type="submit"
                                 class="btn btn-danger btn-sm"
                                 onclick="return confirm('Are you sure you want to delete this item?')">

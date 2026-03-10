@@ -18,6 +18,7 @@ use App\Models\Matauang;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Services\DocNoCheckService;
 
 class AutomateController extends Controller
 {
@@ -145,6 +146,14 @@ class AutomateController extends Controller
 
         ]);
 
+        $docNoCheckService = new DocNoCheckService();
+        $check = $docNoCheckService->check($request->doc_no, 'automate');
+        if (!empty($check['exists'])) {
+            return back()
+                ->withInput()
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+        }
+
         if ($request->hasFile('file_automate')) {
             $file = $request->file('file_automate');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -259,8 +268,16 @@ class AutomateController extends Controller
                 'file_automate' => 'mimes:pdf|max:204800',
             ]);
 
+        $docNoCheckService = new DocNoCheckService();
+        $check = $docNoCheckService->check($request->doc_no, 'automate', $finance->id);
+        if (!empty($check['exists'])) {
+            return back()
+                ->withInput()
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+        }
 
         $data = $request->all();
+        $data['status'] = 'requested';
 
         if ($request->hasFile('file_automate')) {
 
