@@ -21,6 +21,7 @@ use App\Http\Controllers\ReksumberController;
 use App\Http\Controllers\MatauangController;
 use App\Http\Controllers\RektujuanController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PpnController;
 use App\Http\Controllers\Approval1Controller;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
@@ -28,7 +29,6 @@ Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosof
 
 // Redirect root URL to /home if logged in, or to login otherwise
 Route::get('/', function () {
-
 
     if (Auth::check()) {
         return redirect()->route('home');
@@ -63,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('matauang', MatauangController::class);
     Route::resource('rektujuan', RektujuanController::class);
     Route::resource('category', CategoryController::class);
+    Route::resource('ppn', PpnController::class);
 
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
     Route::put('/users/{id}/update_pwd', [UserController::class, 'update_pwd'])->name('users.update_pwd');
@@ -80,5 +81,5 @@ Route::middleware(['auth'])->group(function () {
     return \App\Models\Ppn::findOrFail($id);
     })->name('get.ppn');
 
-    
+
 });
