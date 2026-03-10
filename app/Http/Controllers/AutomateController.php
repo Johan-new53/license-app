@@ -15,6 +15,7 @@ use App\Models\Payableto;
 use App\Models\Rektujuan;
 use App\Models\Bank;
 use App\Models\Matauang;
+use App\Models\Ppn;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -119,8 +120,12 @@ class AutomateController extends Controller
         ->orderBy('nama')
         ->get();
 
+        $ppns= Ppn::where('valid', 1)
+        ->orderBy('id')
+        ->get();
 
-        return view('automates.create', compact('categorys','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys'));
+
+        return view('automates.create', compact('categorys','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
     }
 
       public function store(Request $request): RedirectResponse
@@ -167,14 +172,15 @@ class AutomateController extends Controller
         public function show($id): View
         {
             $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_category', 'finances.id_category', '=', 'm_category.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+                ->leftjoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+                ->leftjoin('m_category', 'finances.id_category', '=', 'm_category.id')
+                ->leftjoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
-                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+                ->leftjoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
 
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-                ->join('m_rek_tujuan', 'finances.id_rek_tujuan', '=', 'm_rek_tujuan.id')
+                ->leftjoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->leftjoin('m_rek_tujuan', 'finances.id_rek_tujuan', '=', 'm_rek_tujuan.id')
+                ->leftjoin('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
@@ -182,7 +188,8 @@ class AutomateController extends Controller
                     'm_hu_rek_sumber.nama as nama_rek_sumber',
                     'm_payableto.nama as nama_payable',
                     'm_currency.nama as nama_currency',
-                    'm_rek_tujuan.nama as nama_rek_tujuan'
+                    'm_rek_tujuan.nama as nama_rek_tujuan',
+                    'm_ppn.nama as nama_ppn'
                 )
                 ->where('finances.id', $id)
                 ->firstOrFail();
@@ -193,12 +200,12 @@ class AutomateController extends Controller
         public function edit($id): View
         {
              $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+                ->leftjoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+                ->leftjoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
-                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+                ->leftjoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
 
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->leftjoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
@@ -231,60 +238,59 @@ class AutomateController extends Controller
             ->orderBy('nama')
             ->get();
 
+            $ppns= Ppn::where('valid', 1)
+            ->orderBy('id')
+            ->get();
 
-            return view('automates.edit', compact('categorys','finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','currencys'));
+
+            return view('automates.edit', compact('categorys','finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','currencys','ppns'));
 
         }
 
 
-        public function update(Request $request, $id)
-        {
-        $finance = Finance::findOrFail($id);
+    public function update(Request $request, $id)
+{
+    $finance = Finance::findOrFail($id);
 
-        $validated = $request->validate([
-                'po_no' => 'required',
-                'id_category' => 'required',
-                'form_submission_time' => 'required',
-                'final_validation_time' => 'required',
-                'email' => 'required',
-                'id_dept' => 'required',
-                'id_rek_sumber' => 'required',
-                'id_payable' => 'required',
-                'id_rek_tujuan' => 'required',
-                'doc_no' => 'required',
-                'description' => 'required',
-                'id_currency' => 'required',
-                'journal_no' => 'required',
-                'dpp' => 'required',
-                'file_automate' => 'mimes:pdf|max:204800',
-            ]);
+    $validated = $request->validate([
+        'po_no' => 'required',
+        'id_category' => 'required',
+        'form_submission_time' => 'required',
+        'final_validation_time' => 'required',
+        'email' => 'required',
+        'id_dept' => 'required',
+        'id_rek_sumber' => 'required',
+        'id_payable' => 'required',
+        'id_rek_tujuan' => 'required',
+        'doc_no' => 'required',
+        'description' => 'required',
+        'id_currency' => 'required',
+        'journal_no' => 'required',
+        'dpp' => 'required',
+        'file_automate' => 'nullable|mimes:pdf|max:204800',
+    ]);
 
+    $data = $request->except('file_automate');
 
-        $data = $request->all();
+    if ($request->hasFile('file_automate')) {
 
-        if ($request->hasFile('file_automate')) {
-
-            // Hapus file lama jika ada
-            if ($finance->file_automate && Storage::exists($finance->file_automate)) {
-                Storage::delete($finance->file_automate);
-            }
-
-            // Upload file baru
-            $file = $request->file('file_automate');
-            $path = $file->store('automate_files', 'public');
-
-            $data['file_automate'] = $path;
+        // hapus file lama
+        if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
+            Storage::disk('public')->delete($finance->input_file);
         }
 
-        $data['input_file'] = $path ?? null;
+        // upload file baru
+        $file = $request->file('file_automate');
+        $path = $file->store('automate_files', 'public');
 
-        $finance->update($data);
+        $data['input_file'] = $path;
+    }
 
-        return redirect()->route('automates.index')
-            ->with('success', 'Automate berhasil diupdate.');
-        }
+    $finance->update($data);
 
-
+    return redirect()->route('automates.index')
+        ->with('success', 'Automate berhasil diupdate.');
+    }
 
     public function destroy($id): RedirectResponse
     {

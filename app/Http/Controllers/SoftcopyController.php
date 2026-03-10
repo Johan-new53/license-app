@@ -14,6 +14,7 @@ use App\Models\Payableto;
 use App\Models\Rektujuan;
 use App\Models\Bank;
 use App\Models\Matauang;
+use App\Models\Ppn;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -116,7 +117,12 @@ class SoftcopyController extends Controller
         ->orderBy('nama')
         ->get();
 
-        return view('softcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys'));
+        $ppns= Ppn::where('valid', 1)
+        ->orderBy('id')
+        ->get();
+
+
+        return view('softcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
     }
 
       public function store(Request $request): RedirectResponse
@@ -157,20 +163,22 @@ class SoftcopyController extends Controller
         public function show($id): View
         {
             $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+                ->leftjoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+                ->leftjoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
-                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+                ->leftjoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
 
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-                ->join('m_rek_tujuan', 'finances.id_rek_tujuan', '=', 'm_rek_tujuan.id')
+                ->leftjoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->leftjoin('m_rek_tujuan', 'finances.id_rek_tujuan', '=', 'm_rek_tujuan.id')
+                ->leftjoin('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
                     'm_hu_rek_sumber.nama as nama_rek_sumber',
                     'm_payableto.nama as nama_payable',
                     'm_currency.nama as nama_currency',
-                    'm_rek_tujuan.nama as nama_rek_tujuan'
+                    'm_rek_tujuan.nama as nama_rek_tujuan',
+                    'm_ppn.nama as nama_ppn'
                 )
                 ->where('finances.id', $id)
                 ->firstOrFail();
@@ -181,12 +189,12 @@ class SoftcopyController extends Controller
         public function edit($id): View
         {
              $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+                ->leftjoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+                ->leftjoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
-                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+                ->leftjoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
 
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->leftjoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
@@ -216,53 +224,52 @@ class SoftcopyController extends Controller
             ->orderBy('nama')
             ->get();
 
+            $ppns= Ppn::where('valid', 1)
+            ->orderBy('id')
+            ->get();
 
-            return view('softcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','currencys'));
+            return view('softcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','currencys','ppns'));
 
         }
 
+    public function update(Request $request, $id)
+{
+    $finance = Finance::findOrFail($id);
 
-        public function update(Request $request, $id)
-        {
-        $finance = Finance::findOrFail($id);
+    $validated = $request->validate([
+        'id_dept' => 'required',
+        'id_rek_sumber' => 'required',
+        'id_payable' => 'required',
+        'id_rek_tujuan' => 'required',
+        'doc_no' => 'required',
+        'description' => 'required',
+        'id_currency' => 'required',
+        'dpp' => 'required',
+        'file_softcopy' => 'mimes:pdf|max:204800',
+    ]);
 
-        $validated = $request->validate([
-                'id_dept' => 'required',
-                'id_rek_sumber' => 'required',
-                'id_payable' => 'required',
-                'id_rek_tujuan' => 'required',
-                'doc_no' => 'required',
-                'description' => 'required',
-                'id_currency' => 'required',
-                'dpp' => 'required',
-                'file_softcopy' => 'mimes:pdf|max:204800',
-            ]);
+    $data = $request->all();
 
+    if ($request->hasFile('file_softcopy')) {
 
-        $data = $request->all();
-
-        if ($request->hasFile('file_softcopy')) {
-
-            // Hapus file lama jika ada
-            if ($finance->file_softcopy && Storage::exists($finance->file_softcopy)) {
-                Storage::delete($finance->file_softcopy);
-            }
-
-            // Upload file baru
-            $file = $request->file('file_softcopy');
-            $path = $file->store('softcopy_files', 'public');
-
-            $data['file_softcopy'] = $path;
+        // hapus file lama
+        if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
+            Storage::disk('public')->delete($finance->input_file);
         }
 
-        $data['input_file'] = $path ?? null;
+        // upload file baru
+        $file = $request->file('file_softcopy');
+        $path = $file->store('softcopy_files', 'public');
 
-        $finance->update($data);
+        $data['input_file'] = $path;
+    }
 
-        return redirect()->route('softcopys.index')
-            ->with('success', 'Softcopy berhasil diupdate.');
-        }
+    $finance->update($data);
 
+    return redirect()->route('softcopys.index')
+        ->with('success', 'Softcopy berhasil diupdate.');
+    }
+        
 
 
     public function destroy($id): RedirectResponse
