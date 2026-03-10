@@ -144,7 +144,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Document Number(s) * :</strong><br>
-                    <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678,456789123)</strong><br>
+                    <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678;456789123)</strong><br>
 
                     <input id="doc_no" type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" placeholder="">
                     <div id="docNoResult" class="mt-2"></div>
@@ -271,7 +271,6 @@
 <script src="{{ asset('js/docno-check.js') }}"></script>
 
 <script>
-
 function hitungTotal() {
     let dpp = parseFloat(document.getElementById('dpp').value) || 0;
     let ppnPersen = parseFloat(document.getElementById('ppn_persen').value) || 0;
