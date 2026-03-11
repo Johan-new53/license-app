@@ -30,4 +30,11 @@ class Finance extends Model
     {
         return $this->belongsTo(Payableto::class, 'id_payable');
     }
+
+    public function histories()
+    {
+        return $this->hasMany(History_approval::class,'id_finance');
+    }
 }
+
+
