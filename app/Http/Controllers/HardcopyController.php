@@ -155,20 +155,16 @@ class HardcopyController extends Controller
         $data['type'] = 'hardcopy';
         $data['status'] = 'requested';
 
-
-
         DB::transaction(function () use ($data) {
         $finance = Finance::create($data);
             History_approval::create([
                 'id_finance' => $finance->id,
                 'status' => 'requested',
-                'keterangan' => 'requested',
+                'keterangan' => 'request prf hardcopy',
                 'user_entry' => auth()->id(),
             ]);
 
         });
-
-
 
         return redirect()->route('hardcopys.index')
                 ->with('success', 'Ap Hardcopy created successfully.');
@@ -283,24 +279,42 @@ class HardcopyController extends Controller
                 ->withInput()
                 ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
         }
-
+        
+        
         $data = $request->all();
         $data['status'] = 'requested';
-        $finance->update($data);
+        $data['user_entry'] = auth()->id();
+        $data['type'] = 'hardcopy';
+
+        DB::transaction(function () use ($data, $finance) {
+            $finance->update($data);
+
+            History_approval::create([
+                'id_finance' => $finance->id,
+                'status' => 'requested',
+                'keterangan' => $data['alasan'],
+                'user_entry' => auth()->id(),
+            ]);
+        });
+       
 
         return redirect()->route('hardcopys.index')
             ->with('success', 'Hard Copy updated successfully');
     }
 
 
-
     public function destroy($id): RedirectResponse
     {
-        $finance = Finance::findOrFail($id);
-        $finance->delete();
+        DB::transaction(function () use ($id) {
+
+            History_approval::where('id_finance', $id)->delete();
+
+            $finance = Finance::findOrFail($id);
+            $finance->delete();
+        });
 
         return redirect()->route('hardcopys.index')
-            ->with('success', 'Hard Copy deleted successfully');
+            ->with('success', 'Hardcopy deleted successfully');
     }
 
 }

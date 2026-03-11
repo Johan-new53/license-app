@@ -1,3 +1,68 @@
+<style>
+
+.approval-wrapper{
+    display:flex;
+    align-items:flex-start;
+    margin-top:20px;
+}
+
+.step{
+    text-align:center;
+    position:relative;
+    flex:1;
+}
+
+.step:after{
+    content:'';
+    position:absolute;
+    top:20px;
+    right:-50%;
+    width:100%;
+    height:3px;
+    background:#ddd;
+    z-index:-1;
+}
+
+.step:last-child:after{
+    display:none;
+}
+
+.step-circle{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    color:white;
+    line-height:40px;
+    margin:auto;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.approved{
+    background:#28a745;
+}
+
+.rejected{
+    background:#dc3545;
+}
+
+.requested{
+    background:#ffc107;
+}
+
+.pending{
+    background:#ffc107;
+}
+
+.step-content{
+    margin-top:10px;
+    font-size:13px;
+}
+
+</style>
+
+
+
 
 @extends('layouts.app')
 
@@ -141,6 +206,58 @@
         
         
 </div>
+<div class="col-md-6">
+
+    <h4>Approval Flow</h4>
+
+    <div class="approval-wrapper">
+
+    @foreach($histories as $key => $row)
+
+    <div class="step">
+
+        <div class="step-circle
+            @if($row->status == 'approved 1' or $row->status == 'approved 2') approved
+            @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2') rejected
+            @else requested
+            @endif
+        ">
+
+            @if($row->status == 'approved 1' or $row->status == 'approved 2')
+                ✔
+            @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2')
+                ✖
+            @elseif($row->status == 'requested' )
+                ⏳  
+            @else
+                ⏳
+            @endif
+
+        </div>
+
+        <div class="step-content">
+
+            <strong>{{ $row->status }}</strong><br>
+
+            <small>{{ $row->keterangan }}</small><br>
+
+            <small>
+                {{ $row->name }}
+            </small><br>
+
+            <small>
+                {{ \Carbon\Carbon::parse($row->created_at)->format('d M Y H:i') }}
+            </small>
+
+        </div>
+
+    </div>
+
+    @endforeach
+
+</div>
+
+
 </div>
 </div>
 @endsection

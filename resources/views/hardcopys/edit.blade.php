@@ -6,19 +6,33 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
+<form action="{{ route('hardcopys.update', $finance->id) }}" 
+      method="POST" 
+      enctype="multipart/form-data">
+    @csrf
+    @method('PUT')
 
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>Edit Hard Copy</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-primary btn-sm" href="{{ route('hardcopys.index') }}">
-                    <i class="fa fa-arrow-left"></i> Back
-                </a>
-            </div>
-        </div>
+    <div class="row align-items-end mb-3">
+
+    <div class="col-md-4">
+        <h2>Edit Hard Copy</h2>
     </div>
+
+    <div class="col-md-4 text-end">
+        <a class="btn btn-primary btn-sm" href="{{ route('hardcopys.index') }}">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+    </div>
+    </div>
+
+   <div class="col-md-8">
+    <div class="d-flex align-items-center">
+        <strong class="me-2">Komen perbaikan rejected atau alasan edit:</strong>
+        <input type="text" name="alasan" class="form-control" placeholder="Masukkan komen perbaikan rejected atau alasan edit">
+    </div>
+    </div>
+    
+
 
     @if ($errors->any())
         <div class="alert alert-danger">

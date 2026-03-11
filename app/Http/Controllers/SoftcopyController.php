@@ -15,6 +15,8 @@ use App\Models\Rektujuan;
 use App\Models\Bank;
 use App\Models\Matauang;
 use App\Models\Ppn;
+use App\Models\History_approval;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -150,21 +152,30 @@ class SoftcopyController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('softcopy_files', $filename, 'public');
         }
-
-
+    
+       
         $data = $request->all();
         $data['user_entry'] = auth()->id();
         $data['type'] = 'softcopy';
-        $data['status'] = 'request';
+        $data['status'] = 'requested';
         $data['input_file'] = $path ?? null;
 
-        Finance::create($data);
+        DB::transaction(function () use ($data) {
+        $finance = Finance::create($data);
+            History_approval::create([
+                'id_finance' => $finance->id,
+                'status' => 'requested',
+                'keterangan' => 'request prf softcopy',
+                'user_entry' => auth()->id(),
+            ]);
+
+        });
 
         return redirect()->route('softcopys.index')
                 ->with('success', 'Ap Softcopy created successfully.');
         }
 
-        public function show($id): View
+    public function show($id): View
         {
             $finance = \DB::table('finances')
                 ->leftjoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
@@ -187,7 +198,18 @@ class SoftcopyController extends Controller
                 ->where('finances.id', $id)
                 ->firstOrFail();
 
-            return view('softcopys.show', compact('finance'));
+            $histories = DB::table('history_approval')
+            ->join('users', 'history_approval.user_entry', '=', 'users.id')
+            ->select(
+                'history_approval.*',
+                'users.name',
+                'users.email'
+            )
+            ->where('history_approval.id_finance', $id)
+            ->orderBy('history_approval.id','asc')
+            ->get();    
+
+            return view('softcopys.show', compact('finance','histories'));
         }
 
         public function edit($id): View
@@ -275,8 +297,23 @@ class SoftcopyController extends Controller
         $data['input_file'] = $path;
     }
 
-    $data['status'] = 'requested';
-    $finance->update($data);
+    
+
+        $data = $request->all();
+        $data['status'] = 'requested';
+        $data['user_entry'] = auth()->id();
+        $data['type'] = 'softcopy';
+
+        DB::transaction(function () use ($data, $finance) {
+            $finance->update($data);
+
+            History_approval::create([
+                'id_finance' => $finance->id,
+                'status' => 'requested',
+                'keterangan' => $data['alasan'],
+                'user_entry' => auth()->id(),
+            ]);
+        });
 
     return redirect()->route('softcopys.index')
         ->with('success', 'Softcopy berhasil diupdate.');
@@ -286,11 +323,16 @@ class SoftcopyController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        $finance = Finance::findOrFail($id);
-        $finance->delete();
+        DB::transaction(function () use ($id) {
+
+            History_approval::where('id_finance', $id)->delete();
+
+            $finance = Finance::findOrFail($id);
+            $finance->delete();
+        });
 
         return redirect()->route('softcopys.index')
-            ->with('success', 'Soft Copy deleted successfully');
+            ->with('success', 'Softcopy deleted successfully');
     }
 
 }

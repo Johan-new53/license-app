@@ -47,7 +47,7 @@
 }
 
 .requested{
-    background:#28a745;
+    background:#ffc107;
 }
 
 .pending{
@@ -234,7 +234,7 @@
         @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2')
             ✖
         @elseif($row->status == 'requested' )
-            ✔    
+            ⏳    
         @else
             ⏳
         @endif

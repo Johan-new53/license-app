@@ -128,14 +128,14 @@
 
                     <a class="btn btn-info btn-sm"
                        href="{{ route('softcopys.show',$softcopy->id) }}">
-                        <i class="fa-solid fa-list"></i>
+                        <i class="fa-solid fa-list"></i> Show
                     </a>
 
                     @can('softcopy-edit')
                         @if ($softcopy->status!='paid' && $softcopy->status!='approved 1' && $softcopy->status!='approved 2')
                         <a class="btn btn-primary btn-sm"
                            href="{{ route('softcopys.edit',$softcopy->id) }}">
-                            <i class="fa-solid fa-pen-to-square"></i>
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
                         </a>
                         @endif
                     @endcan
@@ -148,7 +148,7 @@
                         <button type="submit"
                                 class="btn btn-danger btn-sm"
                                 onclick="return confirm('Are you sure you want to delete this item?')">
-                            <i class="fa-solid fa-trash"></i>
+                            <i class="fa-solid fa-trash"></i> Delete
                         </button>
                         @endif
                     @endcan
