@@ -174,30 +174,40 @@ class HardcopyController extends Controller
                 ->with('success', 'Ap Hardcopy created successfully.');
         }
 
-      public function show($id): View
-        {
-            $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+    public function show($id): View
+    {
+    $finance = \DB::table('finances')
+        ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+        ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+        ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+        ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
+        ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+        ->join('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
+        ->select(
+            'finances.*',
+            'm_dept.nama as nama_dept',
+            'm_hu_rek_sumber.nama as nama_rek_sumber',
+            'm_payableto.nama as nama_payable',
+            'm_bank.nama as nama_bank',
+            'm_currency.nama as nama_currency',
+            'm_ppn.nama as nama_ppn'
+        )
+        ->where('finances.id', $id)
+        ->first();
 
-                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-                ->join('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
-                ->select(
-                    'finances.*',
-                    'm_dept.nama as nama_dept',
-                    'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto.nama as nama_payable',
-                    'm_bank.nama as nama_bank',
-                    'm_currency.nama as nama_currency',
-                    'm_ppn.nama as nama_ppn'
-                )
-                ->where('finances.id', $id)
-                ->first();
+    $histories = DB::table('history_approval')
+    ->join('users', 'history_approval.user_entry', '=', 'users.id')
+    ->select(
+        'history_approval.*',
+        'users.name',
+        'users.email'
+    )
+    ->where('history_approval.id_finance', $id)
+    ->orderBy('history_approval.id','asc')
+    ->get();    
 
-            return view('hardcopys.show', compact('finance'));
-        }
+    return view('hardcopys.show', compact('finance','histories'));
+    }
 
      public function edit($id): View
         {
