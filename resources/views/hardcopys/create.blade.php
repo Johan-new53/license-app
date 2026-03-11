@@ -317,6 +317,26 @@ document.getElementById('id_ppn').addEventListener('change', function() {
 
 document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
 
+$('#submit').on('click', function(e){
+    let invalidField = null;
+    $('select[required], input[required]').each(function(){
+        if($(this).val() == "" || $(this).val() == null){
+            invalidField = this;
+            return false;
+        }
+    });
+
+    if(invalidField){
+        e.preventDefault();
+        let tabPane = $(invalidField).closest('.tab-pane');
+        if(tabPane.length){
+            let tabId = tabPane.attr('id');
+            $('button[data-bs-target="#'+tabId+'"]').tab('show');
+        }
+        invalidField.focus();
+        invalidField.reportValidity();
+    }
+});
 </script>
 
 @endsection

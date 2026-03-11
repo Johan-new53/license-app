@@ -33,8 +33,8 @@
 
 
 
-<form action="{{ route('softcopys.update', $finance->id) }}" 
-      method="POST" 
+<form action="{{ route('softcopys.update', $finance->id) }}"
+      method="POST"
       enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -108,16 +108,16 @@
         </div>
         <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
 
-        
+
            <br>
 
             <div class="col-xs-4 col-sm-4 col-md-4">
                         <strong>Rekening Tujuan * :</strong>
                         <select name="id_rek_tujuan" class="form-control select2" required>
                             <option value="">-- Pilih --</option>
-                            @foreach ($rek_tujuans as $rek_tujuan)                                
+                            @foreach ($rek_tujuans as $rek_tujuan)
                                 <option value="{{ $rek_tujuan->id  }}"
-                                    {{ old('id_rek_tujuan', $finance->id_rek_tujuan) == $rek_tujuan->id ? 'selected' : '' }}>                                
+                                    {{ old('id_rek_tujuan', $finance->id_rek_tujuan) == $rek_tujuan->id ? 'selected' : '' }}>
                                     {{ $rek_tujuan->nama }}
                                 </option>
                             @endforeach
@@ -125,7 +125,7 @@
                 </div>
             <br>
 
-           
+
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
@@ -175,7 +175,7 @@
                 </a>
             </div>
              @endif
-                          
+
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>Upload File (PDF) * :</strong>
@@ -185,7 +185,7 @@
             </div>
             <br>
 
-            
+
         </div>
 
          <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">
@@ -196,14 +196,14 @@
                     <input type="number" id="dpp" name="dpp" value="{{ $finance->dpp }}" class="form-control" placeholder="">
                 </div>
             </div>
-            
+
 
             <div class="col-xs-3 col-sm-3 col-md-3">
             <strong>Ppn (Pilih 0,1,11,Other) * :</strong>
             <select name="id_ppn" id="id_ppn" class="form-control select2" required>
                 <option value="">-- Pilih --</option>
                 @foreach ($ppns as $ppn)
-                    <option value="{{ $ppn->id }}"                        
+                    <option value="{{ $ppn->id }}"
                         {{ old('id_ppn', $finance->id_ppn) == $ppn->id ? 'selected' : '' }}
                         data-ppn="{{ $ppn->ppn }}"
                         data-flag="{{ $ppn->flag_ubah }}">
@@ -212,7 +212,7 @@
                 @endforeach
             </select>
             </div>
-      
+
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -220,7 +220,7 @@
                     <input type="number" id="ppn_persen" name="persen_ppn" value="{{ $finance->persen_ppn }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-            
+
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -228,7 +228,7 @@
                     <input type="number" id="nilai_ppn" name="nilai_ppn" value="{{ $finance->nilai_ppn }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-            
+
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -236,7 +236,7 @@
                     <input type="number" id="pph" name="pph" value="{{ $finance->pph }}" class="form-control" placeholder="">
                 </div>
             </div>
-            
+
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -244,7 +244,7 @@
                     <input type="number" id="total_amount" name="total_amount" value="{{ $finance->total_amount }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-            
+
 
         </div>
 
@@ -323,6 +323,26 @@ document.getElementById('id_ppn').addEventListener('change', function() {
 
 document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
 
+$('#submit').on('click', function(e){
+    let invalidField = null;
+    $('select[required], input[required]').each(function(){
+        if($(this).val() == "" || $(this).val() == null){
+            invalidField = this;
+            return false;
+        }
+    });
+
+    if(invalidField){
+        e.preventDefault();
+        let tabPane = $(invalidField).closest('.tab-pane');
+        if(tabPane.length){
+            let tabId = tabPane.attr('id');
+            $('button[data-bs-target="#'+tabId+'"]').tab('show');
+        }
+        invalidField.focus();
+        invalidField.reportValidity();
+    }
+});
 </script>
 
 @endsection

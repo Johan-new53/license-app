@@ -195,13 +195,13 @@
                     <input type="number" id="dpp" name="dpp" value="{{ $finance->dpp }}" class="form-control" placeholder="">
                 </div>
             </div>
-            
+
             <div class="col-xs-3 col-sm-3 col-md-3">
             <strong>Ppn (Pilih 0,1,11,Other) * :</strong>
             <select name="id_ppn" id="id_ppn" class="form-control select2" required>
                 <option value="">-- Pilih --</option>
                 @foreach ($ppns as $ppn)
-                    <option value="{{ $ppn->id }}"                        
+                    <option value="{{ $ppn->id }}"
                         {{ old('id_ppn', $finance->id_ppn) == $ppn->id ? 'selected' : '' }}
                         data-ppn="{{ $ppn->ppn }}"
                         data-flag="{{ $ppn->flag_ubah }}">
@@ -210,7 +210,7 @@
                 @endforeach
             </select>
             </div>
-          
+
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -218,7 +218,7 @@
                     <input type="number" id="ppn_persen" name="persen_ppn" value="{{ $finance->persen_ppn }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-           
+
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -226,7 +226,7 @@
                     <input type="number" id="nilai_ppn" name="nilai_ppn" value="{{ $finance->nilai_ppn }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-            
+
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -234,7 +234,7 @@
                     <input type="number" id="pph" name="pph" value="{{ $finance->pph }}" class="form-control" placeholder="">
                 </div>
             </div>
-      
+
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -242,7 +242,7 @@
                     <input type="number" id="total_amount" name="total_amount" value="{{ $finance->total_amount }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-       
+
 
 
         </div>
@@ -324,6 +324,26 @@ document.getElementById('id_ppn').addEventListener('change', function() {
 
 document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
 
+$('#submit').on('click', function(e){
+    let invalidField = null;
+    $('select[required], input[required]').each(function(){
+        if($(this).val() == "" || $(this).val() == null){
+            invalidField = this;
+            return false;
+        }
+    });
+
+    if(invalidField){
+        e.preventDefault();
+        let tabPane = $(invalidField).closest('.tab-pane');
+        if(tabPane.length){
+            let tabId = tabPane.attr('id');
+            $('button[data-bs-target="#'+tabId+'"]').tab('show');
+        }
+        invalidField.focus();
+        invalidField.reportValidity();
+    }
+});
 </script>
 
 @endsection
