@@ -16,6 +16,8 @@ use App\Models\Rektujuan;
 use App\Models\Bank;
 use App\Models\Matauang;
 use App\Models\Ppn;
+use App\Models\History_approval;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -166,13 +168,23 @@ class AutomateController extends Controller
         }
 
 
+       
         $data = $request->all();
         $data['user_entry'] = auth()->id();
         $data['type'] = 'automate';
         $data['status'] = 'requested';
         $data['input_file'] = $path ?? null;
 
-        Finance::create($data);
+        DB::transaction(function () use ($data) {
+        $finance = Finance::create($data);
+            History_approval::create([
+                'id_finance' => $finance->id,
+                'status' => 'requested',
+                'keterangan' => 'request prf automate',
+                'user_entry' => auth()->id(),
+            ]);
+
+        });
 
         return redirect()->route('automates.index')
                 ->with('success', 'Ap Automate created successfully.');
@@ -203,7 +215,18 @@ class AutomateController extends Controller
                 ->where('finances.id', $id)
                 ->firstOrFail();
 
-            return view('automates.show', compact('finance'));
+              $histories = DB::table('history_approval')
+                ->join('users', 'history_approval.user_entry', '=', 'users.id')
+                ->select(
+                    'history_approval.*',
+                    'users.name',
+                    'users.email'
+                )
+                ->where('history_approval.id_finance', $id)
+                ->orderBy('history_approval.id','asc')
+                ->get();        
+
+            return view('automates.show', compact('finance','histories'));
         }
 
         public function edit($id): View
@@ -256,69 +279,89 @@ class AutomateController extends Controller
 
         }
 
-
     public function update(Request $request, $id)
-{
-    $finance = Finance::findOrFail($id);
+    {
+        $finance = Finance::findOrFail($id);
 
-    $validated = $request->validate([
-        'po_no' => 'required',
-        'id_category' => 'required',
-        'form_submission_time' => 'required',
-        'final_validation_time' => 'required',
-        'email' => 'required',
-        'id_dept' => 'required',
-        'id_rek_sumber' => 'required',
-        'id_payable' => 'required',
-        'id_rek_tujuan' => 'required',
-        'doc_no' => 'required',
-        'description' => 'required',
-        'id_currency' => 'required',
-        'journal_no' => 'required',
-        'dpp' => 'required',
-        'file_automate' => 'nullable|mimes:pdf|max:204800',
-    ]);
+        $validated = $request->validate([
+            'po_no' => 'required',
+            'id_category' => 'required',
+            'form_submission_time' => 'required',
+            'final_validation_time' => 'required',
+            'email' => 'required',
+            'id_dept' => 'required',
+            'id_rek_sumber' => 'required',
+            'id_payable' => 'required',
+            'id_rek_tujuan' => 'required',
+            'doc_no' => 'required',
+            'description' => 'required',
+            'id_currency' => 'required',
+            'journal_no' => 'required',
+            'dpp' => 'required',
+            'file_automate' => 'nullable|mimes:pdf|max:204800',
+        ]);
 
+        // cek doc number
         $docNoCheckService = new DocNoCheckService();
         $check = $docNoCheckService->check($request->doc_no, 'automate', $finance->id);
+
         if (!empty($check['exists'])) {
             return back()
                 ->withInput()
-                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: ' . implode(', ', $check['exists'])]);
         }
 
-        $data = $request->all();
+        $data = $validated;
 
-    $data = $request->except('file_automate');
+        // set default field
+        $data['status'] = 'requested';
+        $data['user_entry'] = auth()->id();
+        $data['type'] = 'automate';
 
-    if ($request->hasFile('file_automate')) {
+        // upload file jika ada
+        if ($request->hasFile('file_automate')) {
 
-        // hapus file lama
-        if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
-            Storage::disk('public')->delete($finance->input_file);
+            // hapus file lama
+            if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
+                Storage::disk('public')->delete($finance->input_file);
+            }
+
+            $file = $request->file('file_automate');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('automate_files', $filename, 'public');
+
+            $data['input_file'] = $path;
         }
 
-        // upload file baru
-        $file = $request->file('file_automate');
-        $path = $file->store('automate_files', 'public');
+        DB::transaction(function () use ($finance, $data, $request) {
 
-        $data['input_file'] = $path;
+            $finance->update($data);
+
+            History_approval::create([
+                'id_finance' => $finance->id,
+                'status' => 'requested',
+                'keterangan' => $request->alasan ?? 'edit prf automate',
+                'user_entry' => auth()->id(),
+            ]);
+        });
+
+        return redirect()->route('automates.index')
+            ->with('success', 'Automate berhasil diupdate.');
     }
-
-    $data['status'] = 'requested';
-    $finance->update($data);
-
-    return redirect()->route('automates.index')
-        ->with('success', 'Automate berhasil diupdate.');
-    }
+    
 
     public function destroy($id): RedirectResponse
     {
-        $finance = Finance::findOrFail($id);
-        $finance->delete();
+        DB::transaction(function () use ($id) {
+
+            History_approval::where('id_finance', $id)->delete();
+
+            $finance = Finance::findOrFail($id);
+            $finance->delete();
+        });
 
         return redirect()->route('automates.index')
-            ->with('success', 'Soft Copy deleted successfully');
+            ->with('success', 'Automate deleted successfully');
     }
 
 }
