@@ -20,6 +20,7 @@ use App\Models\History_approval;
 use Illuminate\Support\Facades\DB;
 
 
+
 class Approval1Controller extends Controller
 {
 
@@ -111,7 +112,18 @@ class Approval1Controller extends Controller
                 ->where('finances.id', $id)
                 ->firstOrFail();
 
-            return view('approvals.show', compact('finance'));
+                $histories = DB::table('history_approval')
+                ->join('users', 'history_approval.user_entry', '=', 'users.id')
+                ->select(
+                    'history_approval.*',
+                    'users.name',
+                    'users.email'
+                )
+                ->where('history_approval.id_finance', $id)
+                ->orderBy('history_approval.id','asc')
+                ->get();    
+
+            return view('approvals.show', compact('finance','histories'));
         }
 
         public function edit($id): View

@@ -128,14 +128,14 @@
 
                     <a class="btn btn-info btn-sm"
                        href="{{ route('automates.show',$automate->id) }}">
-                        <i class="fa-solid fa-list"></i>
+                        <i class="fa-solid fa-list"></i> Show
                     </a>
 
                     @can('automate-edit')
                         @if ($automate->status!='paid' && $automate->status!='approved 1' && $automate->status!='approved 2')
                         <a class="btn btn-primary btn-sm"
                            href="{{ route('automates.edit',$automate->id) }}">
-                            <i class="fa-solid fa-pen-to-square"></i>
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
                         </a>
                         @endif
                     @endcan
@@ -148,7 +148,7 @@
                         <button type="submit"
                                 class="btn btn-danger btn-sm"
                                 onclick="return confirm('Are you sure you want to delete this item?')">
-                            <i class="fa-solid fa-trash"></i>
+                            <i class="fa-solid fa-trash"></i> Delete
                         </button>
                         @endif
                     @endcan
