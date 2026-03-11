@@ -288,7 +288,7 @@ class AutomateController extends Controller
         }
 
         $data = $request->all();
-        $data['status'] = 'requested';
+
     $data = $request->except('file_automate');
 
     if ($request->hasFile('file_automate')) {
@@ -305,6 +305,7 @@ class AutomateController extends Controller
         $data['input_file'] = $path;
     }
 
+    $data['status'] = 'requested';
     $finance->update($data);
 
     return redirect()->route('automates.index')

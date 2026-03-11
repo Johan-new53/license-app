@@ -261,7 +261,6 @@ class SoftcopyController extends Controller
     }
 
     $data = $request->all();
-    $data['status'] = 'requested';
 
     if ($request->hasFile('file_softcopy')) {
         // hapus file lama
@@ -276,6 +275,7 @@ class SoftcopyController extends Controller
         $data['input_file'] = $path;
     }
 
+    $data['status'] = 'requested';
     $finance->update($data);
 
     return redirect()->route('softcopys.index')
