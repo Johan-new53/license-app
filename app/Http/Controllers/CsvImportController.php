@@ -39,15 +39,18 @@ class CsvImportController extends Controller
                     $start_date="1900-01-01";
                 }
                 else {    
-                    $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', $row['start_date'])->format('Y-m-d');
+                    
+                    $start_date = \Carbon\Carbon::parse($row['start_date'])->format('Y-m-d');
+                    
                 }
                 //$end_date = \Carbon\Carbon::createFromFormat('m/d/Y', $row['end_date'])->format('Y-m-d');
                 if ($row['end_date'] =="")
                 {
                     $request_date="1900-01-01";
                 }
-                else {    
-                    $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', $row['end_date'])->format('Y-m-d');
+                else {
+                    $end_date = \Carbon\Carbon::parse($row['end_date'])->format('Y-m-d');    
+                    
                 }
                 //$next_bidding = \Carbon\Carbon::createFromFormat('m/d/Y', $row['next_bidding'])->format('Y-m-d');
                 if ($row['next_bidding'] =="")

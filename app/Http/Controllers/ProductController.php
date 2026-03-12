@@ -22,31 +22,57 @@ class ProductController extends Controller
         $this->middleware('permission:product-export', ['only' => ['export']]);
     }
 
-    public function index(): View
-    {
-        $products = Product::orderBy('item')->paginate(6);
-        return view('products.index', compact('products'))
-            ->with('i', (request()->input('page', 1) - 1) * 6);
-    }
+   
 
+    
     public function searchitem(Request $request)
     {
-	    $search = $request->get('searchitem');
-        if ($search=='')
-        {
-            $products = Product::orderBy('item')->paginate(6);
-            return view('products.index', compact('products'))
-            ->with('i', (request()->input('page', 1) - 1) * 6);
+        $query = Product::query();
+
+        if ($request->item) {
+            $query->where('item', 'like', '%' . $request->item . '%');
         }
-        else 
-        {
-           
-            $products = Product::where('item', 'like', '%' . $search . '%')->paginate(6);
-            return view('products.index', compact('products'))
-            ->with('i', (request()->input('page', 1) - 1) * 6);
+
+        if ($request->category) {
+            $query->where('category', 'like', '%' . $request->category . '%');
         }
-       
-        
+
+        if ($request->description) {
+            $query->where('description', 'like', '%' . $request->description . '%');
+        }
+
+        if ($request->pic) {
+            $query->where('pic', 'like', '%' . $request->pic . '%');
+        }
+
+        $products = $query->paginate(6);
+
+        return view('products.index', compact('products'));
+    }
+
+    public function index(Request $request)
+    {
+        $query = Product::query();
+
+        if ($request->item) {
+            $query->where('item', 'like', '%' . $request->item . '%');
+        }
+
+        if ($request->category) {
+            $query->where('category', 'like', '%' . $request->category . '%');
+        }
+
+        if ($request->description) {
+            $query->where('description', 'like', '%' . $request->description . '%');
+        }
+
+        if ($request->pic) {
+            $query->where('pic', 'like', '%' . $request->pic . '%');
+        }
+
+        $products = $query->paginate(6);
+
+        return view('products.index', compact('products'));
     }
 
 
