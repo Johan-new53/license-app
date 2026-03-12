@@ -239,7 +239,7 @@
                 @endforeach
             </select>
             </div>
-            
+
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -247,7 +247,7 @@
                     <input type="number" id="ppn_persen" name="persen_ppn" class="form-control" value=0 placeholder="" readonly>
                 </div>
             </div>
-            
+
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -255,7 +255,7 @@
                     <input type="number" id="nilai_ppn" name="nilai_ppn" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-            
+
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -263,7 +263,7 @@
                     <input type="number" id="pph" name="pph" class="form-control" value=0 placeholder="">
                 </div>
             </div>
-            
+
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
@@ -271,7 +271,7 @@
                     <input type="number" id="total_amount" name="total_amount" class="form-control" placeholder="" readonly>
                 </div>
             </div>
-            
+
 
 
         </div>
@@ -351,6 +351,26 @@ document.getElementById('id_ppn').addEventListener('change', function() {
 
 document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
 
+$('#submit').on('click', function(e){
+    let invalidField = null;
+    $('select[required], input[required]').each(function(){
+        if($(this).val() == "" || $(this).val() == null){
+            invalidField = this;
+            return false;
+        }
+    });
+
+    if(invalidField){
+        e.preventDefault();
+        let tabPane = $(invalidField).closest('.tab-pane');
+        if(tabPane.length){
+            let tabId = tabPane.attr('id');
+            $('button[data-bs-target="#'+tabId+'"]').tab('show');
+        }
+        invalidField.focus();
+        invalidField.reportValidity();
+    }
+});
 </script>
 
 @endsection
