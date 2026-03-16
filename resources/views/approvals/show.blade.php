@@ -49,6 +49,9 @@
 .requested{
     background:#ffc107;
 }
+.paid{
+    background:#28a745;
+}
 
 .pending{
     background:#ffc107;
@@ -68,15 +71,24 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Show Approval</h2>
-            <h6>Level : {{ Auth::user()->level }}</h6>   
-        
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('approvals.index') }}">Back</a>
+<div class="row mb-3">
+    <div class="col-lg-12">
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+
+            <div>
+                <h2>Show Approval</h2>
+                <h6>Level : {{ Auth::user()->level }}</h6>
+            </div>
+
+            <div>
+                <a class="btn btn-primary btn-sm" href="{{ route('approvals.index') }}">
+                    Back
+                </a>
+            </div>
+
         </div>
+
     </div>
 </div>
 
@@ -84,10 +96,7 @@
 
 <div class="container">
 <div class="row">
-<div class="col-md-6">
-
-    
-
+<div class="col-md-4">
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Type :</strong>
@@ -122,10 +131,6 @@
             {{ $finance->nama_rek_tujuan }}
         </div>
     </div>
-
-   
-
-
     
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
@@ -140,7 +145,9 @@
             {{ $finance->doc_no }}
         </div>
     </div>
+</div>
 
+<div class="col-md-4">
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Description :</strong>
@@ -171,7 +178,7 @@
         </div>
     </div>
 
-            
+
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Dpp :</strong>
@@ -210,59 +217,59 @@
         
 </div>
 
-    <div class="col-md-6">
+<div class="col-md-4">
 
     <h4>Approval Flow</h4>
 
     <div class="approval-wrapper">
 
-    @foreach($histories as $key => $row)
+            @foreach($histories as $key => $row)
 
-    <div class="step">
+            <div class="step">
 
-        <div class="step-circle
-            @if($row->status == 'approved 1' or $row->status == 'approved 2') approved
-            @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2') rejected
-            @else requested
-            @endif
-        ">
+                <div class="step-circle
+                    @if($row->status == 'approved 1' or $row->status == 'approved 2') approved
+                    @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2') rejected
+                    @else requested
+                    @endif
+                ">
 
-            @if($row->status == 'approved 1' or $row->status == 'approved 2')
-                ✔
-            @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2')
-                ✖
-            @elseif($row->status == 'requested' )
-                ⏳    
-            @else
-                ⏳
-            @endif
+                    @if($row->status == 'approved 1' or $row->status == 'approved 2')
+                        ✔
+                    @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2')
+                        ✖
+                    @elseif($row->status == 'paid' )
+                        ✔    
+                    @elseif($row->status == 'requested' )
+                        ⏳    
+                    @else
+                        ⏳
+                    @endif
 
+                </div>
+
+                <div class="step-content">
+
+                    <strong>{{ $row->status }}</strong><br>
+
+                    <small>{{ $row->keterangan }}</small><br>
+
+                    <small>
+                        {{ $row->name }}
+                    </small><br>
+
+                    <small>
+                        {{ \Carbon\Carbon::parse($row->created_at)->format('d M Y H:i') }}
+                    </small>
+
+                </div>
+
+            </div>
+
+            @endforeach
+
+            </div>
         </div>
-
-        <div class="step-content">
-
-            <strong>{{ $row->status }}</strong><br>
-
-            <small>{{ $row->keterangan }}</small><br>
-
-            <small>
-                {{ $row->name }}
-            </small><br>
-
-            <small>
-                {{ \Carbon\Carbon::parse($row->created_at)->format('d M Y H:i') }}
-            </small>
-
-        </div>
-
-    </div>
-
-    @endforeach
-
-    </div>
-
-
-
 </div>
 </div>
 
@@ -275,6 +282,38 @@
     @method('PUT')
 
     <input type="hidden" name="level" value="{{ Auth::user()->level }}">
+    <div class="col-xs-2 col-sm-2 col-md-2 ">
+                <div class="form-group">
+                    <strong>Due date  :</strong>
+                    <input type="date" name="due_date" value="{{ $finance->due_date }}"  class="form-control" placeholder="">
+                </div>
+    </div>    
+    <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>Payment Term :</strong>   <br>
+                    <input type="text" id="payment_term" name="payment_term" value="{{ $finance->payment_term }}" class="form-control" placeholder="">
+                </div>
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>PO No :</strong>   <br>
+                    <input type="text" id="po_no" name="po_no" value="{{ $finance->po_no }}" class="form-control" placeholder="">
+                </div>
+    </div>
+    <div class="col-xs-3 col-sm-3 col-md-3">
+        <strong>Category :</strong>
+        <select name="id_category" class="form-control select2" required>
+        <option value="">-- Pilih --</option>
+            @foreach ($categorys as $category)
+            <option value="{{ $category->id }}"
+            {{ old('id_category', $finance->id_category) == $category->id ? 'selected' : '' }}>
+            {{ $category->nama }}
+        </option>
+            @endforeach
+        </select>
+    </div>
+    
+    
     <div class="col-xs-6 col-sm-6 col-md-6">
     <div class="form-group">
         <strong>Keterangan * :</strong>
@@ -318,6 +357,40 @@
     @method('PUT')
 
     <input type="hidden" name="level" value="{{ Auth::user()->level }}">
+    <input type="hidden" name="level" value="{{ Auth::user()->level }}">
+    <div class="col-xs-2 col-sm-2 col-md-2 ">
+                <div class="form-group">
+                    <strong>Due date  :</strong>
+                    <input type="date" name="due_date" value="{{ $finance->due_date }}"  class="form-control" placeholder="">
+                </div>
+    </div>    
+
+    <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>Payment Term :</strong>   <br>
+                    <input type="text" id="payment_term" name="payment_term" value="{{ $finance->payment_term }}" class="form-control" placeholder="">
+                </div>
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>PO No :</strong>   <br>
+                    <input type="text" id="po_no" name="po_no" value="{{ $finance->po_no }}" class="form-control" placeholder="">
+                </div>
+    </div>
+    <div class="col-xs-3 col-sm-3 col-md-3">
+        <strong>Category :</strong>
+        <select name="id_category" class="form-control select2" required>
+        <option value="">-- Pilih --</option>
+            @foreach ($categorys as $category)
+            <option value="{{ $category->id }}"
+            {{ old('id_category', $finance->id_category) == $category->id ? 'selected' : '' }}>
+            {{ $category->nama }}
+        </option>
+            @endforeach
+        </select>
+    </div>
+    
+
     <div class="col-xs-6 col-sm-6 col-md-6">
     <div class="form-group">
         <strong>Keterangan * :</strong>

@@ -54,6 +54,10 @@
     background:#ffc107;
 }
 
+.paid{
+    background:#28a745;
+}
+
 .step-content{
     margin-top:10px;
     font-size:13px;
@@ -225,6 +229,7 @@
     <div class="step-circle
         @if($row->status == 'approved 1' or $row->status == 'approved 2') approved
         @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2') rejected
+        @elseif($row->status == 'paid') paid
         @else requested
         @endif
     ">
@@ -235,6 +240,8 @@
             ✖
         @elseif($row->status == 'requested' )
             ⏳    
+        @elseif($row->status == 'paid' )
+            ✔
         @else
             ⏳
         @endif

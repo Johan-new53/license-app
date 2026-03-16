@@ -23,6 +23,7 @@ use App\Http\Controllers\RektujuanController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PpnController;
 use App\Http\Controllers\Approval1Controller;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -44,6 +45,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Protected routes (only accessible when logged in)
 Route::middleware(['auth'])->group(function () {
+    
     Route::resource('permissions', PermissionController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
@@ -52,9 +54,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('softcopys', SoftcopyController::class);
     Route::resource('automates', AutomateController::class);
     Route::resource('approvals', Approval1Controller::class);
+    Route::resource('payments', PaymentController::class);
 
     Route::get('/import', [ImportController::class, 'index'])->name('import');
     Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');
+        
+    
+    
+    Route::get('/payments/export/{payment_date?}', [PaymentController::class,'export'])->name('payments.export');
 
     //MASTER DATA
     Route::resource('bank', BankController::class);
@@ -80,6 +87,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-ppn/{id}', function ($id) {
     return \App\Models\Ppn::findOrFail($id);
     })->name('get.ppn');
+
+    
 
 
 });

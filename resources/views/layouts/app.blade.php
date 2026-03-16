@@ -104,7 +104,12 @@
                                         <i class="fa-solid fa-book-bookmark fa-lg"></i> Approval
                                     </a>
                                     @endcan
-
+                                                                        
+                                     @can('payment-list')
+                                    <a class="dropdown-item" href="{{ route('payments.index') }}">
+                                        <i class="fa-solid fa-book-bookmark fa-lg"></i> Payment
+                                    </a>
+                                    @endcan
 
 
                                     @can('finance-import')
