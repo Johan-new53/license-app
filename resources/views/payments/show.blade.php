@@ -50,11 +50,6 @@
     background:#ffc107;
 }
 
-.paid{
-    background:#28a745;
-}
-
-
 .pending{
     background:#ffc107;
 }
@@ -69,16 +64,18 @@
 
 
 
+
 @extends('layouts.app')
 
 @section('content')
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="pull-left">
-            <h2>Show Soft Copy</h2>
-        </div>
+            <h2>Show Payment</h2>
+            <h6>Level : {{ Auth::user()->level }}</h6>   
+        
         <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('softcopys.index') }}">Back</a>
+            <a class="btn btn-primary" href="{{ route('payments.index') }}">Back</a>
         </div>
     </div>
 </div>
@@ -89,7 +86,15 @@
 <div class="row">
 <div class="col-md-6">
 
-   
+    
+
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Type :</strong>
+            {{ $finance->type }}
+        </div>
+    </div>
+
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Requesting Departemen :</strong>
@@ -174,13 +179,6 @@
         </div>
     </div>
 
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Ppn :</strong>
-            {{ $finance->nama_ppn }}
-        </div>
-    </div>
-
      <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Ppn % :</strong>
@@ -211,7 +209,8 @@
         
         
 </div>
-<div class="col-md-6">
+
+    <div class="col-md-6">
 
     <h4>Approval Flow</h4>
 
@@ -224,7 +223,6 @@
         <div class="step-circle
             @if($row->status == 'approved 1' or $row->status == 'approved 2') approved
             @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2') rejected
-            @elseif($row->status == 'paid') paid
             @else requested
             @endif
         ">
@@ -233,10 +231,8 @@
                 ✔
             @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2')
                 ✖
-            @elseif($row->status == 'paid')
-                ✔    
             @elseif($row->status == 'requested' )
-                ⏳  
+                ⏳    
             @else
                 ⏳
             @endif
@@ -263,9 +259,13 @@
 
     @endforeach
 
+    </div>
+
+
+
+</div>
 </div>
 
 
-</div>
-</div>
+
 @endsection

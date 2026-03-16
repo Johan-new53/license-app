@@ -14,6 +14,7 @@ use App\Models\Payableto;
 use App\Models\Rektujuan;
 
 use App\Models\Matauang;
+use App\Models\Category;
 
 use App\Http\Controllers\Controller;
 use App\Models\History_approval;
@@ -122,8 +123,12 @@ class Approval1Controller extends Controller
                 ->where('history_approval.id_finance', $id)
                 ->orderBy('history_approval.id','asc')
                 ->get();    
+           
+            $categorys= Category::where('valid', 1)
+            ->orderBy('nama')
+            ->get();
 
-            return view('approvals.show', compact('finance','histories'));
+            return view('approvals.show', compact('finance','histories','categorys'));
         }
 
         public function edit($id): View
@@ -175,8 +180,10 @@ class Approval1Controller extends Controller
             $finance = Finance::findOrFail($id);
 
             $validated = $request->validate([
-                'keterangan' => 'required',
+                'keterangan' => 'required'                
             ]);
+
+ 
 
             if ($request->status == 'approved' and $request->level == 1) {
                 $finance->status = 'approved 1';}
@@ -187,7 +194,10 @@ class Approval1Controller extends Controller
             elseif ($request->status == 'rejected' and $request->level == 2) {
                 $finance->status = 'rejected 2';}
 
-
+            $finance->due_date=$request->due_date;
+            $finance->payment_term=$request->payment_term;
+            $finance->po_no=$request->po_no;
+            $finance->id_category=$request->id_category;
 
             DB::transaction(function () use ($finance, $request) {
 
@@ -201,6 +211,9 @@ class Approval1Controller extends Controller
                 ]);
 
             });
+            if ($request->status <> 'approved 1')  {
+                
+            }
 
             return redirect()->route('approvals.index')
                 ->with('success', 'Approval berhasil diproses');

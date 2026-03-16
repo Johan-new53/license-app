@@ -6,13 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Finance extends Model
 {
+   
     protected $casts = [
     'invoice_date' => 'datetime',
+    'due_date' => 'date',
     ];
     protected $table = 'finances';
 
     protected $fillable = [
-    'type','po_no','id_category','form_submission_time','final_validation_time','email',
+    'type','po_no','id_category','form_submission_time','final_validation_time','email','top_hari','due_date',
     'id_dept','id_rek_sumber','id_payable','id_rek_tujuan','nama_rekening_tujuan',	'id_bank',
     'no_rek_tujuan','invoice_date','doc_no','description','activity_code','id_currency','dpp',
     'id_ppn','persen_ppn','nilai_ppn','pph','total_amount','input_file',	'send_email',
