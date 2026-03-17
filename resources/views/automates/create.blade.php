@@ -66,8 +66,15 @@
         <div class="tab-pane fade show active p-3" id="data1" role="tabpanel" aria-labelledby="data1-tab">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
+                    <strong>Payment Term * :</strong>
+                    <input type="text" name="payment_term" class="form-control" placeholder="" required>
+                </div>
+            </div>
+            <br/>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
                     <strong>PO Number * :</strong>
-                    <input type="text" name="po_no" class="form-control" placeholder="">
+                    <input type="text" name="po_no" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br/>
@@ -86,21 +93,21 @@
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Form Submission Time * :</strong>
-                    <input type="date" name="form_submission_time" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
+                    <input type="date" name="form_submission_time" value="{{ date('Y-m-d') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br/>
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Final Validation Time * :</strong>
-                    <input type="date" name="final_validation_time" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
+                    <input type="date" name="final_validation_time" value="{{ date('Y-m-d') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br/>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Email * :</strong>
-                    <input type="text" name="email" class="form-control" placeholder="">
+                    <input type="text" name="email" class="form-control" placeholder="" required>
                 </div>
             </div>
         </div>
@@ -164,7 +171,7 @@
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
-                    <input type="date" name="invoice_date" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
+                    <input type="date" name="invoice_date" value="{{ date('Y-m-d') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
         </div>
@@ -175,7 +182,7 @@
                     <strong>Document Number(s) * :</strong><br>
                     <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678;456789123)</strong><br>
 
-                    <input id="doc_no" type="text" name="doc_no" class="form-control" placeholder="">
+                    <input id="doc_no" type="text" name="doc_no" class="form-control" placeholder="" required>
                     <div id="docNoResult" class="mt-2"></div>
                 </div>
             </div>
@@ -184,7 +191,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Description * :</strong>
-                    <input type="text" name="description" class="form-control" placeholder="">
+                    <input type="text" name="description" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br>
@@ -203,14 +210,14 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Journal Number * :</strong>
-                    <input type="text" name="journal_no" class="form-control" placeholder="">
+                    <input type="text" name="journal_no" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br>
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>Upload File (PDF) * :</strong>
-                    <input type="file" name="file_automate" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.docx,xlsx,pptx,.doc,xls,ppt" >
+                    <input type="file" name="file_automate" class="form-control" accept=".pdf" required>
                     <small class="text-muted">File number limit 1 Single file size limit: 200MB Allowed file types: PDF</small>
                 </div>
             </div>
@@ -222,7 +229,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Dpp * :</strong>   <br>
-                    <input type="number" id="dpp" name="dpp" class="form-control" placeholder="">
+                    <input type="number" id="dpp" name="dpp" class="form-control" placeholder="" required>
                 </div>
             </div>
 
@@ -260,7 +267,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>PPH * :</strong>   <br>
-                    <input type="number" id="pph" name="pph" class="form-control" value=0 placeholder="">
+                    <input type="number" id="pph" name="pph" class="form-control" value=0 placeholder="" required>
                 </div>
             </div>
 

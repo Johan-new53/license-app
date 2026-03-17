@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
+use App\Models\Category;
 use App\Models\Department;
 use App\Models\Hu_reksumber;
 
@@ -94,6 +95,9 @@ class SoftcopyController extends Controller
     public function create()
     {
 
+        $categorys = Category::where('valid', 1)
+        ->orderBy('nama')
+        ->get();
         $departments = Department::where('valid', 1)
         ->orderBy('nama')
         ->get();
@@ -120,13 +124,16 @@ class SoftcopyController extends Controller
         ->get();
 
 
-        return view('softcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
+        return view('softcopys.create', compact('categorys','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
     }
 
     public function store(Request $request): RedirectResponse
     {
 
         request()->validate([
+          'payment_term' => 'required',
+          'po_no' => 'required',
+          'id_category' => 'required',
           'id_dept' => 'required',
           'id_rek_sumber' => 'required',
           'id_payable' => 'required',
@@ -152,8 +159,8 @@ class SoftcopyController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('softcopy_files', $filename, 'public');
         }
-    
-       
+
+
         $data = $request->all();
         $data['user_entry'] = auth()->id();
         $data['type'] = 'softcopy';
@@ -179,6 +186,7 @@ class SoftcopyController extends Controller
         {
             $finance = \DB::table('finances')
                 ->leftjoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+                ->leftjoin('m_category', 'finances.id_category', '=', 'm_category.id')
                 ->leftjoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
 
                 ->leftjoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
@@ -189,6 +197,7 @@ class SoftcopyController extends Controller
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
+                    'm_category.nama as nama_category',
                     'm_hu_rek_sumber.nama as nama_rek_sumber',
                     'm_payableto.nama as nama_payable',
                     'm_currency.nama as nama_currency',
@@ -207,7 +216,7 @@ class SoftcopyController extends Controller
             )
             ->where('history_approval.id_finance', $id)
             ->orderBy('history_approval.id','asc')
-            ->get();    
+            ->get();
 
             return view('softcopys.show', compact('finance','histories'));
         }
@@ -232,6 +241,9 @@ class SoftcopyController extends Controller
                 ->where('finances.id', $id)
                 ->first();
 
+            $categorys = Category::where('valid', 1)
+            ->orderBy('nama')
+            ->get();
             $departments = Department::where('valid', 1)
             ->orderBy('nama')
             ->get();
@@ -254,7 +266,7 @@ class SoftcopyController extends Controller
             ->orderBy('id')
             ->get();
 
-            return view('softcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','currencys','ppns'));
+            return view('softcopys.edit', compact('categorys','finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','currencys','ppns'));
 
         }
 
@@ -263,6 +275,9 @@ class SoftcopyController extends Controller
     $finance = Finance::findOrFail($id);
 
     $validated = $request->validate([
+        'payment_term' => 'required',
+        'po_no' => 'required',
+        'id_category' => 'required',
         'id_dept' => 'required',
         'id_rek_sumber' => 'required',
         'id_payable' => 'required',
@@ -297,7 +312,7 @@ class SoftcopyController extends Controller
         $data['input_file'] = $path;
     }
 
-    
+
 
         $data = $request->all();
         $data['status'] = 'requested';

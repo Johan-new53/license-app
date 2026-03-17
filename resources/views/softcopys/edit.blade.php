@@ -7,8 +7,8 @@
 
 
 
-<form action="{{ route('softcopys.update', $finance->id) }}" 
-      method="POST" 
+<form action="{{ route('softcopys.update', $finance->id) }}"
+      method="POST"
       enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -29,11 +29,11 @@
    <div class="col-md-8">
     <div class="d-flex align-items-center">
         <strong class="me-2">Komen perbaikan rejected atau alasan edit:</strong>
-        <input type="text" name="alasan" class="form-control" placeholder="Masukkan komen perbaikan rejected atau alasan edit">
+        <input type="text" name="alasan" class="form-control" placeholder="Masukkan komen perbaikan rejected atau alasan edit" required>
     </div>
     </div>
 
-    
+
 
 
 
@@ -58,30 +58,61 @@
 
 
 <div class="container mt-4">
-    
+
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="data1-tab" data-bs-toggle="tab" data-bs-target="#data1"
-                type="button" role="tab" aria-controls="data1" aria-selected="true">Requesting</button>
+                type="button" role="tab" aria-controls="data1" aria-selected="true">Document Information</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="data2-tab" data-bs-toggle="tab" data-bs-target="#data2"
-                type="button" role="tab" aria-controls="data2" aria-selected="false">Rekening Tujuan</button>
+                type="button" role="tab" aria-controls="data2" aria-selected="true">Requesting</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#data3"
-                type="button" role="tab" aria-controls="data3" aria-selected="false">Document Number</button>
+            <button class="nav-link" id="data3-tab" data-bs-toggle="tab" data-bs-target="#data3"
+                type="button" role="tab" aria-controls="data3" aria-selected="false">Rekening Tujuan</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="data4-tab" data-bs-toggle="tab" data-bs-target="#data4"
+                type="button" role="tab" aria-controls="data4" aria-selected="false">Document Number</button>
         </li>
          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#data4"
-                type="button" role="tab" aria-controls="data4" aria-selected="false">Amount</button>
+            <button class="nav-link" id="data5-tab" data-bs-toggle="tab" data-bs-target="#data5"
+                type="button" role="tab" aria-controls="data5" aria-selected="false">Amount</button>
         </li>
-
 
     </ul>
 
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active p-3" id="data1" role="tabpanel" aria-labelledby="data1-tab">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Payment Term * :</strong>
+                    <input type="text" name="payment_term" class="form-control" placeholder="" value="{{ $finance->payment_term }}" required>
+                </div>
+            </div>
+            <br/>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>PO Number * :</strong>
+                    <input type="text" name="po_no" class="form-control" placeholder="" value="{{ $finance->po_no }}" required>
+                </div>
+            </div>
+            <br/>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+                <strong>PO Category * :</strong>
+                <select name="id_category" class="form-control select2" required>
+                    <option value="">-- Pilih --</option>
+                    @foreach ($categorys as $category)
+                        <option value="{{ $category->id }}"
+                            {{ old('id_category', $finance->id_category) == $category->id ? 'selected' : '' }}>
+                            {{ $category->nama }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
 
             <div class="col-xs-4 col-sm-4 col-md-4">
             <strong>Requesting Department * :</strong>
@@ -148,7 +179,7 @@
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
-                    <input type="date" name="invoice_date" value="{{ $finance->invoice_date }}"  class="form-control" placeholder="">
+                    <input type="date" name="invoice_date" value="{{ $finance->invoice_date }}"  class="form-control" placeholder="" required>
                 </div>
             </div>
         </div>
@@ -159,7 +190,7 @@
                     <strong>Document Number(s) * :</strong><br>
                     <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678;456789123)</strong><br>
 
-                    <input id="doc_no" type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" placeholder="">
+                    <input id="doc_no" type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" placeholder="" required>
                     <div id="docNoResult" class="mt-2"></div>
                 </div>
             </div>
@@ -168,7 +199,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Description * :</strong>
-                    <input type="text" name="description" value="{{ $finance->description }}" class="form-control" placeholder="">
+                    <input type="text" name="description" value="{{ $finance->description }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br>
@@ -198,7 +229,7 @@
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>Upload File (PDF) * :</strong>
-                    <input type="file" name="file_softcopy" class="form-control" accept=".pdf" >
+                    <input type="file" name="file_softcopy" class="form-control" accept=".pdf">
                     <small class="text-muted">File number limit 1 Single file size limit: 200MB Allowed file types: PDF</small>
                 </div>
             </div>
@@ -212,7 +243,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Dpp * :</strong>   <br>
-                    <input type="number" id="dpp" name="dpp" value="{{ $finance->dpp }}" class="form-control" placeholder="">
+                    <input type="number" id="dpp" name="dpp" value="{{ $finance->dpp }}" class="form-control" placeholder="" required>
                 </div>
             </div>
 
@@ -252,7 +283,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>PPH * :</strong>   <br>
-                    <input type="number" id="pph" name="pph" value="{{ $finance->pph }}" class="form-control" placeholder="">
+                    <input type="number" id="pph" name="pph" value="{{ $finance->pph }}" class="form-control" placeholder="" required>
                 </div>
             </div>
 

@@ -89,7 +89,24 @@
 <!-- KOLOM KIRI -->
 <div class="col-md-6">
 
-
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Payment Term :</strong>
+            {{ $finance->payment_term }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>PO Number :</strong>
+            {{ $finance->po_no }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>PO Category :</strong>
+            {{ $finance->nama_category }}
+        </div>
+    </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Requesting Departemen :</strong>
@@ -132,14 +149,14 @@
         </div>
     </div>
 
-    
+
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Invoice Date:</strong>
             {{ \Carbon\Carbon::parse($finance->invoice_date)->format('d-M-Y') }}
         </div>
     </div>
-    
+
      <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Document number(s) :</strong>
@@ -170,7 +187,7 @@
         </div>
     </div>
 
-            
+
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Dpp :</strong>
@@ -239,7 +256,7 @@
         @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2')
             ✖
         @elseif($row->status == 'requested' )
-            ⏳    
+            ⏳
         @elseif($row->status == 'paid' )
             ✔
         @else

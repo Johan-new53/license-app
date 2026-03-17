@@ -135,6 +135,7 @@ class AutomateController extends Controller
     {
 
         request()->validate([
+          'payment_term' => 'required',
           'po_no' => 'required',
           'id_category' => 'required',
           'form_submission_time' => 'required',
@@ -168,7 +169,7 @@ class AutomateController extends Controller
         }
 
 
-       
+
         $data = $request->all();
         $data['user_entry'] = auth()->id();
         $data['type'] = 'automate';
@@ -224,7 +225,7 @@ class AutomateController extends Controller
                 )
                 ->where('history_approval.id_finance', $id)
                 ->orderBy('history_approval.id','asc')
-                ->get();        
+                ->get();
 
             return view('automates.show', compact('finance','histories'));
         }
@@ -284,6 +285,7 @@ class AutomateController extends Controller
         $finance = Finance::findOrFail($id);
 
         $validated = $request->validate([
+            'payment_term' => 'required',
             'po_no' => 'required',
             'id_category' => 'required',
             'form_submission_time' => 'required',
@@ -348,7 +350,7 @@ class AutomateController extends Controller
         return redirect()->route('automates.index')
             ->with('success', 'Automate berhasil diupdate.');
     }
-    
+
 
     public function destroy($id): RedirectResponse
     {
