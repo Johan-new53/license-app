@@ -40,26 +40,56 @@
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="data1-tab" data-bs-toggle="tab" data-bs-target="#data1"
-                type="button" role="tab" aria-controls="data1" aria-selected="true">Requesting</button>
+                type="button" role="tab" aria-controls="data1" aria-selected="true">Document Information</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="data2-tab" data-bs-toggle="tab" data-bs-target="#data2"
-                type="button" role="tab" aria-controls="data2" aria-selected="false">Rekening Tujuan</button>
+                type="button" role="tab" aria-controls="data2" aria-selected="true">Requesting</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#data3"
-                type="button" role="tab" aria-controls="data3" aria-selected="false">Document Number</button>
+            <button class="nav-link" id="data3-tab" data-bs-toggle="tab" data-bs-target="#data3"
+                type="button" role="tab" aria-controls="data3" aria-selected="false">Rekening Tujuan</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="data4-tab" data-bs-toggle="tab" data-bs-target="#data4"
+                type="button" role="tab" aria-controls="data4" aria-selected="false">Document Number</button>
         </li>
          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#data4"
-                type="button" role="tab" aria-controls="data4" aria-selected="false">Amount</button>
+            <button class="nav-link" id="data5-tab" data-bs-toggle="tab" data-bs-target="#data5"
+                type="button" role="tab" aria-controls="data5" aria-selected="false">Amount</button>
         </li>
-
 
     </ul>
 
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active p-3" id="data1" role="tabpanel" aria-labelledby="data1-tab">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Payment Term * :</strong>
+                    <input type="text" name="payment_term" class="form-control" placeholder="" required>
+                </div>
+            </div>
+            <br/>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>PO Number * :</strong>
+                    <input type="text" name="po_no" class="form-control" placeholder="" required>
+                </div>
+            </div>
+            <br/>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+                <strong>PO Category * :</strong>
+                <select name="id_category" class="form-control select2" required>
+                    <option value="">-- Pilih --</option>
+                    @foreach ($categorys as $category)
+                        <option value="{{ $category->id }}">
+                            {{ $category->nama }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
 
 
 
@@ -100,7 +130,7 @@
             </div>
             <br>
         </div>
-        <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
+        <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">
 
 
             <div class="col-xs-4 col-sm-4 col-md-4">
@@ -119,18 +149,18 @@
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
-                    <input type="date" name="invoice_date" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
+                    <input type="date" name="invoice_date" value="{{ date('Y-m-d') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">
+        <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">
 
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Document Number(s) * :</strong><br>
                     <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678;456789123)</strong><br>
 
-                    <input id="doc_no" type="text" name="doc_no" class="form-control" placeholder="">
+                    <input id="doc_no" type="text" name="doc_no" class="form-control" placeholder="" required>
                     <div id="docNoResult" class="mt-2"></div>
                 </div>
             </div>
@@ -139,7 +169,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Description * :</strong>
-                    <input type="text" name="description" class="form-control" placeholder="">
+                    <input type="text" name="description" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br>
@@ -158,7 +188,7 @@
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>Upload File (PDF) * :</strong>
-                    <input type="file" name="file_softcopy" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.docx,xlsx,pptx,.doc,xls,ppt" >
+                    <input type="file" name="file_softcopy" class="form-control" accept=".pdf" required>
                     <small class="text-muted">File number limit 1 Single file size limit: 200MB Allowed file types: PDF</small>
                 </div>
             </div>
@@ -168,12 +198,12 @@
 
         </div>
 
-         <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">
+         <div class="tab-pane fade p-3" id="data5" role="tabpanel" aria-labelledby="data5-tab">
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Dpp * :</strong>   <br>
-                    <input type="number" id="dpp" name="dpp" class="form-control" placeholder="">
+                    <input type="number" id="dpp" name="dpp" class="form-control" placeholder="" required>
                 </div>
             </div>
 
@@ -210,7 +240,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>PPH * :</strong>   <br>
-                    <input type="number" id="pph" name="pph" class="form-control" value=0 placeholder="">
+                    <input type="number" id="pph" name="pph" class="form-control" value=0 placeholder="" required>
                 </div>
             </div>
 

@@ -7,8 +7,8 @@
 
 
 
-<form action="{{ route('automates.update', $finance->id) }}" 
-      method="POST" 
+<form action="{{ route('automates.update', $finance->id) }}"
+      method="POST"
       enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -29,10 +29,10 @@
    <div class="col-md-8">
     <div class="d-flex align-items-center">
         <strong class="me-2">Komen perbaikan rejected atau alasan edit:</strong>
-        <input type="text" name="alasan" class="form-control" placeholder="Masukkan komen perbaikan rejected atau alasan edit">
+        <input type="text" name="alasan" class="form-control" placeholder="Masukkan komen perbaikan rejected atau alasan edit" required>
     </div>
     </div>
-    
+
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -77,8 +77,14 @@
         <div class="tab-pane fade show active p-3" id="data1" role="tabpanel" aria-labelledby="data1-tab">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
+                    <strong>Payment Term * :</strong>
+                    <input type="text" name="payment_term" class="form-control" placeholder="" value="{{ $finance->payment_term }}" required>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
                     <strong>PO Number * :</strong>
-                    <input type="text" name="po_no" class="form-control" placeholder="" value="{{ $finance->po_no }}">
+                    <input type="text" name="po_no" class="form-control" placeholder="" value="{{ $finance->po_no }}" required>
                 </div>
             </div>
             <br/>
@@ -98,21 +104,21 @@
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Form Submission Time * :</strong>
-                    <input type="date" name="form_submission_time" value="{{ $finance->form_submission_time }}" class="form-control" placeholder="">
+                    <input type="date" name="form_submission_time" value="{{ $finance->form_submission_time }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br/>
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Final Validation Time * :</strong>
-                    <input type="date" name="final_validation_time" value="{{ $finance->final_validation_time }}" class="form-control" placeholder="">
+                    <input type="date" name="final_validation_time" value="{{ $finance->final_validation_time }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br/>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Email * :</strong>
-                    <input type="text" name="email" class="form-control" placeholder="" value="{{ $finance->email }}">
+                    <input type="text" name="email" class="form-control" placeholder="" value="{{ $finance->email }}" required>
                 </div>
             </div>
         </div>
@@ -183,7 +189,7 @@
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
-                    <input type="date" name="invoice_date" value="{{ $finance->invoice_date }}"  class="form-control" placeholder="">
+                    <input type="date" name="invoice_date" value="{{ $finance->invoice_date }}"  class="form-control" placeholder="" required>
                 </div>
             </div>
         </div>
@@ -194,7 +200,7 @@
                     <strong>Document Number(s) * :</strong><br>
                     <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678;456789123)</strong><br>
 
-                    <input id="doc_no" type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" placeholder="">
+                    <input id="doc_no" type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" placeholder="" required>
                     <div id="docNoResult" class="mt-2"></div>
                 </div>
             </div>
@@ -203,7 +209,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Description * :</strong>
-                    <input type="text" name="description" value="{{ $finance->description }}" class="form-control" placeholder="">
+                    <input type="text" name="description" value="{{ $finance->description }}" class="form-control" placeholder="" required>
                 </div>
             </div>
 
@@ -223,7 +229,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Journal Number * :</strong>
-                        <input type="text" name="journal_no" value="{{ $finance->journal_no }}" class="form-control" placeholder="">
+                        <input type="text" name="journal_no" value="{{ $finance->journal_no }}" class="form-control" placeholder="" required>
                     </div>
             </div>
             @if($finance->input_file)
@@ -238,7 +244,7 @@
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>Upload File (PDF) * :</strong>
-                    <input type="file" name="file_automate" class="form-control" accept=".pdf" >
+                    <input type="file" name="file_automate" class="form-control" accept=".pdf">
                     <small class="text-muted">File number limit 1 Single file size limit: 200MB Allowed file types: PDF</small>
                 </div>
             </div>
@@ -290,7 +296,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>PPH * :</strong>   <br>
-                    <input type="number" id="pph" name="pph" value="{{ $finance->pph }}" class="form-control" placeholder="">
+                    <input type="number" id="pph" name="pph" value="{{ $finance->pph }}" class="form-control" placeholder="" required>
                 </div>
             </div>
 

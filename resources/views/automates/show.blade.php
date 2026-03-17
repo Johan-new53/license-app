@@ -91,6 +91,12 @@
 
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
+            <strong>Payment Term :</strong>
+            {{ $finance->payment_term }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
             <strong>PO Number :</strong>
             {{ $finance->po_no }}
         </div>
@@ -211,7 +217,7 @@
             {{ $finance->nama_ppn }}
         </div>
     </div>
-    
+
      <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Ppn % :</strong>
@@ -266,9 +272,9 @@
         @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2')
             ✖
         @elseif($row->status == 'paid')
-            ✔    
+            ✔
         @elseif($row->status == 'requested' )
-            ⏳    
+            ⏳
         @else
             ⏳
         @endif

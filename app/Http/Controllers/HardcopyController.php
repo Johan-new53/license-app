@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Bank;
 use App\Models\Department;
 use App\Models\Finance;
@@ -96,6 +97,9 @@ class HardcopyController extends Controller
     public function create()
     {
 
+        $categorys = Category::where('valid', 1)
+        ->orderBy('nama')
+        ->get();
         $departments = Department::where('valid', 1)
         ->orderBy('nama')
         ->get();
@@ -123,12 +127,15 @@ class HardcopyController extends Controller
 
 
 
-        return view('hardcopys.create', compact('departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
+        return view('hardcopys.create', compact('categorys','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
     }
 
       public function store(Request $request): RedirectResponse
     {
         request()->validate([
+          'payment_term' => 'required',
+          'po_no' => 'required',
+          'id_category' => 'required',
           'id_dept' => 'required',
           'id_rek_sumber' => 'required',
           'id_payable' => 'required',
@@ -150,7 +157,7 @@ class HardcopyController extends Controller
                 ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
         }
 
-       
+
         $hari = Payableto::where('id', $request->id_payable)->value('hari');
         $data['top_hari'] = $hari;
 
@@ -180,6 +187,7 @@ class HardcopyController extends Controller
     {
     $finance = \DB::table('finances')
         ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+        ->join('m_category', 'finances.id_category', '=', 'm_category.id')
         ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
         ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
         ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
@@ -188,6 +196,7 @@ class HardcopyController extends Controller
         ->select(
             'finances.*',
             'm_dept.nama as nama_dept',
+            'm_category.nama as nama_category',
             'm_hu_rek_sumber.nama as nama_rek_sumber',
             'm_payableto.nama as nama_payable',
             'm_bank.nama as nama_bank',
@@ -206,7 +215,7 @@ class HardcopyController extends Controller
     )
     ->where('history_approval.id_finance', $id)
     ->orderBy('history_approval.id','asc')
-    ->get();    
+    ->get();
 
     return view('hardcopys.show', compact('finance','histories'));
     }
@@ -231,6 +240,9 @@ class HardcopyController extends Controller
                 ->where('finances.id', $id)
                 ->first();
 
+            $categorys = Category::where('valid', 1)
+            ->orderBy('nama')
+            ->get();
             $departments = Department::where('valid', 1)
             ->orderBy('nama')
             ->get();
@@ -256,7 +268,7 @@ class HardcopyController extends Controller
             ->get();
 
 
-            return view('hardcopys.edit', compact('finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
+            return view('hardcopys.edit', compact('categorys','finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
 
         }
 
@@ -266,6 +278,9 @@ class HardcopyController extends Controller
         $finance = Finance::findOrFail($id);
 
         $validated = $request->validate([
+            'payment_term' => 'required',
+            'po_no' => 'required',
+            'id_category' => 'required',
             'id_dept' => 'required',
             'id_rek_sumber' => 'required',
             'id_payable' => 'required',
@@ -285,8 +300,8 @@ class HardcopyController extends Controller
                 ->withInput()
                 ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
         }
-        
-        
+
+
         $data = $request->all();
         $data['status'] = 'requested';
         $data['user_entry'] = auth()->id();
@@ -302,7 +317,7 @@ class HardcopyController extends Controller
                 'user_entry' => auth()->id(),
             ]);
         });
-       
+
 
         return redirect()->route('hardcopys.index')
             ->with('success', 'Hard Copy updated successfully');

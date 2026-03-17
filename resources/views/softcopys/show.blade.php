@@ -89,7 +89,24 @@
 <div class="row">
 <div class="col-md-6">
 
-   
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Payment Term :</strong>
+            {{ $finance->payment_term }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>PO Number :</strong>
+            {{ $finance->po_no }}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>PO Category :</strong>
+            {{ $finance->nama_category }}
+        </div>
+    </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Requesting Departemen :</strong>
@@ -118,17 +135,17 @@
         </div>
     </div>
 
-   
 
 
-    
+
+
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Invoice Date:</strong>
             {{ \Carbon\Carbon::parse($finance->invoice_date)->format('d-M-Y') }}
         </div>
     </div>
-    
+
      <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Document number(s) :</strong>
@@ -155,8 +172,8 @@
             <strong>File Softcopy :</strong><br>
 
             @if($finance->input_file)
-                <a href="{{ asset('storage/' . $finance->input_file) }}" 
-                target="_blank" 
+                <a href="{{ asset('storage/' . $finance->input_file) }}"
+                target="_blank"
                 class="btn btn-success btn-sm">
                     Lihat / Download File
                 </a>
@@ -166,7 +183,7 @@
         </div>
     </div>
 
-            
+
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Dpp :</strong>
@@ -208,8 +225,8 @@
             {{ number_format($finance->total_amount,0,'.',',') }}
         </div>
     </div>
-        
-        
+
+
 </div>
 <div class="col-md-6">
 
@@ -234,9 +251,9 @@
             @elseif($row->status == 'rejected 1' or $row->status == 'rejected 2')
                 ✖
             @elseif($row->status == 'paid')
-                ✔    
+                ✔
             @elseif($row->status == 'requested' )
-                ⏳  
+                ⏳
             @else
                 ⏳
             @endif
