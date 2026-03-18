@@ -21,6 +21,11 @@
                     </div>
 
                      <div class="col-lg-12 margin-tb d-flex justify-content-between align-items-center mb-3"> 
+                        <h6>Email : {{ Auth::user()->email }}</h6>                        
+                        
+                    </div>
+
+                     <div class="col-lg-12 margin-tb d-flex justify-content-between align-items-center mb-3"> 
                                               
                         <h6>Level : {{ Auth::user()->level }}</h6> 
                     </div>

@@ -19,7 +19,7 @@ use App\Models\Category;
 use App\Http\Controllers\Controller;
 use App\Models\History_approval;
 use Illuminate\Support\Facades\DB;
-
+use App\Jobs\SendGraphMail;
 
 
 class Approval1Controller extends Controller
@@ -182,7 +182,7 @@ class Approval1Controller extends Controller
             $validated = $request->validate([
                 'keterangan' => 'required'                
             ]);
-
+            $email = $finance->user->email ?? null;
  
 
             if ($request->status == 'approved' and $request->level == 1) {
@@ -198,7 +198,7 @@ class Approval1Controller extends Controller
             $finance->payment_term=$request->payment_term;
             $finance->po_no=$request->po_no;
             $finance->id_category=$request->id_category;
-
+            $keterangan=$request->keterangan;
             DB::transaction(function () use ($finance, $request) {
 
                 $finance->save();
@@ -209,10 +209,19 @@ class Approval1Controller extends Controller
                     'keterangan' => $request->keterangan,
                     'user_entry' => auth()->id(),
                 ]);
-
-            });
-            if ($request->status <> 'approved 1')  {
                 
+            });
+           
+
+            if ($finance->status <> 'approved 1') {
+                $subject = auth()->user()->name . " " . $request->status . " your request";
+                SendGraphMail::dispatch(
+                    $email,
+                    $subject,
+                    view('emails.status_prf', compact('finance','keterangan'))->render()
+                    
+                );
+
             }
 
             return redirect()->route('approvals.index')
