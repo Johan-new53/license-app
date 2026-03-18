@@ -20,7 +20,7 @@ use App\Models\History_approval;
 use Illuminate\Support\Facades\DB;
 use App\Exports\PaymentsExport;
 use Maatwebsite\Excel\Facades\Excel;
-
+use App\Jobs\SendGraphMail;
 
 
 class PaymentController extends Controller
@@ -147,49 +147,70 @@ class PaymentController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'payment_date' => 'required',           
+        $request->validate([
+            'payment_date' => 'required',
         ]);
 
-        $query = Finance::query()
-            ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-            ->where('finances.status', 'approved 2');
+        $paymentDate = $request->payment_date ?? now();
+        $userId = auth()->id();
+        $userName = auth()->user()->name;
 
-        if ($request->filled('payment_date')) {
-            $query->whereRaw(
-                "finances.due_date <= ?",                
-                [$request->payment_date]
-            );
-        }
+        // Ambil data dulu (untuk email & history)
+        $finances = Finance::with('user')
+            ->where('status', 'approved 2')
+            ->when($request->filled('payment_date'), function ($q) use ($request) {
+                $q->where('due_date', '<=', $request->payment_date);
+            })
+            ->get();
 
-        $finances = $query->select('finances.id')->get();
+        DB::transaction(function () use ($finances, $paymentDate, $userId, $userName) {
 
-        DB::transaction(function () use ($finances, $request) {
+            // ✅ 1. Bulk update (1 query saja)
+            $ids = $finances->pluck('id');
+
+            Finance::whereIn('id', $ids)->update([
+                'status' => 'paid',
+                'payment_date' => $paymentDate,
+                'user_payment_entry' => $userId,
+                'payment_entry'=> now(),
+            ]);
+
+            // ✅ 2. Insert history (bisa tetap loop, atau bulk insert)
+            $histories = [];
 
             foreach ($finances as $finance) {
-
-                Finance::where('id', $finance->id)->update([
-                    'status' => 'paid',
-                    'payment_date' => $request->payment_date ?? now(),
-                    'user_payment_entry' => auth()->id(),
-                    'payment_entry'=>now(),
-                ]);
-
-                History_approval::create([
+                $histories[] = [
                     'id_finance' => $finance->id,
                     'status' => 'paid',
                     'keterangan' => 'paid',
-                    'user_entry' => auth()->id(),
-                ]);
+                    'user_entry' => $userId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
             }
 
+            History_approval::insert($histories); // 🔥 bulk insert
+
+            // ✅ 3. Kirim email (queue tetap per user, tapi ringan)
+            foreach ($finances as $finance) {
+
+                $email = $finance->user->email ?? null;
+
+                if (!$email) continue;
+
+                $subject = $userName . " has paid your request";
+
+                SendGraphMail::dispatch(
+                    $email,
+                    $subject,
+                    view('emails.payment', compact('finance'))->render()
+                );
+            }
         });
 
         return redirect()->route('payments.index')
             ->with('success', 'Status payment berhasil diupdate menjadi Paid');
     }
-
- 
    
     
     public function export($payment_date = null)

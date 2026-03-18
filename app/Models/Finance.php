@@ -23,6 +23,11 @@ class Finance extends Model
 
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_entry');
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'user_entry');

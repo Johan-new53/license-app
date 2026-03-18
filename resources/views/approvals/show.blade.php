@@ -356,7 +356,7 @@
     @csrf
     @method('PUT')
 
-    <input type="hidden" name="level" value="{{ Auth::user()->level }}">
+    
     <input type="hidden" name="level" value="{{ Auth::user()->level }}">
     <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
