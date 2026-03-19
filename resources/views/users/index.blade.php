@@ -44,6 +44,7 @@
        <th>Name</th>
        <th>Email</th>
        <th>Level</th>
+       <th>Graph tenant</th>
        <th>Roles</th>
        <th width="280px">Action</th>
    </tr>
@@ -53,6 +54,7 @@
         <td>{{ $user->name }}</td>
         <td>{{ $user->email }}</td>
         <td>{{ $user->level }}</td>
+        <td>{{ $user->graph_tenant }}</td>
         <td>
           @if(!empty($user->getRoleNames()))
             @foreach($user->getRoleNames() as $v)

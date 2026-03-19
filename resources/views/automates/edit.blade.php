@@ -87,7 +87,7 @@
                     <input type="text" name="po_no" class="form-control" placeholder="" value="{{ $finance->po_no }}" required>
                 </div>
             </div>
-            <br/>
+            
             <div class="col-xs-4 col-sm-4 col-md-4">
                 <strong>PO Category * :</strong>
                 <select name="id_category" class="form-control select2" required>
@@ -100,21 +100,21 @@
                     @endforeach
                 </select>
             </div>
-            <br/>
+            
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Form Submission Time * :</strong>
                     <input type="date" name="form_submission_time" value="{{ $finance->form_submission_time }}" class="form-control" placeholder="" required>
                 </div>
             </div>
-            <br/>
+            
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Final Validation Time * :</strong>
                     <input type="date" name="final_validation_time" value="{{ $finance->final_validation_time }}" class="form-control" placeholder="" required>
                 </div>
             </div>
-            <br/>
+            
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Email * :</strong>

@@ -21,6 +21,10 @@
         <strong>Level:</strong>
         <p>{{ $user->level }}</p>
     </div>
+    <div class="col-12 mb-3">
+        <strong>Graph tenant:</strong>
+        <p>{{ $user->graph_tenant }}</p>
+    </div>
     <div class="col-12">
         <strong>Roles:</strong><br>
         @if($user->getRoleNames()->isNotEmpty())

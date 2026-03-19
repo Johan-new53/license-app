@@ -112,7 +112,7 @@
                 </select>
             </div>
         </div>
-        <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
+    <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
 
             <div class="col-xs-4 col-sm-4 col-md-4">
             <strong>Requesting Department * :</strong>
@@ -156,10 +156,8 @@
             </div>
             <br>
         </div>
-        <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
 
-
-           <br>
+    <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">
 
             <div class="col-xs-4 col-sm-4 col-md-4">
                         <strong>Rekening Tujuan * :</strong>
@@ -183,7 +181,8 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">
+
+    <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">
 
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
@@ -238,7 +237,7 @@
 
         </div>
 
-         <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">
+         <div class="tab-pane fade p-3" id="data5" role="tabpanel" aria-labelledby="data5-tab">
 
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">

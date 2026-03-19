@@ -182,8 +182,9 @@ class Approval1Controller extends Controller
             $validated = $request->validate([
                 'keterangan' => 'required'                
             ]);
+            
             $email = $finance->user->email ?? null;
- 
+            
 
             if ($request->status == 'approved' and $request->level == 1) {
                 $finance->status = 'approved 1';}
@@ -215,11 +216,13 @@ class Approval1Controller extends Controller
 
             if ($finance->status <> 'approved 1') {
                 $subject = auth()->user()->name . " " . $request->status . " your request";
-                SendGraphMail::dispatch(
+               
+                SendGraphMail::dispatchSync(
                     $email,
                     $subject,
-                    view('emails.status_prf', compact('finance','keterangan'))->render()
-                    
+                    view('emails.status_prf', compact('finance','keterangan'))->render(),
+                    auth()->user()->graph_tenant, // tenant
+                    auth()->user()->email // sender
                 );
 
             }

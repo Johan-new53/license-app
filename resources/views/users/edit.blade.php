@@ -39,6 +39,10 @@
             <input type="number" name="level" class="form-control" placeholder="level" value="{{ old('level', $user->level) }}">
         </div>
         <div class="col-12 mb-3">
+            <label><strong>Graph tenant:</strong></label>
+            <input type="text" name="graph_tenant" class="form-control" placeholder="" value="{{ old('graph_tenant', $user->graph_tenant) }}">
+        </div>
+        <div class="col-12 mb-3">
             <label><strong>Password:</strong></label>
             <input type="password" name="password" class="form-control" placeholder="Password">
         </div>

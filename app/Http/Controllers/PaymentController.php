@@ -199,12 +199,15 @@ class PaymentController extends Controller
                 if (!$email) continue;
 
                 $subject = $userName . " has paid your request";
-
-                SendGraphMail::dispatch(
+                 SendGraphMail::dispatchSync(
                     $email,
                     $subject,
-                    view('emails.payment', compact('finance'))->render()
+                    view('emails.payment', compact('finance'))->render(),
+                    auth()->user()->graph_tenant, // tenant
+                    auth()->user()->email // sender
                 );
+
+                
             }
         });
 
