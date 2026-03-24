@@ -4,16 +4,17 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/cleave.js@1/dist/cleave.min.js"></script>
+
+
 
 
     <div class="row">
         <div class="col-lg-12 margin-tb">
             <div class="pull-left">
-                <h2>Add New Soft Copy</h2>
+                <h2>Add New Hard Copy</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-primary btn-sm" href="{{ route('softcopys.index') }}">
+                <a class="btn btn-primary btn-sm" href="{{ route('hardcopys.index') }}">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
             </div>
@@ -31,8 +32,7 @@
         </div>
     @endif
 
-
-<form action="{{ route('softcopys.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('hardcopys.store') }}" method="POST">
     @csrf
 
 
@@ -132,20 +132,32 @@
         </div>
         <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">
 
-
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>Nama Rekening Tujuan * :</strong>
+                    <input type="text" name="nama_rekening_tujuan" class="form-control" placeholder="Nama Rekening Tujuan" required>
+                </div>
+            </div>
+            <br>
             <div class="col-xs-4 col-sm-4 col-md-4">
-                        <strong>Rekening Tujuan * :</strong>
-                        <select name="id_rek_tujuan" class="form-control select2" required>
+                        <strong>Bank Tujuan * :</strong>
+                        <select name="id_bank" class="form-control select2" required>
                             <option value="">-- Pilih --</option>
-                            @foreach ($rek_tujuans as $rek_tujuan)
-                                <option value="{{ $rek_tujuan->id }}">
-                                    {{ $rek_tujuan->nama }}
+                            @foreach ($banks as $bank)
+                                <option value="{{ $bank->id }}">
+                                    {{ $bank->nama }}
                                 </option>
                             @endforeach
                         </select>
                 </div>
             <br>
-
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>No Rekening Tujuan * :</strong>
+                    <input type="text" name="no_rek_tujuan" class="form-control" placeholder="" required>
+                </div>
+            </div>
+            <br>
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
@@ -173,6 +185,16 @@
                 </div>
             </div>
             <br>
+
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Activity code * :</strong>
+                    <input type="text" name="activity_code" class="form-control" placeholder="" required>
+                </div>
+            </div>
+            <br>
+
+
             <div class="col-xs-4 col-sm-4 col-md-4">
                         <strong>Currency * :</strong>
                         <select name="id_currency" class="form-control select2" required>
@@ -185,16 +207,8 @@
                         </select>
                 </div>
             <br>
-            <div class="col-xs-6 col-sm-6 col-md-6">
-                <div class="form-group">
-                    <strong>Upload File (PDF) * :</strong>
-                    <input type="file" name="file_softcopy" class="form-control" accept=".pdf" required>
-                    <small class="text-muted">File number limit 1 Single file size limit: 200MB Allowed file types: PDF</small>
-                </div>
-            </div>
+
             <br>
-
-
 
         </div>
 
@@ -203,9 +217,10 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Dpp * :</strong>   <br>
-                    <input type="text" id="dpp" name="dpp" class="form-control" placeholder="" required>
+                    <input type="number" id="dpp" name="dpp" class="form-control" placeholder="" required>
                 </div>
             </div>
+
 
             <div class="col-xs-3 col-sm-3 col-md-3">
             <strong>Ppn (Pilih 0,1,11,Other) * :</strong>
@@ -221,18 +236,18 @@
             </select>
             </div>
 
+
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
-                    <strong>Ppn% * :</strong>   <br>
+                    <strong>Ppn% </strong>   <br>
                     <input type="number" id="ppn_persen" name="persen_ppn" class="form-control" value=0 placeholder="" readonly>
                 </div>
             </div>
 
-
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Nilai Ppn * :</strong>   <br>
-                    <input type="text" id="nilai_ppn" name="nilai_ppn" class="form-control" placeholder="" readonly>
+                    <input type="number" id="nilai_ppn" name="nilai_ppn" class="form-control" placeholder="" readonly>
                 </div>
             </div>
 
@@ -240,7 +255,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>PPH * :</strong>   <br>
-                    <input type="text" id="pph" name="pph" class="form-control" value=0 placeholder="" required>
+                    <input type="number" id="pph" name="pph" class="form-control" value=0 placeholder="" required>
                 </div>
             </div>
 
@@ -248,7 +263,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Total Amount * :</strong>   <br>
-                    <input type="text" id="total_amount" name="total_amount" class="form-control" placeholder="" readonly>
+                    <input type="number" id="total_amount" name="total_amount" class="form-control" placeholder="" readonly>
                 </div>
             </div>
 
@@ -271,94 +286,93 @@
 <script>
   window.DOCNO_CHECK = {
     url: "{{ route('checkDocNo') }}",
-    type: "hardcopy","softcopy",
+    type: "all", // "hardcopy" / "softcopy" / "all"
+    filter_field: "id_dept", // bersifat optional contoh: "id_dept" (sesuaikan dengan nama field filter di form)
+    filter_label: "Departemen", // label untuk pesan error (sesuaikan dengan nama field filter di form)
   };
 </script>
-
 <script src="{{ asset('js/docno-check.js') }}"></script>
 
 <script>
-    let cleaveDpp = new Cleave('#dpp', {
-        numeral: true,
-        numeralThousandsGroupStyle: 'thousand'
-    });
 
-    let cleavePph = new Cleave('#pph', {
-        numeral: true,
-        numeralThousandsGroupStyle: 'thousand'
-    });
+function hitungTotal() {
+    let dpp = parseFloat(document.getElementById('dpp').value) || 0;
+    let ppnPersen = parseFloat(document.getElementById('ppn_persen').value) || 0;
+    let pph = parseFloat(document.getElementById('pph').value) || 0;
+    let nilaiPpnInput = document.getElementById('nilai_ppn');
 
-    let cleavePpn = new Cleave('#nilai_ppn', {
-        numeral: true,
-        numeralThousandsGroupStyle: 'thousand'
-    });
+    let ppnNilai = 0;
 
-    let cleaveTotal = new Cleave('#total_amount', {
-        numeral: true,
-        numeralThousandsGroupStyle: 'thousand'
-    });
-
-    function hitungTotal() {
-        let dpp = parseFloat(cleaveDpp.getRawValue()) || 0;
-        let pph = parseFloat(cleavePph.getRawValue()) || 0;
-        let ppnPersen = parseFloat(document.getElementById('ppn_persen').value) || 0;
-
-        let ppnNilai = 0;
-
-        if ($('#nilai_ppn').prop('readonly')) {
-            ppnNilai = (ppnPersen / 100) * dpp;
-            cleavePpn.setRawValue(ppnNilai);
-        } else {
-            ppnNilai = parseFloat(cleavePpn.getRawValue()) || 0;
-        }
-
-        let total = dpp + ppnNilai - pph;
-        cleaveTotal.setRawValue(total);
+    if (nilaiPpnInput.readOnly) {
+        ppnNilai = (ppnPersen / 100) * dpp;
+        nilaiPpnInput.value = ppnNilai;
+    } else {
+        ppnNilai = parseFloat(nilaiPpnInput.value) || 0;
     }
 
+    let total = dpp + ppnNilai - pph;
+
+    document.getElementById('total_amount').value = total;
+}
+
 // trigger saat input berubah
-    $('#dpp, #pph, #nilai_ppn, #ppn_persen').on('input', function () {
-        hitungTotal();
-    });
+document.getElementById('dpp').addEventListener('input', hitungTotal);
+document.getElementById('ppn_persen').addEventListener('input', hitungTotal);
+document.getElementById('pph').addEventListener('input', hitungTotal);
 
-    $('#id_ppn').on('change', function () {
-        hitungTotal();
-    });
 
-    document.getElementById('id_ppn').addEventListener('change', function() {
+// id ppn berubah
+document.getElementById('id_ppn').addEventListener('change', function() {
 
-        let selected = this.options[this.selectedIndex];
+    let selected = this.options[this.selectedIndex];
 
-        let persen = parseFloat(selected.getAttribute('data-ppn')) || 0;
-        let flag = parseInt(selected.getAttribute('data-flag')) || 0;
+    let persen = parseFloat(selected.getAttribute('data-ppn')) || 0;
+    let flag = parseInt(selected.getAttribute('data-flag')) || 0;
 
-        let ppnPersenInput = document.getElementById('ppn_persen');
-        let nilaiPpnInput = document.getElementById('nilai_ppn');
+    let ppnPersenInput = document.getElementById('ppn_persen');
+    let nilaiPpnInput = document.getElementById('nilai_ppn');
 
-        // set persen
-        ppnPersenInput.value = persen;
+    // set persen
+    ppnPersenInput.value = persen;
 
-        // atur readonly dulu (PENTING urutan ini)
-        if (flag === 0) {
-            nilaiPpnInput.readOnly = true;
-            nilaiPpnInput.value = 0; // reset dulu supaya bersih
-        } else {
-            nilaiPpnInput.readOnly = false;
-            nilaiPpnInput.value = 0; // reset juga supaya tidak bawa nilai lama
+    // atur readonly dulu (PENTING urutan ini)
+    if (flag === 0) {
+        nilaiPpnInput.readOnly = true;
+        nilaiPpnInput.value = 0; // reset dulu supaya bersih
+    } else {
+        nilaiPpnInput.readOnly = false;
+        nilaiPpnInput.value = 0; // reset juga supaya tidak bawa nilai lama
+    }
+
+    // hitung ulang setelah semua set
+    hitungTotal();
+});
+
+
+document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
+// selesai id ppn berubah
+
+
+$('#submit').on('click', function(e){
+    let invalidField = null;
+    $('select[required], input[required]').each(function(){
+        if($(this).val() == "" || $(this).val() == null){
+            invalidField = this;
+            return false;
         }
-
-        // hitung ulang setelah semua set
-        hitungTotal();
     });
 
-    document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
-
-    $('form').on('submit', function () {
-        $('#dpp').val(cleaveDpp.getRawValue());
-        $('#pph').val(cleavePph.getRawValue());
-        $('#nilai_ppn').val(cleavePpn.getRawValue());
-        $('#total_amount').val(cleaveTotal.getRawValue());
-    });
+    if(invalidField){
+        e.preventDefault();
+        let tabPane = $(invalidField).closest('.tab-pane');
+        if(tabPane.length){
+            let tabId = tabPane.attr('id');
+            $('button[data-bs-target="#'+tabId+'"]').tab('show');
+        }
+        invalidField.focus();
+        invalidField.reportValidity();
+    }
+});
 </script>
 
 @endsection
@@ -371,3 +385,4 @@
         });
     });
 </script>
+
