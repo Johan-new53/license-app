@@ -11,7 +11,11 @@
     <div class="row g-2 align-items-end">
         <div class="col-lg-2">
             <label class="form-label">Payment Date</label>
-            <input type="date" name="payment_date" value="{{ request('payment_date', now()->format('Y-m-d')) }}"  class="form-control">
+            <input type="date" 
+            name="payment_date" 
+            value="{{ request('payment_date', now()->format('Y-m-d')) }}"  
+            class="form-control"
+            onchange="this.form.submit()">                    
             
         </div>
 
@@ -31,9 +35,14 @@
     </form>
 
   
-    <a href="{{ route('payments.export', ['payment_date' => request('payment_date')]) }}" class="btn btn-success">
-    Export Excel
+    
+    <a href="{{ route('payments.export', ['payment_date' => request('payment_date', now()->format('Y-m-d'))]) }}" class="btn btn-success">
+    Export Approved 2 To Excel
     </a>
+    <a href="{{ route('payments.export_paid', ['payment_date' => request('payment_date', now()->format('Y-m-d'))]) }}" class="btn btn-success">
+    Export Paid To Excel
+    </a>
+
     
 
 </div>
@@ -129,6 +138,7 @@ document.getElementById('paidForm').addEventListener('submit', function(e) {
 
 });
 </script>
+
 
 
 @endsection

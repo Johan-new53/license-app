@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class PaymentsExport implements FromCollection, WithHeadings, WithMapping
+class PaymentsExport_paid implements FromCollection, WithHeadings, WithMapping
 {
     protected $payment_date;
 
@@ -24,8 +24,8 @@ class PaymentsExport implements FromCollection, WithHeadings, WithMapping
             ->leftJoin('m_category', 'finances.id_category', '=', 'm_category.id')
             ->leftJoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
             ->leftJoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-            ->where('finances.status', 'approved 2')
-            ->where('finances.due_date', '<=', $this->payment_date)
+            ->where('finances.status', 'paid')
+            ->where('finances.due_date', '=', $this->payment_date)
             ->select(
                 'finances.created_at',
                 'm_hu_rek_sumber.nama as nama_rek_sumber',
