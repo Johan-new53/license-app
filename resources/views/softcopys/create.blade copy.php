@@ -4,7 +4,7 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/cleave.js@1/dist/cleave.min.js"></script>
+
 
 
     <div class="row">
@@ -203,7 +203,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Dpp * :</strong>   <br>
-                    <input type="text" id="dpp" name="dpp" class="form-control" placeholder="" required>
+                    <input type="number" id="dpp" name="dpp" class="form-control" placeholder="" required>
                 </div>
             </div>
 
@@ -232,7 +232,7 @@
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Nilai Ppn * :</strong>   <br>
-                    <input type="text" id="nilai_ppn" name="nilai_ppn" class="form-control" placeholder="" readonly>
+                    <input type="number" id="nilai_ppn" name="nilai_ppn" class="form-control" placeholder="" readonly>
                 </div>
             </div>
 
@@ -240,7 +240,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>PPH * :</strong>   <br>
-                    <input type="text" id="pph" name="pph" class="form-control" value=0 placeholder="" required>
+                    <input type="number" id="pph" name="pph" class="form-control" value=0 placeholder="" required>
                 </div>
             </div>
 
@@ -248,7 +248,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Total Amount * :</strong>   <br>
-                    <input type="text" id="total_amount" name="total_amount" class="form-control" placeholder="" readonly>
+                    <input type="number" id="total_amount" name="total_amount" class="form-control" placeholder="" readonly>
                 </div>
             </div>
 
@@ -278,87 +278,80 @@
 <script src="{{ asset('js/docno-check.js') }}"></script>
 
 <script>
-    let cleaveDpp = new Cleave('#dpp', {
-        numeral: true,
-        numeralThousandsGroupStyle: 'thousand'
-    });
 
-    let cleavePph = new Cleave('#pph', {
-        numeral: true,
-        numeralThousandsGroupStyle: 'thousand'
-    });
+function hitungTotal() {
+    let dpp = parseFloat(document.getElementById('dpp').value) || 0;
+    let ppnPersen = parseFloat(document.getElementById('ppn_persen').value) || 0;
+    let pph = parseFloat(document.getElementById('pph').value) || 0;
+    let nilaiPpnInput = document.getElementById('nilai_ppn');
 
-    let cleavePpn = new Cleave('#nilai_ppn', {
-        numeral: true,
-        numeralThousandsGroupStyle: 'thousand'
-    });
+    let ppnNilai = 0;
 
-    let cleaveTotal = new Cleave('#total_amount', {
-        numeral: true,
-        numeralThousandsGroupStyle: 'thousand'
-    });
-
-    function hitungTotal() {
-        let dpp = parseFloat(cleaveDpp.getRawValue()) || 0;
-        let pph = parseFloat(cleavePph.getRawValue()) || 0;
-        let ppnPersen = parseFloat(document.getElementById('ppn_persen').value) || 0;
-
-        let ppnNilai = 0;
-
-        if ($('#nilai_ppn').prop('readonly')) {
-            ppnNilai = (ppnPersen / 100) * dpp;
-            cleavePpn.setRawValue(ppnNilai);
-        } else {
-            ppnNilai = parseFloat(cleavePpn.getRawValue()) || 0;
-        }
-
-        let total = dpp + ppnNilai - pph;
-        cleaveTotal.setRawValue(total);
+    if (nilaiPpnInput.readOnly) {
+        ppnNilai = (ppnPersen / 100) * dpp;
+        nilaiPpnInput.value = ppnNilai;
+    } else {
+        ppnNilai = parseFloat(nilaiPpnInput.value) || 0;
     }
 
+    let total = dpp + ppnNilai - pph;
+
+    document.getElementById('total_amount').value = total;
+}
+
 // trigger saat input berubah
-    $('#dpp, #pph, #nilai_ppn, #ppn_persen').on('input', function () {
-        hitungTotal();
-    });
+document.getElementById('dpp').addEventListener('input', hitungTotal);
+document.getElementById('ppn_persen').addEventListener('input', hitungTotal);
+document.getElementById('pph').addEventListener('input', hitungTotal);
 
-    $('#id_ppn').on('change', function () {
-        hitungTotal();
-    });
+document.getElementById('id_ppn').addEventListener('change', function() {
 
-    document.getElementById('id_ppn').addEventListener('change', function() {
+    let selected = this.options[this.selectedIndex];
 
-        let selected = this.options[this.selectedIndex];
+    let persen = parseFloat(selected.getAttribute('data-ppn')) || 0;
+    let flag = parseInt(selected.getAttribute('data-flag')) || 0;
 
-        let persen = parseFloat(selected.getAttribute('data-ppn')) || 0;
-        let flag = parseInt(selected.getAttribute('data-flag')) || 0;
+    let ppnPersenInput = document.getElementById('ppn_persen');
+    let nilaiPpnInput = document.getElementById('nilai_ppn');
 
-        let ppnPersenInput = document.getElementById('ppn_persen');
-        let nilaiPpnInput = document.getElementById('nilai_ppn');
+    // set persen
+    ppnPersenInput.value = persen;
 
-        // set persen
-        ppnPersenInput.value = persen;
+    // atur readonly dulu (PENTING urutan ini)
+    if (flag === 0) {
+        nilaiPpnInput.readOnly = true;
+        nilaiPpnInput.value = 0; // reset dulu supaya bersih
+    } else {
+        nilaiPpnInput.readOnly = false;
+        nilaiPpnInput.value = 0; // reset juga supaya tidak bawa nilai lama
+    }
 
-        // atur readonly dulu (PENTING urutan ini)
-        if (flag === 0) {
-            nilaiPpnInput.readOnly = true;
-            nilaiPpnInput.value = 0; // reset dulu supaya bersih
-        } else {
-            nilaiPpnInput.readOnly = false;
-            nilaiPpnInput.value = 0; // reset juga supaya tidak bawa nilai lama
+    // hitung ulang setelah semua set
+    hitungTotal();
+});
+
+document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
+
+$('#submit').on('click', function(e){
+    let invalidField = null;
+    $('select[required], input[required]').each(function(){
+        if($(this).val() == "" || $(this).val() == null){
+            invalidField = this;
+            return false;
         }
-
-        // hitung ulang setelah semua set
-        hitungTotal();
     });
 
-    document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
-
-    $('form').on('submit', function () {
-        $('#dpp').val(cleaveDpp.getRawValue());
-        $('#pph').val(cleavePph.getRawValue());
-        $('#nilai_ppn').val(cleavePpn.getRawValue());
-        $('#total_amount').val(cleaveTotal.getRawValue());
-    });
+    if(invalidField){
+        e.preventDefault();
+        let tabPane = $(invalidField).closest('.tab-pane');
+        if(tabPane.length){
+            let tabId = tabPane.attr('id');
+            $('button[data-bs-target="#'+tabId+'"]').tab('show');
+        }
+        invalidField.focus();
+        invalidField.reportValidity();
+    }
+});
 </script>
 
 @endsection
