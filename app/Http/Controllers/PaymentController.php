@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use App\Models\History_approval;
 use Illuminate\Support\Facades\DB;
 use App\Exports\PaymentsExport;
+use App\Exports\PaymentsExport_paid;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Jobs\SendGraphMail;
 
@@ -226,6 +227,19 @@ class PaymentController extends Controller
         return Excel::download(
             new PaymentsExport($payment_date),
             'payments_'.$payment_date.'.xlsx'
+        );
+    }
+
+    public function export_paid($payment_date = null)
+    {
+        // jika payment_date kosong, redirect kembali dengan error
+        if (!$payment_date) {
+            return redirect()->back()->with('error', 'Payment Date wajib diisi!');
+        }
+
+        return Excel::download(
+            new PaymentsExport_paid($payment_date),
+            'payments_paid_'.$payment_date.'.xlsx'
         );
     }
 }

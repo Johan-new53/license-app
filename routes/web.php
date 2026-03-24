@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
     
     
     Route::get('/payments/export/{payment_date?}', [PaymentController::class,'export'])->name('payments.export');
+    Route::get('/payments/export_paid/{payment_date?}', [PaymentController::class,'export_paid'])->name('payments.export_paid');
 
     //MASTER DATA
     Route::resource('bank', BankController::class);
