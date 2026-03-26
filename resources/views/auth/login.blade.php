@@ -1,75 +1,70 @@
-@extends('layouts.app')
+@extends('layouts.login')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+<div class="login-card">
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+    {{-- Brand --}}
+    <div class="brand-logo">
+        <img src="{{ asset('siloam.png') }}" alt="Logo">
+        <span class="brand-name">{{ config('app.name', 'Finance App') }}</span>
+    </div>
+    <p class="login-subtitle">Masuk ke akun Anda untuk melanjutkan</p>
 
-                        <a href="{{ route('login.microsoft') }}" class="btn w-100 d-flex align-items-center justify-content-center" 
-                        style="background-color:#2F2F2F; color:white; font-weight:500;">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
-                                alt="Microsoft Logo" width="20" height="20" class="me-2">
-                            Login dengan Microsoft
-                    	</a>
+    {{-- Microsoft SSO --}}
+    <a href="{{ route('login.microsoft') }}" class="btn-microsoft">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft">
+        Login dengan Microsoft
+    </a>
 
-                        <br>
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+    <div class="divider">atau masuk dengan email</div>
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+    {{-- Email / Password form --}}
+    <form method="POST" action="{{ route('login') }}">
+        @csrf
 
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                   
-
-                                   
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                               
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <div class="input-group-icon">
+                <input id="email"
+                       type="email"
+                       name="email"
+                       value="{{ old('email') }}"
+                       class="form-control @error('email') is-invalid @enderror"
+                       placeholder="nama@domain.com"
+                       required
+                       autocomplete="email"
+                       autofocus>
+                <span class="input-icon"><i class="fa-solid fa-envelope"></i></span>
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
         </div>
-    </div>
+
+        <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group-icon">
+                <input id="password"
+                       type="password"
+                       name="password"
+                       class="form-control @error('password') is-invalid @enderror"
+                       placeholder="••••••••"
+                       required
+                       autocomplete="current-password">
+                <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                @error('password')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
+
+        <button type="submit" class="btn-login">
+            <i class="fa-solid fa-right-to-bracket me-2"></i> Masuk
+        </button>
+    </form>
+
+    <p class="form-footer">
+        &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+    </p>
 </div>
 @endsection
