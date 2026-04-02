@@ -24,6 +24,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PpnController;
 use App\Http\Controllers\Approval1Controller;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PayableController;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -45,7 +46,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Protected routes (only accessible when logged in)
 Route::middleware(['auth'])->group(function () {
-    
+
     Route::resource('permissions', PermissionController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
@@ -58,9 +59,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/import', [ImportController::class, 'index'])->name('import');
     Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');
-        
-    
-    
+
+
+
     Route::get('/payments/export/{payment_date?}', [PaymentController::class,'export'])->name('payments.export');
     Route::get('/payments/export_paid/{payment_date?}', [PaymentController::class,'export_paid'])->name('payments.export_paid');
 
@@ -72,6 +73,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('rektujuan', RektujuanController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('ppn', PpnController::class);
+
+    Route::resource('payable', PayableController::class);
+    Route::post('payable/sync', [PayableController::class, 'sync'])->name('payable.sync');
 
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
     Route::put('/users/{id}/update_pwd', [UserController::class, 'update_pwd'])->name('users.update_pwd');
@@ -89,7 +93,7 @@ Route::middleware(['auth'])->group(function () {
     return \App\Models\Ppn::findOrFail($id);
     })->name('get.ppn');
 
-    
+
 
 
 });

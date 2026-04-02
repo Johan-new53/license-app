@@ -287,6 +287,11 @@
                                         <i class="fa-solid fa-percent me-2"></i> PPN
                                     </a>
                                     @endcan
+                                    @can('payable-list')
+                                    <a class="dropdown-item" href="{{ route('payable.index', ['type' => 'hardcopy']) }}">
+                                        <i class="fa-solid fa-file-invoice-dollar me-2"></i> Payable
+                                    </a>
+                                    @endcan
                                 </div>
                             </li>
                             @endcanany
