@@ -9,6 +9,8 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
+
+
 $TENANT_ID     = $_ENV['TENANT_ID']     ?? '';
 $CLIENT_ID     = $_ENV['CLIENT_ID']     ?? '';
 $CLIENT_SECRET = $_ENV['CLIENT_SECRET'] ?? '';
