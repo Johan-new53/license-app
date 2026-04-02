@@ -4,12 +4,6 @@
 @section('content')
 
 
-<div class="d-flex justify-content-end">
-<div class="p-2 bg-light border">
-
-</div>
-</div>
-
 <div class="row">
 <form action="" method="get">
     <div class="col-lg-12 margin-tb d-flex justify-content-between align-items-center mb-3">

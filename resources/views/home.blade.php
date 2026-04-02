@@ -228,6 +228,20 @@
     </div>
     @endcan
 
+    @can('payable-list')
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ route('payable.index') }}" class="dash-card dash-card--rose">
+            <div class="dash-card-icon">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
+            <div>
+                <div class="dash-card-title">Payable</div>
+                <div class="dash-card-sub">Kelola vendor pembayaran</div>
+            </div>
+        </a>
+    </div>
+    @endcan
+
     {{-- ── ADMIN ── --}}
     @canany(['permission-list','role-list','user-list'])
     <div class="col-12 mt-2">
