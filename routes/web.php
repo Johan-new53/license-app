@@ -24,6 +24,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PpnController;
 use App\Http\Controllers\Approval1Controller;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DigitalController;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -55,6 +56,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('automates', AutomateController::class);
     Route::resource('approvals', Approval1Controller::class);
     Route::resource('payments', PaymentController::class);
+    Route::resource('digitals', DigitalController::class);
 
     Route::get('/import', [ImportController::class, 'index'])->name('import');
     Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');

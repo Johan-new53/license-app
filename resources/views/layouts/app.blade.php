@@ -225,6 +225,11 @@
                                         <i class="fa-solid fa-robot me-2"></i> Automate
                                     </a>
                                     @endcan
+                                     @can('digital-list')
+                                    <a class="dropdown-item" href="{{ route('digitals.index') }}">
+                                        <i class="fa-solid fa-book-bookmark me-2"></i> Digital
+                                    </a>
+                                    @endcan
                                     @can('approval-list')
                                     <a class="dropdown-item" href="{{ route('approvals.index') }}">
                                         <i class="fa-solid fa-thumbs-up me-2"></i> Approval
