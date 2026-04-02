@@ -3,9 +3,9 @@
 return [
     'tenants' => [
         'tenant1' => [
-            'tenant_id' => env('GRAPH_TENANT_ID'),
-            'client_id' => env('GRAPH_CLIENT_ID'),
-            'client_secret' => env('GRAPH_CLIENT_SECRET'),
+            'tenant_id' => env('GRAPH_TENANT_ID1'),
+            'client_id' => env('GRAPH_CLIENT_ID1'),
+            'client_secret' => env('GRAPH_CLIENT_SECRET1'),
         ],
         'tenant2' => [
             'tenant_id' => env('GRAPH_TENANT_ID2'),

@@ -32,6 +32,7 @@
                 <option value="hardcopy">hardcopy</option>
                 <option value="softcopy">softcopy</option>
                 <option value="automate">automate</option>
+                <option value="digital">digital</option>
             </select>
         </div>
         <div class="col-lg-2">

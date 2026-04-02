@@ -25,7 +25,7 @@ class PaymentsExport_paid implements FromCollection, WithHeadings, WithMapping
             ->leftJoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
             ->leftJoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
             ->where('finances.status', 'paid')
-            ->where('finances.due_date', '=', $this->payment_date)
+            ->where('finances.payment_date', '=', $this->payment_date)
             ->select(
                 'finances.created_at',
                 'm_hu_rek_sumber.nama as nama_rek_sumber',

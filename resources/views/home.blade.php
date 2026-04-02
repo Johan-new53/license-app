@@ -55,7 +55,7 @@
     @endcan
 
     {{-- ── PRF SUBMISSION section ── --}}
-    @canany(['hardcopy-list','softcopy-list','automate-list','approval-list','payment-list'])
+    @canany(['hardcopy-list','softcopy-list','automate-list','digital-list','approval-list','payment-list'])
     <div class="col-12 @can('product-list') mt-2 @endcan">
         <div class="dash-section-label" style="--label-color: rgba(139,92,246,0.8);">
             <i class="fa-solid fa-file-invoice fa-xs me-1"></i> PRF Submission
@@ -94,6 +94,18 @@
             <div>
                 <div class="dash-card-title">Automate</div>
                 <div class="dash-card-sub">PRF otomatis</div>
+            </div>
+        </a>
+    </div>
+    @endcan
+
+     @can('digital-list')
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ route('digitals.index') }}" class="dash-card dash-card--blue">
+            <div class="dash-card-icon"><i class="fa-solid fa-robot"></i></div>
+            <div>
+                <div class="dash-card-title">Digital</div>
+                <div class="dash-card-sub">PRF digital</div>
             </div>
         </a>
     </div>
