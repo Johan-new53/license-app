@@ -168,9 +168,11 @@ class AutomateController extends Controller
             $path = $file->storeAs('automate_files', $filename, 'public');
         }
 
-
-
         $data = $request->all();
+        $hari = Payableto::where('id', $request->id_payable)->value('hari');
+        $data['top_hari'] = $hari;
+        $data['due_date'] = now()->addDays($hari);
+
         $data['user_entry'] = auth()->id();
         $data['type'] = 'automate';
         $data['status'] = 'requested';

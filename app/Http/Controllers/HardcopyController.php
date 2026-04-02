@@ -157,16 +157,17 @@ class HardcopyController extends Controller
                 ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
         }
 
-
+        $data = $request->all();
         $hari = Payableto::where('id', $request->id_payable)->value('hari');
         $data['top_hari'] = $hari;
+        $data['due_date'] = now()->addDays($hari);
 
-        $data = $request->all();
+        
         $data['user_entry'] = auth()->id();
         $data['type'] = 'hardcopy';
         $data['status'] = 'requested';
-        $data['top_hari'] = $hari;
-        $data['due_date'] = now()->addDays($hari);
+        
+        
 
         DB::transaction(function () use ($data) {
         $finance = Finance::create($data);
