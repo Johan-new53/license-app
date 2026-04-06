@@ -21,9 +21,27 @@ class RektujuanController extends Controller
 
     public function index(Request $request): View
     {
-        $rektujuan = Rektujuan::orderBy('nama', 'ASC')->paginate(5);
+        $query = Rektujuan::query();
+
+        if ($request->has('nama') && $request->nama != '') {
+            $query->where('nama', 'LIKE', '%' . $request->nama . '%');
+        }
+
+        if ($request->has('norek') && $request->norek != '') {
+            $query->where('norek', 'LIKE', '%' . $request->norek . '%');
+        }
+
+        if ($request->has('bank') && $request->bank != '') {
+            $query->where('bank', 'LIKE', '%' . $request->bank . '%');
+        }
+
+        if ($request->has('valid') && $request->valid != '') {
+            $query->where('valid', $request->valid);
+        }
+
+        $rektujuan = $query->orderBy('nama', 'ASC')->paginate(10);
         return view('masterdata.rektujuan.index', compact('rektujuan'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+            ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
     public function create(): View

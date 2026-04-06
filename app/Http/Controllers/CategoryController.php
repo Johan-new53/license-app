@@ -21,9 +21,19 @@ class CategoryController extends Controller
 
     public function index(Request $request): View
     {
-        $category = Category::orderBy('nama', 'ASC')->paginate(5);
+        $query = Category::query();
+
+        if ($request->has('nama') && $request->nama != '') {
+            $query->where('nama', 'LIKE', '%' . $request->nama . '%');
+        }
+
+        if ($request->has('valid') && $request->valid != '') {
+            $query->where('valid', $request->valid);
+        }
+
+        $category = $query->orderBy('nama', 'ASC')->paginate(10);
         return view('masterdata.category.index', compact('category'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+            ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
     public function create(): View

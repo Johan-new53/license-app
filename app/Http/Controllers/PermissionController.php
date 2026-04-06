@@ -24,7 +24,7 @@ class PermissionController extends Controller
     {
         $permissions = Permission::orderBy('name', 'ASC')->paginate(5);
         return view('permissions.index', compact('permissions'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+            ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
     public function create(): View
@@ -36,23 +36,23 @@ class PermissionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
-            'name' => 'required',            
+            'name' => 'required',
         ]);
 
-        
-       
+
+
         Permission::create([
             'name' => $request->input('name'),
             'guard_name' => 'web',
         ]);
-                
+
 
         return redirect()->route('permissions.index')
             ->with('success', 'Permissions created successfully');
     }
 
-    
-    
+
+
     public function show($id): View
     {
         $permission = Permission::find($id);
@@ -65,14 +65,14 @@ class PermissionController extends Controller
         return view('permissions.edit', compact('permission'));
     }
 
-    
-    
+
+
 
      public function update(Request $request, $id): RedirectResponse
     {
         $this->validate($request, [
             'name' => 'required',
-           
+
         ]);
 
         $permission = Permission::find($id);
