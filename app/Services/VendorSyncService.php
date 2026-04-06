@@ -12,7 +12,7 @@ class VendorSyncService
 {
     public function sync(string $userEntry = 'system'): array
     {
-        $types = ['hardcopy', 'automate'];
+        $types = ['hardcopy', 'automate', 'digital'];
         $syncStartedAt = now();
 
         try {

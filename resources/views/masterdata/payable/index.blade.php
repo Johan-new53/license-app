@@ -45,14 +45,59 @@
        class="btn btn-sm {{ request('type') == 'automate' ? 'btn-primary' : 'btn-outline-primary' }}">
         Automate
     </a>
+
+    <a href="{{ route('payable.index', ['type' => 'digital']) }}"
+       class="btn btn-sm {{ request('type') == 'digital' ? 'btn-primary' : 'btn-outline-primary' }}">
+        Digital
+    </a>
 </div>
+
+<form action="{{ route('payable.index') }}" method="GET" class="mb-3">
+    <input type="hidden" name="type" value="{{ request('type', 'hardcopy') }}">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Name</label>
+            <input type="text" name="nama" value="{{ request('nama') }}" class="form-control" placeholder="Search name...">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Vendor Account</label>
+            <input type="text" name="vendor_account" value="{{ request('vendor_account') }}" class="form-control" placeholder="Search account...">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">TOP (hari)</label>
+            <input type="number" name="hari" value="{{ request('hari') }}" class="form-control" placeholder="Days...">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Valid </label>
+            <select name="valid" class="form-select">
+                <option value="">-- Semua --</option>
+                <option value="1" {{ request('valid') == '1' ? 'selected' : '' }}>Valid</option>
+                <option value="0" {{ request('valid') == '0' ? 'selected' : '' }}>Invalid</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <div class="row g-1">
+                <div class="col-6">
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="fa fa-search"></i> Filter
+                    </button>
+                </div>
+                <div class="col-6">
+                    <a href="{{ route('payable.index', ['type' => request('type', 'hardcopy')]) }}" class="btn btn-secondary w-100">
+                        Reset
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
     </div>
 @endif
-
+<hr class="mt-0">
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -60,7 +105,7 @@
             <th>Name</th>
             <th class="text-center">Vendor Account</th>
             <th class="text-center">TOP (hari)</th>
-            <th width="100px" class="text-center">Valid</th>
+            <th class="text-center" width="100px">Valid</th>
             <th class="text-center" width="280px">Action</th>
         </tr>
     </thead>
@@ -93,7 +138,7 @@
     </tbody>
 </table>
 
-{!! $payable->links('pagination::bootstrap-5') !!}
+{!! $payable->appends(request()->query())->links('pagination::bootstrap-5') !!}
 
 @endsection
 

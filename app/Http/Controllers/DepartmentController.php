@@ -21,9 +21,19 @@ class DepartmentController extends Controller
 
     public function index(Request $request): View
     {
-        $department = Department::orderBy('nama', 'ASC')->paginate(5);
+        $query = Department::query();
+
+        if ($request->has('nama') && $request->nama != '') {
+            $query->where('nama', 'LIKE', '%' . $request->nama . '%');
+        }
+
+        if ($request->has('valid') && $request->valid != '') {
+            $query->where('valid', $request->valid);
+        }
+
+        $department = $query->orderBy('nama', 'ASC')->paginate(10);
         return view('masterdata.department.index', compact('department'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+            ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
     public function create(): View

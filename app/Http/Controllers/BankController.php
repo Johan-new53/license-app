@@ -21,9 +21,19 @@ class BankController extends Controller
 
     public function index(Request $request): View
     {
-        $bank = Bank::orderBy('nama', 'ASC')->paginate(5);
+        $query = Bank::query();
+
+        if ($request->has('nama') && $request->nama != '') {
+            $query->where('nama', 'LIKE', '%' . $request->nama . '%');
+        }
+
+        if ($request->has('valid') && $request->valid != '') {
+            $query->where('valid', $request->valid);
+        }
+
+        $bank = $query->orderBy('nama', 'ASC')->paginate(10);
         return view('masterdata.bank.index', compact('bank'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+            ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
     public function create(): View

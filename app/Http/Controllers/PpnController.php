@@ -21,9 +21,27 @@ class PpnController extends Controller
 
     public function index(Request $request): View
     {
-        $ppn = Ppn::orderBy('nama', 'ASC')->paginate(5);
+        $query = Ppn::query();
+
+        if ($request->has('nama') && $request->nama != '') {
+            $query->where('nama', 'LIKE', '%' . $request->nama . '%');
+        }
+
+        if ($request->has('ppn_val') && $request->ppn_val != '') {
+            $query->where('ppn', $request->ppn_val);
+        }
+
+        if ($request->has('flag_ubah') && $request->flag_ubah != '') {
+            $query->where('flag_ubah', $request->flag_ubah);
+        }
+
+        if ($request->has('valid') && $request->valid != '') {
+            $query->where('valid', $request->valid);
+        }
+
+        $ppn = $query->orderBy('nama', 'ASC')->paginate(10);
         return view('masterdata.ppn.index', compact('ppn'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+            ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
     public function create(): View
