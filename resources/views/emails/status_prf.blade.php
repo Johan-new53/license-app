@@ -15,7 +15,7 @@
 <p>Best Regards,</p>
 <p>Finance Team </p>
 @elseif (str_contains($finance->status, 'approved'))
-<p>Your request for this documnet number ({{ $finance->doc_no }}) has been approved with the following</p>
+<p>Your request for this document number ({{ $finance->doc_no }}) has been approved with the following</p>
 <p>comments :</p>
 
 <p> {{ $keterangan }}</p>
