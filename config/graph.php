@@ -22,5 +22,10 @@ return [
             'client_id' => env('GRAPH_CLIENT_ID4'),
             'client_secret' => env('GRAPH_CLIENT_SECRET4'),
         ],
+        'tenant5' => [
+            'tenant_id' => env('GRAPH_TENANT_ID5'),
+            'client_id' => env('GRAPH_CLIENT_ID5'),
+            'client_secret' => env('GRAPH_CLIENT_SECRET5'),
+        ],
     ],
 ];
