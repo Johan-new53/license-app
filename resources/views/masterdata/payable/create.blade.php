@@ -2,45 +2,65 @@
 
 @section('content')
 <div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Create New Payable</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary btn-sm mb-2" href="{{ route('payable.index') }}">
-                <i class="fa fa-arrow-left"></i> Back
-            </a>
-        </div>
+    <div class="col-lg-12 margin-tb d-flex justify-content-between align-items-center">
+        <h2>Create New Payable</h2>
+        <a class="btn btn-primary btn-sm" href="{{ route('payable.index', ['type' => request('type', 'hardcopy')]) }}">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
     </div>
 </div>
 
-@if (count($errors) > 0)
-    <div class="alert alert-danger">
-      <strong>Whoops!</strong> There were some problems with your input.<br><br>
-      <ul>
-         @foreach ($errors->all() as $error)
-           <li>{{ $error }}</li>
-         @endforeach
-      </ul>
+@if ($errors->any())
+    <div class="alert alert-danger mt-2">
+        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+        <ul>
+            @foreach ($errors->all() as $error)
+               <li>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
 @endif
 
 <form method="POST" action="{{ route('payable.store') }}">
     @csrf
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Name:</strong>
-                <input type="text" name="nama" placeholder="Name" class="form-control">
-            </div>
+
+    <div class="row mt-3">
+        <div class="col-12 mb-3">
+            <strong>Type:</strong>
+            <input type="text" class="form-control"
+                   value="{{ request('type', 'hardcopy') }}" readonly>
+            <input type="hidden" name="type"
+                   value="{{ request('type', 'hardcopy') }}">
         </div>
 
-        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-            <button type="submit" class="btn btn-primary btn-sm mt-2 mb-3">
+        <div class="col-12 mb-3">
+            <label><strong>Name:</strong></label>
+            <input type="text" name="nama" class="form-control" placeholder="Name" value="{{ old('nama') }}">
+        </div>
+
+        <div class="col-12 mb-3">
+            <label><strong>Vendor Account:</strong></label>
+            <input type="text" name="vendor_account" class="form-control" placeholder="Vendor Account" value="{{ old('vendor_account') }}">
+        </div>
+
+        <div class="col-12 mb-3">
+            <label><strong>TOP (hari):</strong></label>
+            <input type="number" name="hari" class="form-control" placeholder="TOP" value="{{ old('hari') }}">
+        </div>
+
+        <div class="col-12 mb-3">
+            <label><strong>Valid:</strong></label>
+            <select name="valid" class="form-control">
+                <option value="1" {{ old('valid', 1) == 1 ? 'selected' : '' }}>Yes</option>
+                <option value="0" {{ old('valid') == 0 ? 'selected' : '' }}>No</option>
+            </select>
+        </div>
+
+        <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-floppy-disk"></i> Submit
             </button>
         </div>
     </div>
 </form>
-
 @endsection
