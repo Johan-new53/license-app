@@ -1,26 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Payableto;
 use App\Models\Sync_log;
 use App\Services\VendorSyncService;
-use Spatie\Permission\Models\Role;
-use DB;
-use Hash;
-use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Http;
+use App\Imports\PayableImport;
+use App\Exports\PayableExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
+use Throwable;
 
 class PayableController extends Controller
 {
     function __construct()
     {
         $this->middleware('permission:payable-list', ['only' => ['index']]);
-        $this->middleware('permission:payable-create', ['only' => ['create','store']]);
+        $this->middleware('permission:payable-create', ['only' => ['create','store','import','export']]);
         $this->middleware('permission:payable-edit', ['only' => ['edit','update']]);
     }
 
@@ -31,19 +30,19 @@ class PayableController extends Controller
 
         $query = Payableto::where('type', $type);
 
-        if ($request->has('nama') && $request->nama != '') {
+        if ($request->filled('nama')) {
             $query->where('nama', 'LIKE', '%' . $request->nama . '%');
         }
 
-        if ($request->has('vendor_account') && $request->vendor_account != '') {
+        if ($request->filled('vendor_account')) {
             $query->where('vendor_account', 'LIKE', '%' . $request->vendor_account . '%');
         }
 
-        if ($request->has('hari') && $request->hari != '') {
+        if ($request->filled('hari')) {
             $query->where('hari', $request->hari);
         }
 
-        if ($request->has('valid') && $request->valid != '') {
+        if ($request->filled('valid')) {
             $query->where('valid', $request->valid);
         }
 
@@ -53,54 +52,113 @@ class PayableController extends Controller
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        $payable = Payableto::get();
-        return view('masterdata.payable.create', compact('payable'));
+        $type = $request->type ?? 'hardcopy';
+        return view('masterdata.payable.create', compact('type'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
-            'nama' => 'required',
-            'hari' => 'required',
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'hari' => 'required|numeric|min:0',
+            'type' => 'required|string|max:50',
+            'vendor_account' => 'nullable|string|max:255',
+            'valid' => 'nullable|in:0,1',
         ]);
 
         Payableto::create([
-            'nama' => $request->input('nama'),
-            'vendor_account' => $request->input('vendor_account'),
-            'hari' => $request->input('hari'),
-            'valid' => 1,
+            'nama' => $request->nama,
+            'vendor_account' => $request->vendor_account,
+            'hari' => $request->hari,
+            'valid' => $request->valid ?? 1,
+            'type' => $request->type,
             'user_entry' => auth()->user()->name,
         ]);
 
-        return redirect()->route('payable.index')
-            ->with('success', 'Payable created successfully');
+        return redirect()->route('payable.index', ['type' => $request->type])
+            ->with('success', 'Data created successfully');
     }
 
-    public function edit($id): View
+    public function edit(Request $request, $id): View
     {
-        $payable = Payableto::find($id);
-        return view('masterdata.payable.edit', compact('payable'));
+        $payable = Payableto::findOrFail($id);
+        $type = $request->type ?? $payable->type ?? 'hardcopy';
+
+        return view('masterdata.payable.edit', compact('payable', 'type'));
     }
 
     public function update(Request $request, $id): RedirectResponse
     {
-        $this->validate($request, [
-            'nama' => 'required',
-            'hari' => 'required',
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'hari' => 'required|numeric|min:0',
+            'vendor_account' => 'nullable|string|max:255',
+            'valid' => 'nullable|in:0,1',
         ]);
 
-        $payable = Payableto::find($id);
-        $payable->nama = $request->input('nama');
-        $payable->vendor_account = $request->input('vendor_account');
-        $payable->hari = $request->input('hari');
-        $payable->valid = $request->input('valid');
+        $payable = Payableto::findOrFail($id);
+        $payable->nama = $request->nama;
+        $payable->vendor_account = $request->vendor_account;
+        $payable->hari = $request->hari;
+        $payable->valid = $request->valid ?? 1;
         $payable->user_entry = auth()->user()->name;
         $payable->save();
 
-        return redirect()->route('payable.index')
-            ->with('success', 'Payable updated successfully');
+        return redirect()->route('payable.index', ['type' => $request->type ?? $payable->type ?? 'hardcopy'])
+            ->with('success', 'Data updated successfully');
+    }
+
+    public function export(Request $request)
+    {
+        $filename = 'data_' . ($request->type ?? 'all') . '_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new PayableExport($request), $filename);
+    }
+
+    public function import(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls|max:5120',
+        ], [
+            'file.required' => 'File Excel wajib dipilih.',
+            'file.mimes' => 'File harus berupa Excel (.xlsx atau .xls).',
+            'file.max' => 'Ukuran file maksimal 5 MB.',
+        ]);
+
+        try {
+            $file = $request->file('file');
+
+            if (!$file || !$file->isValid()) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'File upload gagal.');
+            }
+
+            $import = new PayableImport(auth()->user()->name);
+
+            Excel::import($import, $file);
+
+            $message = "Upload data selesai. Insert: {$import->inserted}, Update: {$import->updated}, Skip: {$import->skipped}";
+
+            return redirect()->route('payable.index', [
+                'type' => $request->type ?? 'hardcopy'
+            ])
+            ->with('success', $message)
+            ->with('import_errors', $import->errors);
+
+        } catch (\Throwable $e) {
+            \Log::error('Payable import error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Upload data gagal: ' . $e->getMessage());
+        }
     }
 
     public function sync(VendorSyncService $vendorSyncService)

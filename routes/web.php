@@ -76,8 +76,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('category', CategoryController::class);
     Route::resource('ppn', PpnController::class);
 
-    Route::resource('payable', PayableController::class);
+    Route::resource('payable', PayableController::class)->except(['show']);
     Route::post('payable/sync', [PayableController::class, 'sync'])->name('payable.sync');
+    Route::post('/payable/import', [PayableController::class, 'import'])->name('payable.import');
+    Route::get('/payable/export', [PayableController::class, 'export'])->name('payable.export');
 
     Route::get('/users/{id}/change', [UserController::class, 'change'])->name('users.change');
     Route::put('/users/{id}/update_pwd', [UserController::class, 'update_pwd'])->name('users.update_pwd');
