@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Imports\PayableImport;
 use App\Exports\PayableExport;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -26,7 +27,7 @@ class PayableController extends Controller
     public function index(Request $request): View
     {
         $lastSync = Sync_log::orderByDesc('last_sync_at')->first();
-        $type = $request->type ?? 'hardcopy';
+        $type = $request->type ?? 'main';
 
         $query = Payableto::where('type', $type);
 
@@ -54,7 +55,7 @@ class PayableController extends Controller
 
     public function create(Request $request): View
     {
-        $type = $request->type ?? 'hardcopy';
+        $type = $request->type ?? 'main';
         return view('masterdata.payable.create', compact('type'));
     }
 
@@ -64,13 +65,14 @@ class PayableController extends Controller
             'nama' => 'required|string|max:255',
             'hari' => 'required|numeric|min:0',
             'type' => 'required|string|max:50',
-            'vendor_account' => 'nullable|string|max:255',
+            'vendor_account' => 'nullable|string|max:255|unique:m_payableto,vendor_account',
             'valid' => 'nullable|in:0,1',
         ]);
 
         Payableto::create([
             'nama' => $request->nama,
             'vendor_account' => $request->vendor_account,
+            'term_payment' => '-',
             'hari' => $request->hari,
             'valid' => $request->valid ?? 1,
             'type' => $request->type,
@@ -84,7 +86,7 @@ class PayableController extends Controller
     public function edit(Request $request, $id): View
     {
         $payable = Payableto::findOrFail($id);
-        $type = $request->type ?? $payable->type ?? 'hardcopy';
+        $type = $request->type ?? $payable->type ?? 'main';
 
         return view('masterdata.payable.edit', compact('payable', 'type'));
     }
@@ -94,7 +96,12 @@ class PayableController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'hari' => 'required|numeric|min:0',
-            'vendor_account' => 'nullable|string|max:255',
+            'vendor_account' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('m_payableto', 'vendor_account')->ignore($id),
+            ],
             'valid' => 'nullable|in:0,1',
         ]);
 
@@ -106,7 +113,7 @@ class PayableController extends Controller
         $payable->user_entry = auth()->user()->name;
         $payable->save();
 
-        return redirect()->route('payable.index', ['type' => $request->type ?? $payable->type ?? 'hardcopy'])
+        return redirect()->route('payable.index', ['type' => $request->type ?? $payable->type ?? 'main'])
             ->with('success', 'Data updated successfully');
     }
 
@@ -120,11 +127,11 @@ class PayableController extends Controller
     public function import(Request $request): RedirectResponse
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls|max:5120',
+            'file' => 'required|file|mimes:xlsx,xls|max:51200',
         ], [
             'file.required' => 'File Excel wajib dipilih.',
             'file.mimes' => 'File harus berupa Excel (.xlsx atau .xls).',
-            'file.max' => 'Ukuran file maksimal 5 MB.',
+            'file.max' => 'Ukuran file maksimal 50 MB.',
         ]);
 
         try {
@@ -143,7 +150,7 @@ class PayableController extends Controller
             $message = "Upload data selesai. Insert: {$import->inserted}, Update: {$import->updated}, Skip: {$import->skipped}";
 
             return redirect()->route('payable.index', [
-                'type' => $request->type ?? 'hardcopy'
+                'type' => $request->type ?? 'main'
             ])
             ->with('success', $message)
             ->with('import_errors', $import->errors);
@@ -165,7 +172,7 @@ class PayableController extends Controller
     {
         $result = $vendorSyncService->sync(auth()->user()->name);
 
-        return redirect()->route('payable.index', ['type' => 'hardcopy'])
+        return redirect()->route('payable.index', ['type' => 'main'])
             ->with($result['success'] ? 'success' : 'error', $result['message']);
     }
 }

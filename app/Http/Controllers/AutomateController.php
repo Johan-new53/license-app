@@ -50,7 +50,7 @@ class AutomateController extends Controller
             ->pluck('status');
 
         $payabletos = Payableto::where('valid', 1)
-            ->where('type', 'automate')
+            ->where('type', 'main')
             ->orderBy('nama')
             ->get();
 
@@ -109,7 +109,7 @@ class AutomateController extends Controller
         ->orderBy('nama')
         ->get();
         $payabletos = Payableto::where('valid', 1)
-        ->where('type', 'automate')
+        ->where('type', 'main')
         ->orderBy('nama')
         ->get();
          $rek_tujuans= Rektujuan::where('valid', 1)
@@ -262,7 +262,7 @@ class AutomateController extends Controller
             ->orderBy('nama')
             ->get();
             $payabletos = Payableto::where('valid', 1)
-            ->where('type', 'automate')
+            ->where('type', 'main')
             ->orderBy('nama')
             ->get();
             $rek_tujuans= Rektujuan::where('valid', 1)

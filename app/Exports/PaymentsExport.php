@@ -66,8 +66,8 @@ class PaymentsExport implements FromCollection, WithHeadings, WithMapping
             'KURS /Rupiah',
             'COURIER SERVICE/OTHERS',
             'WITHHOLDING TAX (PPh 23 & 4(2))',
-            'GRAND TOTAL IDR'           
-            
+            'GRAND TOTAL IDR'
+
         ];
     }
 
@@ -91,7 +91,7 @@ class PaymentsExport implements FromCollection, WithHeadings, WithMapping
             '',
             '',
             $row->pph*-1,
-            $row->total_amount           
+            $row->total_amount
 
         ];
     }

@@ -3,12 +3,12 @@
 @section('content')
 <div class="row mb-3">
     <div class="col-lg-12 d-flex justify-content-between align-items-center">
-        <h2>Data Management</h2>
+        <h2>Payable Management</h2>
 
         <div class="d-flex gap-2 mt-2 mt-lg-0">
             @can('payable-create')
                 <a class="btn btn-success btn-sm"
-                   href="{{ route('payable.create', ['type' => request('type', 'hardcopy')]) }}">
+                   href="{{ route('payable.create', ['type' => request('type', 'main')]) }}">
                     <i class="fa fa-plus"></i> Create New Data
                 </a>
 
@@ -24,7 +24,7 @@
             {{--
             <form id="syncForm" action="{{ route('payable.sync') }}" method="POST" class="d-inline">
                 @csrf
-                <input type="hidden" name="type" value="{{ request('type', 'hardcopy') }}">
+                <input type="hidden" name="type" value="{{ request('type', 'main') }}">
                 <button type="submit" id="syncButton" class="btn btn-warning btn-sm">
                     <span class="sync-btn-text">
                         <i class="fa fa-sync"></i> Sync data from D365
@@ -40,29 +40,19 @@
 </div>
 
 <div class="mb-3">
-    <a href="{{ route('payable.index', ['type' => 'hardcopy']) }}"
-       class="btn btn-sm {{ request('type','hardcopy') == 'hardcopy' ? 'btn-primary' : 'btn-outline-primary' }}">
-        Hardcopy
+    <a href="{{ route('payable.index', ['type' => 'main']) }}"
+       class="btn btn-sm {{ request('type','main') == 'main' ? 'btn-primary' : 'btn-outline-primary' }}">
+        Main
     </a>
 
     <a href="{{ route('payable.index', ['type' => 'softcopy']) }}"
        class="btn btn-sm {{ request('type') == 'softcopy' ? 'btn-primary' : 'btn-outline-primary' }}">
         Softcopy
     </a>
-
-    <a href="{{ route('payable.index', ['type' => 'automate']) }}"
-       class="btn btn-sm {{ request('type') == 'automate' ? 'btn-primary' : 'btn-outline-primary' }}">
-        Automate
-    </a>
-
-    <a href="{{ route('payable.index', ['type' => 'digital']) }}"
-       class="btn btn-sm {{ request('type') == 'digital' ? 'btn-primary' : 'btn-outline-primary' }}">
-        Digital
-    </a>
 </div>
 
 <form action="{{ route('payable.index') }}" method="GET" class="mb-3">
-    <input type="hidden" name="type" value="{{ request('type', 'hardcopy') }}">
+    <input type="hidden" name="type" value="{{ request('type', 'main') }}">
     <div class="row g-2 align-items-end">
         <div class="col-md-4">
             <label class="form-label">Name</label>
@@ -92,7 +82,7 @@
                     </button>
                 </div>
                 <div class="col-6">
-                    <a href="{{ route('payable.index', ['type' => request('type', 'hardcopy')]) }}" class="btn btn-secondary w-100">
+                    <a href="{{ route('payable.index', ['type' => request('type', 'main')]) }}" class="btn btn-secondary w-100">
                         Reset
                     </a>
                 </div>
@@ -164,7 +154,7 @@
             <td class="text-center">
                 @can('payable-edit')
                     <a class="btn btn-primary btn-sm"
-                       href="{{ route('payable.edit', ['payable' => $d->id, 'type' => request('type', 'hardcopy')]) }}">
+                       href="{{ route('payable.edit', ['payable' => $d->id, 'type' => request('type', 'main')]) }}">
                         <i class="fa-solid fa-pen-to-square"></i> Edit
                     </a>
                 @endcan
@@ -197,7 +187,7 @@
                         <label for="file" class="form-label">File Excel</label>
                         <input type="file" name="file" id="file" class="form-control" accept=".xlsx,.xls" required>
                         <small class="text-muted">
-                            Format file: .xlsx atau .xls, maksimal 5 MB.
+                            Format file: .xlsx atau .xls, maksimal 50 MB.
                         </small>
                         @error('file')
                             <div class="text-danger mt-1">{{ $message }}</div>
