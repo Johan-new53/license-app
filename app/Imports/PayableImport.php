@@ -19,10 +19,8 @@ class PayableImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
     public array $errors = [];
 
     protected array $allowedTypes = [
-        'hardcopy',
+        'main',
         'softcopy',
-        'automate',
-        'digital',
     ];
 
     public function __construct(string $userEntry)
@@ -100,7 +98,7 @@ class PayableImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
 
                 if (!in_array($type, $this->allowedTypes, true)) {
                     $this->skipped++;
-                    $this->errors[] = "Baris {$excelRow}: Type '{$typeRaw}' tidak valid. Hanya boleh hardcopy, softcopy, automate, atau digital.";
+                    $this->errors[] = "Baris {$excelRow}: Type '{$typeRaw}' tidak valid. Hanya boleh main atau softcopy.";
                     continue;
                 }
 

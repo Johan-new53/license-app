@@ -48,7 +48,7 @@ class DigitalController extends Controller
             ->pluck('status');
 
         $payabletos = Payableto::where('valid', 1)
-            ->where('type', 'digital')
+            ->where('type', 'main')
             ->orderBy('nama')
             ->get();
 
@@ -107,7 +107,7 @@ class DigitalController extends Controller
         ->orderBy('nama')
         ->get();
         $payabletos = Payableto::where('valid', 1)
-        ->where('type', 'digital')
+        ->where('type', 'main')
         ->orderBy('nama')
         ->get();
          $rek_tujuans= Rektujuan::where('valid', 1)
@@ -162,12 +162,12 @@ class DigitalController extends Controller
         $data['top_hari'] = $hari;
         $data['due_date'] = now()->addDays($hari);
 
-        
+
         $data['user_entry'] = auth()->id();
         $data['type'] = 'digital';
         $data['status'] = 'requested';
-        
-        
+
+
 
         DB::transaction(function () use ($data) {
         $finance = Finance::create($data);
@@ -251,6 +251,7 @@ class DigitalController extends Controller
             ->orderBy('nama')
             ->get();
             $payabletos = Payableto::where('valid', 1)
+            ->where('type', 'main')
             ->orderBy('nama')
             ->get();
             $rek_tujuans= Rektujuan::where('valid', 1)

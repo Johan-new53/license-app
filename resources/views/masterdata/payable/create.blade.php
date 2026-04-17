@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-lg-12 margin-tb d-flex justify-content-between align-items-center">
         <h2>Create New Payable</h2>
-        <a class="btn btn-primary btn-sm" href="{{ route('payable.index', ['type' => request('type', 'hardcopy')]) }}">
+        <a class="btn btn-primary btn-sm" href="{{ route('payable.index', ['type' => request('type', 'main')]) }}">
             <i class="fa fa-arrow-left"></i> Back
         </a>
     </div>
@@ -28,9 +28,9 @@
         <div class="col-12 mb-3">
             <strong>Type:</strong>
             <input type="text" class="form-control"
-                   value="{{ request('type', 'hardcopy') }}" readonly>
+                   value="{{ request('type', 'main') }}" readonly>
             <input type="hidden" name="type"
-                   value="{{ request('type', 'hardcopy') }}">
+                   value="{{ request('type', 'main') }}">
         </div>
 
         <div class="col-12 mb-3">
@@ -51,8 +51,8 @@
         <div class="col-12 mb-3">
             <label><strong>Valid:</strong></label>
             <select name="valid" class="form-control">
-                <option value="1" {{ old('valid', 1) == 1 ? 'selected' : '' }}>Yes</option>
-                <option value="0" {{ old('valid') == 0 ? 'selected' : '' }}>No</option>
+                <option value="1" selected>Yes</option>
+                <option value="0">No</option>
             </select>
         </div>
 
