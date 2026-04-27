@@ -203,7 +203,7 @@
                             @endcan
 
                             <!-- FINANCE -->
-                            @canany(['hardcopy-list','softcopy-list','automate-list','approval-list','payment-list','finance-import'])
+                            @canany(['hardcopy-list','softcopy-list','automate-list','digital-list','approval-list','payment-list','finance-import'])
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#"
                                    data-bs-toggle="dropdown" title="Finance">
@@ -227,7 +227,7 @@
                                     @endcan
                                      @can('digital-list')
                                     <a class="dropdown-item" href="{{ route('digitals.index') }}">
-                                        <i class="fa-solid fa-book-bookmark me-2"></i> Digital
+                                        <i class="fa-solid fa-robot me-2"></i> Digital
                                     </a>
                                     @endcan
                                     @can('approval-list')
