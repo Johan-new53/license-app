@@ -58,9 +58,7 @@ class DigitalController extends Controller
             ->where('user_entry', auth()->id())
             ->where('type', 'digital');
         } else {
-            $query = Finance::query()            
-        $query = Finance::query()
-            ->where('user_entry', auth()->id())
+            $query = Finance::query()             
             ->where('type', 'digital');
         }    
         
