@@ -26,6 +26,7 @@ use App\Http\Controllers\Approval1Controller;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DigitalController;
 use App\Http\Controllers\PayableController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/login/microsoft', [LoginController::class, 'redirectToMicrosoft'])->name('login.microsoft');
 Route::get('/login/microsoft/callback', [LoginController::class, 'handleMicrosoftCallback']);
@@ -61,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/import', [ImportController::class, 'index'])->name('import');
     Route::post('/import', [ImportController::class, 'upload'])->name('import.upload');
+    Route::get('/import/template', [ImportController::class, 'template'])->name('import.template');
 
 
 
@@ -100,4 +102,6 @@ Route::middleware(['auth'])->group(function () {
 
 
 
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 });

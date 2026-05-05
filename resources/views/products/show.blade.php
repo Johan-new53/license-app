@@ -2,13 +2,17 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Show Product</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('products.index') }}">Back</a>
+<div class="row mb-3">
+    <div class="col-lg-12">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2>Show Product</h2>
+            </div>
+            <div>
+                <a class="btn btn-primary btn-sm" href="{{ route('products.index') }}">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -57,49 +61,49 @@
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Start date:</strong>
-            {{ \Carbon\Carbon::parse($product->start_date)->format('d-M-Y') }}
+            {{ $product->start_date ? \Carbon\Carbon::parse($product->start_date)->format('d-M-Y') : '-' }}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>End date:</strong>
-            {{ \Carbon\Carbon::parse($product->end_date)->format('d-M-Y') }}
+            {{ $product->end_date ? \Carbon\Carbon::parse($product->end_date)->format('d-M-Y') : '-' }}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Last bidding:</strong>
-            {{ \Carbon\Carbon::parse($product->last_bidding)->format('d-M-Y') }}            
+            {{ $product->last_bidding ? \Carbon\Carbon::parse($product->last_bidding)->format('d-M-Y') : '-' }}            
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Next bidding:</strong>            
-            {{ \Carbon\Carbon::parse($product->next_bidding)->format('d-M-Y') }}
+            {{ $product->next_bidding ? \Carbon\Carbon::parse($product->next_bidding)->format('d-M-Y') : '-' }}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Renewal date:</strong>            
-            {{ \Carbon\Carbon::parse($product->renewal_date)->format('d-M-Y') }}
+            {{ $product->renewal_date ? \Carbon\Carbon::parse($product->renewal_date)->format('d-M-Y') : '-' }}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Tgl email 1:</strong>            
-            {{ \Carbon\Carbon::parse($product->tgl_email1)->format('d-M-Y') }}
+            {{ $product->tgl_email1 ? \Carbon\Carbon::parse($product->tgl_email1)->format('d-M-Y') : '-' }}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Tgl email 2:</strong>
-            {{ \Carbon\Carbon::parse($product->tgl_email2)->format('d-M-Y') }}
+            {{ $product->tgl_email2 ? \Carbon\Carbon::parse($product->tgl_email2)->format('d-M-Y') : '-' }}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="form-group">
             <strong>Tgl email 3:</strong>
-            {{ \Carbon\Carbon::parse($product->tgl_email3)->format('d-M-Y') }}
+            {{ $product->tgl_email3 ? \Carbon\Carbon::parse($product->tgl_email3)->format('d-M-Y') : '-' }}
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12">
@@ -108,7 +112,7 @@
              @if ($product->request_date == '0000-00-00')         
                 
             @else
-                {{ \Carbon\Carbon::parse($product->request_date)->format('d-M-Y') }}
+                {{ $product->request_date ? \Carbon\Carbon::parse($product->request_date)->format('d-M-Y') : '-' }}
             @endif
         </div>
     </div>
@@ -193,7 +197,7 @@
                     <strong>Date update status:</strong>    
                     @if ($product->date_update_status == '0000-00-00') 
                     @else
-                        {{ \Carbon\Carbon::parse($product->date_update_status)->format('d-M-Y') }}
+                        {{ $product->date_update_status ? \Carbon\Carbon::parse($product->date_update_status)->format('d-M-Y') : '-' }}
                     @endif
                 
                 </div>

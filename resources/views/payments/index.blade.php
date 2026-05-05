@@ -64,33 +64,36 @@
 <hr class="mt-0">
 
 <div class="table-responsive">
-    <table class="table table-bordered">
-        <tr>
-            <th>No</th>
-            <th>Invoice Date</th>
-            <th>Created Date</th>
-            <th>Nama</th>
-            <th>Top</th>
-            <th>Due Date</th>
-            <th>Type</th>
-            <th>Document No.</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th width="140px">Action</th>
-        </tr>
+    <table class="table table-bordered" style="width:100%;">
+        <thead>
+            <tr>
+                <th style="width:3%">No</th>
+                <th style="width:8%">Invoice Date</th>
+                <th style="width:8%">Created Date</th>
+                <th style="width:15%">Nama</th>
+                <th style="width:3%">Top</th>
+                <th style="width:8%">Due Date</th>
+                <th style="width:8%">Type</th>
+                <th style="width:15%">Document No.</th>
+                <th style="width:25%">Description</th>
+                <th style="width:7%">Status</th>
+                <th style="width:5%">Action</th>
+            </tr>
+        </thead>
+        <tbody>
         @if(isset($payments) && count($payments) > 0)
         @foreach ($payments as $payment)
         <tr>
             <td>{{ ++$i }}</td>
-            <td>{{ $payment->invoice_date->format('d-m-Y') }}</td>
-            <td>{{ $payment->created_at->format('d-m-Y') }}</td>
-            <td>{{ $payment->nama_payable }}</td>
+            <td style="white-space:nowrap;">{{ $payment->invoice_date ? $payment->invoice_date->format('d-m-Y') : '-' }}</td>
+            <td style="white-space:nowrap;">{{ $payment->created_at->format('d-m-Y') }}</td>
+            <td style="word-break:break-word;">{{ $payment->nama_payable }}</td>
             <td>{{ $payment->top_hari }}</td>            
-            <td>{{ $payment->due_date->format('d-m-Y') }}</td>
-            <td>{{ $payment->type }}</td>
-            <td>{{ $payment->doc_no }}</td>
-            <td>{{ $payment->description }}</td>
-            <td>{{ $payment->status }}</td>
+            <td style="white-space:nowrap;">{{ $payment->due_date ? $payment->due_date->format('d-m-Y') : '-' }}</td>
+            <td style="white-space:nowrap;">{{ $payment->type }}</td>
+            <td style="word-break:break-word;">{{ $payment->doc_no }}</td>
+            <td style="word-break:break-word;">{{ $payment->description }}</td>
+            <td style="white-space:nowrap;">{{ $payment->status }}</td>
             <td>
                 <form action="" method="POST">
                     <a class="btn btn-info btn-sm" href="{{ route('payments.show',$payment->id) }}">
@@ -107,6 +110,7 @@
                 </td>
             </tr>
         @endif
+        </tbody>
     </table>
 </div>
 <br>

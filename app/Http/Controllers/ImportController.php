@@ -25,6 +25,11 @@ class ImportController extends Controller
         return view('import');
     }
 
+    public function template()
+    {
+        return Excel::download(new \App\Exports\ImportTemplateExport(), 'Template_Import_PRF.xlsx');
+    }
+
     public function upload(Request $request)
     {
         $request->validate([
@@ -53,12 +58,55 @@ class ImportController extends Controller
         $now     = now();
         $inserts = [];
 
+        // Ambil data PPN dari database
+        $allPpn = \App\Models\Ppn::where('valid', 1)->get();
+        $ppnOther = $allPpn->where('flag_ubah', 1)->first();
+
         foreach (array_slice($rows, 1) as $r) {
             // skip row kosong
             if (count(array_filter($r, fn($v) => $v !== null && $v !== '')) === 0) continue;
 
             $typeRaw = $cell($r, 'type'); // aman kalau null
             $typeNorm = $typeRaw ? strtolower(str_replace(' ', '', (string)$typeRaw)) : null;
+
+            $dpp = $this->toNumber($cell($r, 'dpp')) ?? 0;
+            $nilai_ppn = $this->toNumber($cell($r, 'ppn')) ?? 0;
+            $ppn_persen_excel = $cell($r, 'PPN Persen');
+
+            $id_ppn = null;
+            $persen_ppn = 0;
+
+            if ($ppn_persen_excel !== null && $ppn_persen_excel !== '') {
+                $matched = $allPpn->where('ppn', (float)$ppn_persen_excel)->first();
+                if ($matched) {
+                    $id_ppn = $matched->id;
+                    $persen_ppn = $matched->ppn;
+                } else if ($ppnOther) {
+                    $id_ppn = $ppnOther->id;
+                    $persen_ppn = (float)$ppn_persen_excel;
+                }
+            } else {
+                if ($dpp > 0 && $nilai_ppn > 0) {
+                    $calc_persen = round(($nilai_ppn / $dpp) * 100);
+                    $matched = $allPpn->where('ppn', $calc_persen)->where('flag_ubah', 0)->first();
+                    if ($matched) {
+                        $id_ppn = $matched->id;
+                        $persen_ppn = $matched->ppn;
+                    } else if ($ppnOther) {
+                        $id_ppn = $ppnOther->id;
+                        $persen_ppn = $calc_persen;
+                    }
+                } else if ($nilai_ppn == 0) {
+                    $matched = $allPpn->where('ppn', 0)->first();
+                    if ($matched) {
+                        $id_ppn = $matched->id;
+                        $persen_ppn = 0;
+                    } else if ($ppnOther) {
+                        $id_ppn = $ppnOther->id;
+                        $persen_ppn = 0;
+                    }
+                }
+            }
 
             $inserts[] = [
                 'type' => $typeNorm,
@@ -87,9 +135,10 @@ class ImportController extends Controller
                 'description' => $cell($r, 'description'),
                 'id_currency' => $this->findIdByName(Matauang::class, $cell($r, 'currency')),
 
-                'dpp' => $this->toNumber($cell($r, 'dpp')),
-                'persen_ppn' => 0,
-                'nilai_ppn' => $this->toNumber($cell($r, 'ppn')),
+                'id_ppn' => $id_ppn,
+                'dpp' => $dpp,
+                'persen_ppn' => $persen_ppn,
+                'nilai_ppn' => $nilai_ppn,
                 'pph' => $this->toNumber($cell($r, 'pph')),
                 'total_amount' => $this->toNumber($cell($r, 'Total Amount')),
 

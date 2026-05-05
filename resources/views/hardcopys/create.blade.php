@@ -8,18 +8,20 @@
 
 
 
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
+<div class="row mb-3">
+    <div class="col-lg-12">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
                 <h2>Add New Hard Copy</h2>
             </div>
-            <div class="pull-right">
+            <div>
                 <a class="btn btn-primary btn-sm" href="{{ route('hardcopys.index') }}">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
             </div>
         </div>
     </div>
+</div>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -32,7 +34,7 @@
         </div>
     @endif
 
-<form action="{{ route('hardcopys.store') }}" method="POST">
+<form action="{{ route('hardcopys.store') }}" method="POST" novalidate>
     @csrf
 
 
@@ -72,8 +74,8 @@
             <br/>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
-                    <strong>PO Number * :</strong>
-                    <input type="text" name="po_no" class="form-control" placeholder="" required>
+                    <strong>PO Number :</strong>
+                    <input type="text" name="po_no" class="form-control" placeholder="">
                 </div>
             </div>
             <br/>
@@ -376,14 +378,55 @@ document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
 
 
 
-    $('form').on('submit', function () {
+    $('form').on('submit', function (e) {
+        // Cek validasi manual untuk menangani Tabs
+        let requiredFields = $(this).find('[required]');
+        let emptyFields = [];
+        let firstEmptyField = null;
+
+        requiredFields.each(function() {
+            if ($(this).val() === '' || $(this).val() === null) {
+                // Ambil label dari elemen <strong> sebelumnya atau atribut placeholder/name
+                let label = $(this).closest('.form-group, .col-xs-4, .col-xs-6, .col-xs-3, .col-xs-12').find('strong').first().text().replace(' * :', '').replace('* :', '').trim();
+                if (!label) label = $(this).attr('placeholder') || $(this).attr('name');
+                emptyFields.push(label);
+                
+                if (!firstEmptyField) firstEmptyField = $(this);
+            }
+        });
+
+        if (emptyFields.length > 0) {
+            e.preventDefault(); // Batalkan submit
+            
+            alert("Harap isi field berikut:\n- " + emptyFields.join("\n- "));
+
+            // Jika field ada di dalam tab, pindah ke tab tersebut
+            let tabPane = firstEmptyField.closest('.tab-pane');
+            if (tabPane.length > 0) {
+                let tabId = tabPane.attr('id');
+                let tabButton = $('button[data-bs-target="#' + tabId + '"]');
+                if (tabButton.length > 0) {
+                    tabButton.tab('show');
+                }
+            }
+
+            // Fokus ke field
+            setTimeout(function() {
+                firstEmptyField.focus();
+                if (firstEmptyField.hasClass('select2-hidden-accessible')) {
+                    firstEmptyField.select2('open');
+                }
+            }, 300);
+            
+            return false;
+        }
+
+        // Jika valid, jalankan proses submit (cleave raw value)
         $('#dpp').val(cleaveDpp.getRawValue());
         $('#pph').val(cleavePph.getRawValue());
         $('#nilai_ppn').val(cleavePpn.getRawValue());
         $('#total_amount').val(cleaveTotal.getRawValue());
     });
-
-
 </script>
 
 @endsection

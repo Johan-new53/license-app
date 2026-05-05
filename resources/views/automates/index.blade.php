@@ -100,7 +100,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td style="white-space:nowrap;">
-                {{ $automate->invoice_date->format('d-m-Y') }}
+                {{ $automate->invoice_date ? $automate->invoice_date->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
                 {{ $automate->payableto->nama ?? null }}

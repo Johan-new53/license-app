@@ -95,16 +95,16 @@ $i = ($products->currentPage() - 1) * $products->perPage();
 
 <div class="table-responsive">
 
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-striped" style="width:100%;">
 
 <thead class="table-dark">
 <tr>
-<th>No</th>
-<th>Item</th>
-<th>Category</th>
-<th>Description</th>
-<th>PIC</th>
-<th width="250">Action</th>
+<th style="width:5%">No</th>
+<th style="width:15%">Item</th>
+<th style="width:15%">Category</th>
+<th style="width:40%">Description</th>
+<th style="width:10%">PIC</th>
+<th style="width:15%">Action</th>
 </tr>
 </thead>
 
@@ -113,10 +113,10 @@ $i = ($products->currentPage() - 1) * $products->perPage();
 
 <tr>
 <td>{{ ++$i }}</td>
-<td>{{ $product->item }}</td>
-<td>{{ $product->category }}</td>
-<td>{{ $product->description }}</td>
-<td>{{ $product->pic }}</td>
+<td style="word-break:break-word;">{{ $product->item }}</td>
+<td style="word-break:break-word;">{{ $product->category }}</td>
+<td style="word-break:break-word;">{{ $product->description }}</td>
+<td style="word-break:break-word;">{{ $product->pic }}</td>
 
 <td>
 

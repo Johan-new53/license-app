@@ -106,12 +106,10 @@ class PaymentController extends Controller
         public function edit($id): View
         {
              $payments = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
-
-                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->leftJoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+                ->leftJoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+                ->leftJoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+                ->leftJoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
