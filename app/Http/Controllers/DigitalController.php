@@ -52,11 +52,18 @@ class DigitalController extends Controller
             ->orderBy('nama')
             ->get();
 
-        $query = Finance::query()
-            // ->where('user_entry', auth()->id())
+        if (auth()->user()->level==0)
+        {
+            $query = Finance::query()
+            ->where('user_entry', auth()->id())
             ->where('type', 'digital');
+        } else {
+            $query = Finance::query()            
+            ->where('type', 'digital');
+        }    
+        
 
-        // filter tanggal invoice_date
+            // filter tanggal invoice_date
         if ($request->filled('date_from')) {
             $query->whereDate('invoice_date', '>=', $request->date_from);
         }
