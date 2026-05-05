@@ -29,10 +29,13 @@
                             </small>
                         </div>
 
-                        <div class="d-flex gap-2">
+                        <div class="d-flex justify-content-between align-items-center">
                             <button class="btn btn-primary">
-                                Proses Import
+                                <i class="fa fa-upload"></i> Proses Import
                             </button>
+                            <a href="{{ route('import.template') }}" class="btn btn-outline-success">
+                                <i class="fa fa-file-excel"></i> Download Template
+                            </a>
                         </div>
 
                     </form>

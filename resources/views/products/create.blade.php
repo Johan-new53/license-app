@@ -2,18 +2,20 @@
 
 
 @section('content')
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
+<div class="row mb-3">
+    <div class="col-lg-12">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
                 <h2>Add New Product</h2>
             </div>
-            <div class="pull-right">
+            <div>
                 <a class="btn btn-primary btn-sm" href="{{ route('products.index') }}">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
             </div>
         </div>
     </div>
+</div>
 
     @if ($errors->any())
         <div class="alert alert-danger">

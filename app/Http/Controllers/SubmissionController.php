@@ -101,12 +101,11 @@ class SubmissionController extends Controller
       public function show($id): View
         {
             $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
-
-                ->join('m_payableto_h', 'finances.id_payable_h', '=', 'm_payableto_h.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')                
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->leftJoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+                ->leftJoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+                ->leftJoin('m_payableto_h', 'finances.id_payable_h', '=', 'm_payableto_h.id')
+                ->leftJoin('m_bank', 'finances.id_bank', '=', 'm_bank.id')                
+                ->leftJoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',
@@ -124,12 +123,11 @@ class SubmissionController extends Controller
      public function edit($id): View
         {
              $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
-
-                ->join('m_payableto_h', 'finances.id_payable_h', '=', 'm_payableto_h.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')                
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+                ->leftJoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+                ->leftJoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+                ->leftJoin('m_payableto_h', 'finances.id_payable_h', '=', 'm_payableto_h.id')
+                ->leftJoin('m_bank', 'finances.id_bank', '=', 'm_bank.id')                
+                ->leftJoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
                 ->select(
                     'finances.*',
                     'm_dept.nama as nama_dept',

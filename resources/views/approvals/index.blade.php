@@ -83,36 +83,49 @@
 <hr class="mt-0">
 
 <div class="table-responsive">
-    <table class="table table-bordered">
-        <tr>
-            <th>No</th>
-            <th>Invoice Date</th>
-            <th>Type</th>
-            <th>Document No.</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th width="280px">Action</th>
-        </tr>
+    <table class="table table-bordered" style="width:100%;">
+        <thead>
+            <tr>
+                <th style="width:5%">No</th>
+                <th style="width:10%">Invoice Date</th>
+                <th style="width:8%">Type</th>
+                <th style="width:24%">Document No.</th>
+                <th style="width:35%">Description</th>
+                <th style="width:8%">Status</th>
+                <th style="width:8%">Action</th>
+            </tr>
+        </thead>
+        <tbody>
         @foreach ($approvals as $approval)
         <tr>
             <td>{{ ++$i }}</td>
-            <td>{{ $approval->invoice_date->format('d-m-Y') }}</td>
-            <td>{{ $approval->type }}</td>
-            <td>{{ $approval->doc_no }}</td>
-            <td>{{ $approval->description }}</td>
-            <td>{{ $approval->status }}</td>
+            <td style="white-space:nowrap;">
+                {{ $approval->invoice_date ? $approval->invoice_date->format('d-m-Y') : '-' }}
+            </td>
+            <td style="white-space:nowrap;">{{ $approval->type }}</td>
+            <td style="word-break:break-word;">{{ $approval->doc_no }}</td>
+            <td style="word-break:break-word;">{{ $approval->description }}</td>
+            <td style="white-space:nowrap;">{{ $approval->status }}</td>
             <td>
-                <form action="" method="POST">
-                    <a class="btn btn-info btn-sm" href="{{ route('approvals.show',$approval->id) }}">
-                        <i class="fa-solid fa-list"></i> Show
-                    </a>
+                <form action="" method="POST" style="display:flex; flex-direction:column; gap:5px;">
+                    @if($approval->type == 'digital')
+                        <a class="btn btn-info btn-sm" href="{{ route('approvals.show',$approval->id) }}">
+                            <i class="fa-solid fa-list"></i> Show
+                        </a>
+                        <a class="btn btn-primary btn-sm" href="{{ route('digitals.edit', $approval->id) }}?source=approval_index">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </a>
 
-
-
+                    @else
+                        <a class="btn btn-info btn-sm" href="{{ route('approvals.show',$approval->id) }}">
+                            <i class="fa-solid fa-list"></i> Show
+                        </a>
+                    @endif
                 </form>
             </td>
         </tr>
         @endforeach
+        </tbody>
     </table>
 </div>
 <br>

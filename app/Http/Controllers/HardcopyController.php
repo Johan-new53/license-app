@@ -27,9 +27,9 @@ class HardcopyController extends Controller
 
     function __construct()
     {
-        $this->middleware('permission:hardcopy-list|hardcopy-create|hardcopy-edit|hardcopy-delete', ['only' => ['index','show']]);
-        $this->middleware('permission:hardcopy-create', ['only' => ['create','store']]);
-        $this->middleware('permission:hardcopy-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:hardcopy-list|hardcopy-create|hardcopy-edit|hardcopy-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:hardcopy-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:hardcopy-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:hardcopy-delete', ['only' => ['destroy']]);
         $this->middleware('permission:hardcopy-export', ['only' => ['export']]);
     }
@@ -98,55 +98,54 @@ class HardcopyController extends Controller
     {
 
         $categorys = Category::where('valid', 1)
-        ->orderBy('nama')
-        ->get();
+            ->orderBy('nama')
+            ->get();
         $departments = Department::where('valid', 1)
-        ->orderBy('nama')
-        ->get();
+            ->orderBy('nama')
+            ->get();
         $hu_rek_sumbers = Hu_reksumber::where('valid', 1)
-        ->orderBy('nama')
-        ->get();
+            ->orderBy('nama')
+            ->get();
         $payabletos = Payableto::where('valid', 1)
-        ->where('type', 'main')
-        ->orderBy('nama')
-        ->get();
-         $rek_tujuans= Rektujuan::where('valid', 1)
-        ->orderBy('nama')
-        ->get();
-         $banks= Bank::where('valid', 1)
-        ->orderBy('nama')
-        ->get();
+            ->where('type', 'main')
+            ->orderBy('nama')
+            ->get();
+        $rek_tujuans = Rektujuan::where('valid', 1)
+            ->orderBy('nama')
+            ->get();
+        $banks = Bank::where('valid', 1)
+            ->orderBy('nama')
+            ->get();
 
-         $currencys= Matauang::where('valid', 1)
-        ->orderBy('nama')
-        ->get();
+        $currencys = Matauang::where('valid', 1)
+            ->orderBy('nama')
+            ->get();
 
-         $ppns= Ppn::where('valid', 1)
-        ->orderBy('id')
-        ->get();
+        $ppns = Ppn::where('valid', 1)
+            ->orderBy('id')
+            ->get();
 
 
 
-        return view('hardcopys.create', compact('categorys','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
+        return view('hardcopys.create', compact('categorys', 'departments', 'hu_rek_sumbers', 'payabletos', 'rek_tujuans', 'banks', 'currencys', 'ppns'));
     }
 
-      public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         request()->validate([
-          'payment_term' => 'required',
-          'po_no' => 'required',
-          'id_category' => 'required',
-          'id_dept' => 'required',
-          'id_rek_sumber' => 'required',
-          'id_payable' => 'required',
-          'nama_rekening_tujuan' => 'required',
-          'id_bank' => 'required',
-          'no_rek_tujuan' => 'required',
-          'doc_no' => 'required',
-          'description' => 'required',
-          'id_currency' => 'required',
-          'dpp' => 'required',
-
+            'payment_term' => 'required',
+            'po_no' => 'nullable',
+            'id_category' => 'required',
+            'id_dept' => 'required',
+            'id_rek_sumber' => 'required',
+            'id_payable' => 'required',
+            'nama_rekening_tujuan' => 'required',
+            'id_bank' => 'required',
+            'no_rek_tujuan' => 'required',
+            'doc_no' => 'required',
+            'description' => 'required',
+            'id_currency' => 'required',
+            'dpp' => 'required',
         ]);
 
         $docNoCheckService = new DocNoCheckService();
@@ -154,7 +153,7 @@ class HardcopyController extends Controller
         if (!empty($check['exists'])) {
             return back()
                 ->withInput()
-                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: ' . implode(', ', $check['exists'])]);
         }
 
         $data = $request->all();
@@ -170,7 +169,7 @@ class HardcopyController extends Controller
 
 
         DB::transaction(function () use ($data) {
-        $finance = Finance::create($data);
+            $finance = Finance::create($data);
             History_approval::create([
                 'id_finance' => $finance->id,
                 'status' => 'requested',
@@ -181,98 +180,82 @@ class HardcopyController extends Controller
         });
 
         return redirect()->route('hardcopys.index')
-                ->with('success', 'Ap Hardcopy created successfully.');
-        }
+            ->with('success', 'Ap Hardcopy created successfully.');
+    }
 
     public function show($id): View
     {
-    $finance = \DB::table('finances')
-        ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-        ->join('m_category', 'finances.id_category', '=', 'm_category.id')
-        ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
-        ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-        ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
-        ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-        ->join('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
-        ->select(
-            'finances.*',
-            'm_dept.nama as nama_dept',
-            'm_category.nama as nama_category',
-            'm_hu_rek_sumber.nama as nama_rek_sumber',
-            'm_payableto.nama as nama_payable',
-            'm_bank.nama as nama_bank',
-            'm_currency.nama as nama_currency',
-            'm_ppn.nama as nama_ppn'
-        )
-        ->where('finances.id', $id)
-        ->first();
+        $finance = \DB::table('finances')
+            ->leftJoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+            ->leftJoin('m_category', 'finances.id_category', '=', 'm_category.id')
+            ->leftJoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+            ->leftJoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+            ->leftJoin('m_bank', 'finances.id_bank', '=', 'm_bank.id')
+            ->leftJoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+            ->leftJoin('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
+            ->select(
+                'finances.*',
+                'm_dept.nama as nama_dept',
+                'm_category.nama as nama_category',
+                'm_hu_rek_sumber.nama as nama_rek_sumber',
+                'm_payableto.nama as nama_payable',
+                'm_bank.nama as nama_bank',
+                'm_currency.nama as nama_currency',
+                'm_ppn.nama as nama_ppn'
+            )
+            ->where('finances.id', $id)
+            ->first();
 
-    $histories = DB::table('history_approval')
-    ->join('users', 'history_approval.user_entry', '=', 'users.id')
-    ->select(
-        'history_approval.*',
-        'users.name',
-        'users.email'
-    )
-    ->where('history_approval.id_finance', $id)
-    ->orderBy('history_approval.id','asc')
-    ->get();
+        $histories = DB::table('history_approval')
+            ->join('users', 'history_approval.user_entry', '=', 'users.id')
+            ->select(
+                'history_approval.*',
+                'users.name',
+                'users.email'
+            )
+            ->where('history_approval.id_finance', $id)
+            ->orderBy('history_approval.id', 'asc')
+            ->get();
 
-    return view('hardcopys.show', compact('finance','histories'));
+        return view('hardcopys.show', compact('finance', 'histories'));
     }
 
-     public function edit($id): View
-        {
-             $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+    public function edit($id): View
+    {
+        $finance = Finance::findOrFail($id);
 
-                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-                ->select(
-                    'finances.*',
-                    'm_dept.nama as nama_dept',
-                    'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto.nama as nama_payable',
-                    'm_bank.nama as nama_bank',
-                    'm_currency.nama as nama_currency'
-                )
-                ->where('finances.id', $id)
-                ->first();
-
-            $categorys = Category::where('valid', 1)
+        $categorys = Category::where('valid', 1)
             ->orderBy('nama')
             ->get();
-            $departments = Department::where('valid', 1)
+        $departments = Department::where('valid', 1)
             ->orderBy('nama')
             ->get();
-            $hu_rek_sumbers = Hu_reksumber::where('valid', 1)
+        $hu_rek_sumbers = Hu_reksumber::where('valid', 1)
             ->orderBy('nama')
             ->get();
-            $payabletos = Payableto::where('valid', 1)
+        $payabletos = Payableto::where('valid', 1)
             ->where('type', 'main')
             ->orderBy('nama')
             ->get();
-            $rek_tujuans= Rektujuan::where('valid', 1)
+        $rek_tujuans = Rektujuan::where('valid', 1)
             ->orderBy('nama')
             ->get();
-            $banks= Bank::where('valid', 1)
-            ->orderBy('nama')
-            ->get();
-
-            $currencys= Matauang::where('valid', 1)
+        $banks = Bank::where('valid', 1)
             ->orderBy('nama')
             ->get();
 
-            $ppns= Ppn::where('valid', 1)
+        $currencys = Matauang::where('valid', 1)
+            ->orderBy('nama')
+            ->get();
+
+        $ppns = Ppn::where('valid', 1)
             ->orderBy('id')
             ->get();
 
 
-            return view('hardcopys.edit', compact('categorys','finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
+        return view('hardcopys.edit', compact('categorys', 'finance', 'departments', 'hu_rek_sumbers', 'payabletos', 'rek_tujuans', 'banks', 'currencys', 'ppns'));
 
-        }
+    }
 
 
     public function update(Request $request, $id)
@@ -281,7 +264,7 @@ class HardcopyController extends Controller
 
         $validated = $request->validate([
             'payment_term' => 'required',
-            'po_no' => 'required',
+            'po_no' => 'nullable',
             'id_category' => 'required',
             'id_dept' => 'required',
             'id_rek_sumber' => 'required',
@@ -300,13 +283,12 @@ class HardcopyController extends Controller
         if (!empty($check['exists'])) {
             return back()
                 ->withInput()
-                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai: ' . implode(', ', $check['exists'])]);
         }
 
 
         $data = $request->all();
         $data['status'] = 'requested';
-        $data['user_entry'] = auth()->id();
         $data['type'] = 'hardcopy';
 
         DB::transaction(function () use ($data, $finance) {

@@ -132,7 +132,7 @@ class SoftcopyController extends Controller
 
         request()->validate([
           'payment_term' => 'required',
-          'po_no' => 'required',
+          'po_no' => 'nullable',
           'id_category' => 'required',
           'id_dept' => 'required',
           'id_rek_sumber' => 'required',
@@ -226,23 +226,7 @@ class SoftcopyController extends Controller
 
         public function edit($id): View
         {
-             $finance = \DB::table('finances')
-                ->leftjoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->leftjoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
-
-                ->leftjoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-
-                ->leftjoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-                ->select(
-                    'finances.*',
-                    'm_dept.nama as nama_dept',
-                    'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto.nama as nama_payable',
-
-                    'm_currency.nama as nama_currency'
-                )
-                ->where('finances.id', $id)
-                ->first();
+            $finance = Finance::findOrFail($id);
 
             $categorys = Category::where('valid', 1)
             ->orderBy('nama')
@@ -279,7 +263,7 @@ class SoftcopyController extends Controller
 
     $validated = $request->validate([
         'payment_term' => 'required',
-        'po_no' => 'required',
+        'po_no' => 'nullable',
         'id_category' => 'required',
         'id_dept' => 'required',
         'id_rek_sumber' => 'required',
@@ -319,7 +303,6 @@ class SoftcopyController extends Controller
 
         $data = $request->all();
         $data['status'] = 'requested';
-        $data['user_entry'] = auth()->id();
         $data['type'] = 'softcopy';
 
         DB::transaction(function () use ($data, $finance) {

@@ -53,7 +53,7 @@ class DigitalController extends Controller
             ->get();
 
         $query = Finance::query()
-            // ->where('user_entry', auth()->id())
+            ->where('user_entry', auth()->id())
             ->where('type', 'digital');
 
         // filter tanggal invoice_date
@@ -130,37 +130,55 @@ class DigitalController extends Controller
         return view('digitals.create', compact('categorys','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
     }
 
-      public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        request()->validate([
-          'payment_term' => 'required',
-          'po_no' => 'required',
-          'id_category' => 'required',
-          'id_dept' => 'required',
-          'id_rek_sumber' => 'required',
-          'id_payable' => 'required',
-          'nama_rekening_tujuan' => 'required',
-          'id_bank' => 'required',
-          'no_rek_tujuan' => 'required',
-          'doc_no' => 'required',
-          'description' => 'required',
-          'id_currency' => 'required',
-          'dpp' => 'required',
-
-        ]);
+        if (auth()->user()->level == 0) {
+            $request->validate([
+                'journal_no' => 'required',
+            ]);
+        } else {
+            $request->validate([
+              'payment_term' => 'required',
+              'po_no' => 'nullable',
+              'id_category' => 'required',
+              'id_dept' => 'required',
+              'id_rek_sumber' => 'required',
+              'id_payable' => 'required',
+              'nama_rekening_tujuan' => 'required',
+              'id_bank' => 'required',
+              'no_rek_tujuan' => 'required',
+              'doc_no' => 'required',
+              'description' => 'required',
+              'id_currency' => 'required',
+              'journal_no' => 'required',
+              'dpp' => 'required',
+            ]);
+        }
 
         $docNoCheckService = new DocNoCheckService();
-        $check = $docNoCheckService->check($request->doc_no, 'digital');
-        if (!empty($check['exists'])) {
-            return back()
-                ->withInput()
-                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+        if ($request->filled('doc_no')) {
+            $check = $docNoCheckService->check($request->doc_no, 'digital');
+            if (!empty($check['exists'])) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+            }
         }
 
         $data = $request->all();
-        $hari = Payableto::where('id', $request->id_payable)->value('hari');
-        $data['top_hari'] = $hari;
-        $data['due_date'] = now()->addDays($hari);
+
+        if ($request->filled('id_payable')) {
+            $hari = Payableto::where('id', $request->id_payable)->value('hari');
+            $data['top_hari'] = $hari;
+            $data['due_date'] = now()->addDays($hari);
+        } else {
+            $data['top_hari'] = 0;
+            $data['due_date'] = now();
+        }
+
+        if (auth()->user()->level == 0 && empty($data['description'])) {
+            $data['description'] = 'Journal Number : '.$data['journal_no'];
+        }
 
 
         $data['user_entry'] = auth()->id();
@@ -187,13 +205,13 @@ class DigitalController extends Controller
     public function show($id): View
     {
     $finance = \DB::table('finances')
-        ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-        ->join('m_category', 'finances.id_category', '=', 'm_category.id')
-        ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
-        ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-        ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
-        ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-        ->join('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
+        ->leftJoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
+        ->leftJoin('m_category', 'finances.id_category', '=', 'm_category.id')
+        ->leftJoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
+        ->leftJoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
+        ->leftJoin('m_bank', 'finances.id_bank', '=', 'm_bank.id')
+        ->leftJoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
+        ->leftJoin('m_ppn', 'finances.id_ppn', '=', 'm_ppn.id')
         ->select(
             'finances.*',
             'm_dept.nama as nama_dept',
@@ -221,25 +239,9 @@ class DigitalController extends Controller
     return view('digitals.show', compact('finance','histories'));
     }
 
-     public function edit($id): View
-        {
-             $finance = \DB::table('finances')
-                ->join('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->join('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
-
-                ->join('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-                ->join('m_bank', 'finances.id_bank', '=', 'm_bank.id')
-                ->join('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-                ->select(
-                    'finances.*',
-                    'm_dept.nama as nama_dept',
-                    'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto.nama as nama_payable',
-                    'm_bank.nama as nama_bank',
-                    'm_currency.nama as nama_currency'
-                )
-                ->where('finances.id', $id)
-                ->first();
+    public function edit($id): View
+    {
+        $finance = Finance::findOrFail($id);
 
             $categorys = Category::where('valid', 1)
             ->orderBy('nama')
@@ -279,9 +281,39 @@ class DigitalController extends Controller
     {
         $finance = Finance::findOrFail($id);
 
-        $validated = $request->validate([
+        if (auth()->user()->level == 0) {
+            $request->validate([
+                'journal_no' => 'required',
+                'alasan' => 'required',
+            ]);
+
+            DB::transaction(function () use ($finance, $request) {
+                $finance->update([
+                    'journal_no' => $request->journal_no,
+                    'description' => 'Journal Number : '.$request->journal_no,
+                ]);
+
+                History_approval::create([
+                    'id_finance' => $finance->id,
+                    'status' => $finance->status,
+                    'keterangan' => $request->alasan,
+                    'user_entry' => auth()->id(),
+                ]);
+            });
+
+            if ($request->source == 'approval_index') {
+                return redirect()->route('approvals.index')->with('success', 'Journal Number updated successfully');
+            } elseif ($request->source == 'approval_show') {
+                return redirect()->route('approvals.show', $finance->id)->with('success', 'Journal Number updated successfully');
+            }
+
+            return redirect()->route('digitals.index')
+                ->with('success', 'Journal Number updated successfully');
+        }
+
+        $request->validate([
             'payment_term' => 'required',
-            'po_no' => 'required',
+            'po_no' => 'nullable',
             'id_category' => 'required',
             'id_dept' => 'required',
             'id_rek_sumber' => 'required',
@@ -292,6 +324,7 @@ class DigitalController extends Controller
             'doc_no' => 'required',
             'description' => 'required',
             'id_currency' => 'required',
+            'journal_no' => 'required',
             'dpp' => 'required',
         ]);
 
@@ -306,7 +339,6 @@ class DigitalController extends Controller
 
         $data = $request->all();
         $data['status'] = 'requested';
-        $data['user_entry'] = auth()->id();
         $data['type'] = 'digital';
 
         DB::transaction(function () use ($data, $finance) {
@@ -320,6 +352,12 @@ class DigitalController extends Controller
             ]);
         });
 
+
+        if ($request->source == 'approval_index') {
+            return redirect()->route('approvals.index')->with('success', 'Digital updated successfully');
+        } elseif ($request->source == 'approval_show') {
+            return redirect()->route('approvals.show', $finance->id)->with('success', 'Digital updated successfully');
+        }
 
         return redirect()->route('digitals.index')
             ->with('success', 'Digital updated successfully');

@@ -203,7 +203,7 @@
                             @endcan
 
                             <!-- FINANCE -->
-                            @canany(['hardcopy-list','softcopy-list','automate-list','digital-list','approval-list','payment-list','finance-import'])
+                            @canany(['hardcopy-list','softcopy-list','automate-list','digital-list','approval-list','payment-list','finance-import','finance-report'])
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#"
                                    data-bs-toggle="dropdown" title="Finance">
@@ -238,6 +238,11 @@
                                     @can('payment-list')
                                     <a class="dropdown-item" href="{{ route('payments.index') }}">
                                         <i class="fa-solid fa-credit-card me-2"></i> Payment
+                                    </a>
+                                    @endcan
+                                    @can('finance-report')
+                                    <a class="dropdown-item" href="{{ route('reports.index') }}">
+                                        <i class="fa-solid fa-chart-line me-2"></i> Report
                                     </a>
                                     @endcan
                                     @can('finance-import')
