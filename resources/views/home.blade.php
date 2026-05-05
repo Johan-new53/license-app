@@ -113,7 +113,7 @@
 
     @can('approval-list')
     <div class="col-sm-6 col-lg-3">
-        <a href="{{ route('approvals.index') }}" class="dash-card dash-card--amber">
+        <a href="{{ route('approvals.index') }}" class="dash-card dash-card--blue">
             <div class="dash-card-icon"><i class="fa-solid fa-thumbs-up"></i></div>
             <div>
                 <div class="dash-card-title">Approval</div>
@@ -125,7 +125,7 @@
 
     @can('payment-list')
     <div class="col-sm-6 col-lg-3">
-        <a href="{{ route('payments.index') }}" class="dash-card dash-card--teal">
+        <a href="{{ route('payments.index') }}" class="dash-card dash-card--blue">
             <div class="dash-card-icon"><i class="fa-solid fa-credit-card"></i></div>
             <div>
                 <div class="dash-card-title">Payment</div>
@@ -135,9 +135,21 @@
     </div>
     @endcan
 
+    @can('finance-report')
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ route('reports.index') }}" class="dash-card dash-card--blue">
+            <div class="dash-card-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div>
+                <div class="dash-card-title">Report</div>
+                <div class="dash-card-sub">Laporan PRF</div>
+            </div>
+        </a>
+    </div>
+    @endcan
+
     @can('finance-import')
     <div class="col-sm-6 col-lg-3">
-        <a href="{{ route('import') }}" class="dash-card dash-card--slate">
+        <a href="{{ route('import') }}" class="dash-card dash-card--blue">
             <div class="dash-card-icon"><i class="fa-solid fa-file-import"></i></div>
             <div>
                 <div class="dash-card-title">Import</div>

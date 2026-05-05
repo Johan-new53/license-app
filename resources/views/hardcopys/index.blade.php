@@ -106,7 +106,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td style="white-space:nowrap;">
-                {{ $hardcopy->invoice_date->format('d-m-Y') }}
+                {{ $hardcopy->invoice_date ? $hardcopy->invoice_date->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
                 {{ $hardcopy->payableto->nama ?? null }}

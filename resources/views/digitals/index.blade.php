@@ -5,9 +5,6 @@
 
 
 <div class="d-flex justify-content-end">
-<div class="p-2 bg-light border">
-
-</div>
 </div>
 
 <div class="row">
@@ -112,7 +109,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td style="white-space:nowrap;">
-                {{ $digital->invoice_date->format('d-m-Y') }}
+                {{ $digital->invoice_date ? $digital->invoice_date->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
                 {{ $digital->payableto->nama ?? null }}

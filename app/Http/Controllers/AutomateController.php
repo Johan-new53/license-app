@@ -136,7 +136,7 @@ class AutomateController extends Controller
 
         request()->validate([
           'payment_term' => 'required',
-          'po_no' => 'required',
+          'po_no' => 'nullable',
           'id_category' => 'required',
           'form_submission_time' => 'required',
           'final_validation_time' => 'required',
@@ -144,13 +144,14 @@ class AutomateController extends Controller
           'id_dept' => 'required',
           'id_rek_sumber' => 'required',
           'id_payable' => 'required',
-          'id_rek_tujuan' => 'required',
+          'nama_rekening_tujuan' => 'required',
+          'id_bank' => 'required',
+          'no_rek_tujuan' => 'required',
           'doc_no' => 'required',
           'description' => 'required',
           'id_currency' => 'required',
-          'journal_no' => 'required',
+          'journal_no' => 'nullable',
           'dpp' => 'required',
-          'file_automate' => 'mimes:pdf|max:204800',
 
         ]);
 
@@ -232,25 +233,9 @@ class AutomateController extends Controller
             return view('automates.show', compact('finance','histories'));
         }
 
-        public function edit($id): View
-        {
-             $finance = \DB::table('finances')
-                ->leftjoin('m_dept', 'finances.id_dept', '=', 'm_dept.id')
-                ->leftjoin('m_hu_rek_sumber', 'finances.id_rek_sumber', '=', 'm_hu_rek_sumber.id')
-
-                ->leftjoin('m_payableto', 'finances.id_payable', '=', 'm_payableto.id')
-
-                ->leftjoin('m_currency', 'finances.id_currency', '=', 'm_currency.id')
-                ->select(
-                    'finances.*',
-                    'm_dept.nama as nama_dept',
-                    'm_hu_rek_sumber.nama as nama_rek_sumber',
-                    'm_payableto.nama as nama_payable',
-
-                    'm_currency.nama as nama_currency'
-                )
-                ->where('finances.id', $id)
-                ->first();
+    public function edit($id): View
+    {
+        $finance = Finance::findOrFail($id);
 
             $categorys = Category::where('valid', 1)
             ->orderBy('nama')
@@ -268,6 +253,9 @@ class AutomateController extends Controller
             $rek_tujuans= Rektujuan::where('valid', 1)
             ->orderBy('nama')
             ->get();
+            $banks= Bank::where('valid', 1)
+            ->orderBy('nama')
+            ->get();
 
             $currencys= Matauang::where('valid', 1)
             ->orderBy('nama')
@@ -278,7 +266,7 @@ class AutomateController extends Controller
             ->get();
 
 
-            return view('automates.edit', compact('categorys','finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','currencys','ppns'));
+            return view('automates.edit', compact('categorys','finance','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
 
         }
 
@@ -288,7 +276,7 @@ class AutomateController extends Controller
 
         $validated = $request->validate([
             'payment_term' => 'required',
-            'po_no' => 'required',
+            'po_no' => 'nullable',
             'id_category' => 'required',
             'form_submission_time' => 'required',
             'final_validation_time' => 'required',
@@ -296,13 +284,14 @@ class AutomateController extends Controller
             'id_dept' => 'required',
             'id_rek_sumber' => 'required',
             'id_payable' => 'required',
-            'id_rek_tujuan' => 'required',
+            'nama_rekening_tujuan' => 'required',
+            'id_bank' => 'required',
+            'no_rek_tujuan' => 'required',
             'doc_no' => 'required',
             'description' => 'required',
             'id_currency' => 'required',
-            'journal_no' => 'required',
+            'journal_no' => 'nullable',
             'dpp' => 'required',
-            'file_automate' => 'nullable|mimes:pdf|max:204800',
         ]);
 
         // cek doc number
@@ -319,7 +308,6 @@ class AutomateController extends Controller
 
         // set default field
         $data['status'] = 'requested';
-        $data['user_entry'] = auth()->id();
         $data['type'] = 'automate';
 
         // upload file jika ada

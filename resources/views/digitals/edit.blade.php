@@ -8,23 +8,34 @@
 
 
 
-<form action="{{ route('digitals.update', $finance->id) }}"
-      method="POST"
-      enctype="multipart/form-data">
+@php
+    $source = request('source');
+    $backUrl = route('digitals.index');
+    if ($source == 'approval_index') {
+        $backUrl = route('approvals.index');
+    } elseif ($source == 'approval_show') {
+        $backUrl = route('approvals.show', $finance->id);
+    }
+@endphp
+
+<form action="{{ route('digitals.update', $finance->id) }}" method="POST" enctype="multipart/form-data" novalidate>
     @csrf
     @method('PUT')
+    <input type="hidden" name="source" value="{{ $source }}">
 
-    <div class="row align-items-end mb-3">
-
-    <div class="col-md-4">
-        <h2>Edit Digital</h2>
-    </div>
-
-    <div class="col-md-4 text-end">
-        <a class="btn btn-primary btn-sm" href="{{ route('digitals.index') }}">
-            <i class="fa fa-arrow-left"></i> Back
-        </a>
-    </div>
+    <div class="row mb-3">
+        <div class="col-lg-12">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2>Edit Digital</h2>
+                </div>
+                <div>
+                    <a class="btn btn-primary btn-sm" href="{{ $backUrl }}">
+                        <i class="fa fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
    <div class="col-md-8">
@@ -48,11 +59,10 @@
     @endif
 
 
-<form action="{{ route('digitals.update', $finance->id) }}" method="POST">
-    @csrf
-    @method('PUT')
+
 
 <div class="container mt-4">
+    @if(Auth::user()->level != 0)
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="data1-tab" data-bs-toggle="tab" data-bs-target="#data1"
@@ -88,8 +98,8 @@
             <br/>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
-                    <strong>PO Number * :</strong>
-                    <input type="text" name="po_no" class="form-control" placeholder="" value="{{ $finance->po_no }}" required>
+                    <strong>PO Number :</strong>
+                    <input type="text" name="po_no" class="form-control" placeholder="" value="{{ $finance->po_no }}">
                 </div>
             </div>
             <br/>
@@ -182,7 +192,7 @@
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
-                    <input type="date" name="invoice_date" value="{{ $finance->invoice_date }}"  class="form-control" placeholder="" required>
+                    <input type="date" name="invoice_date" value="{{ old('invoice_date', $finance->invoice_date ? date('Y-m-d', strtotime($finance->invoice_date)) : '') }}"  class="form-control" placeholder="" required>
                 </div>
             </div>
         </div>
@@ -228,8 +238,13 @@
                             @endforeach
                         </select>
                 </div>
-            <br>
-
+                <br>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Journal Number * :</strong>
+                    <input type="text" name="journal_no" value="{{ $finance->journal_no }}" class="form-control" placeholder="" required>
+                </div>
+            </div>
             <br>
 
         </div>
@@ -293,6 +308,21 @@
 
 
         </div>
+    </div>
+
+    @else
+        <div class="p-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group mb-3">
+                        <strong>Journal Number * :</strong>
+                        <input type="text" name="journal_no" value="{{ $finance->journal_no }}" class="form-control" placeholder="Masukkan Journal Number" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
 
 
 
@@ -310,7 +340,7 @@
   window.DOCNO_CHECK = {
     url: "{{ route('checkDocNo') }}",
     type: "all",
-    ignore_id: {{ $finance->id }}
+    ignore_id: {{ $finance->id }},
     filter_field: "id_dept", // bersifat optional contoh: "id_dept" (sesuaikan dengan nama field filter di form)
     filter_label: "Departemen", // label untuk pesan error (sesuaikan dengan nama field filter di form)
   };
@@ -354,7 +384,7 @@
 
         let total = dpp + ppnNilai - pph;
         cleaveTotal.setRawValue(total);
-    }    
+    }
 
     // trigger saat input berubah
 
@@ -395,7 +425,50 @@
 
     document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
 
-    $('form').on('submit', function () {
+    $('form').on('submit', function (e) {
+        // Cek validasi manual untuk menangani Tabs
+        let requiredFields = $(this).find('[required]');
+        let emptyFields = [];
+        let firstEmptyField = null;
+
+        requiredFields.each(function() {
+            if ($(this).val() === '' || $(this).val() === null) {
+                // Ambil label dari elemen <strong> sebelumnya atau atribut placeholder/name
+                let label = $(this).closest('.form-group, .col-xs-4, .col-xs-6, .col-xs-3, .col-xs-12').find('strong').first().text().replace(' * :', '').replace('* :', '').trim();
+                if (!label) label = $(this).attr('placeholder') || $(this).attr('name');
+                emptyFields.push(label);
+                
+                if (!firstEmptyField) firstEmptyField = $(this);
+            }
+        });
+
+        if (emptyFields.length > 0) {
+            e.preventDefault(); // Batalkan submit
+            
+            alert("Harap isi field berikut:\n- " + emptyFields.join("\n- "));
+
+            // Jika field ada di dalam tab, pindah ke tab tersebut
+            let tabPane = firstEmptyField.closest('.tab-pane');
+            if (tabPane.length > 0) {
+                let tabId = tabPane.attr('id');
+                let tabButton = $('button[data-bs-target="#' + tabId + '"]');
+                if (tabButton.length > 0) {
+                    tabButton.tab('show');
+                }
+            }
+
+            // Fokus ke field
+            setTimeout(function() {
+                firstEmptyField.focus();
+                if (firstEmptyField.hasClass('select2-hidden-accessible')) {
+                    firstEmptyField.select2('open');
+                }
+            }, 300);
+            
+            return false;
+        }
+
+        // Jika valid, jalankan proses submit (cleave raw value)
         $('#dpp').val(cleaveDpp.getRawValue());
         $('#pph').val(cleavePph.getRawValue());
         $('#nilai_ppn').val(cleavePpn.getRawValue());

@@ -2,9 +2,17 @@
 
 @section('content')
 <div class="row mb-3">
-    <div class="col-lg-12 d-flex justify-content-between align-items-center">
-        <h2>Show User</h2>
-        <a class="btn btn-primary btn-sm" href="{{ route('users.index') }}">Back</a>
+    <div class="col-lg-12">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2>Show User</h2>
+            </div>
+            <div>
+                <a class="btn btn-primary btn-sm" href="{{ route('users.index') }}">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 

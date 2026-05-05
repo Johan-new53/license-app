@@ -1,15 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Create New Permission</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary btn-sm mb-2" href="{{ route('permissions.index') }}">
-                <i class="fa fa-arrow-left"></i> Back
-            </a>
+<div class="row mb-3">
+    <div class="col-lg-12">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2>Create New Permission</h2>
+            </div>
+            <div>
+                <a class="btn btn-primary btn-sm" href="{{ route('permissions.index') }}">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+            </div>
         </div>
     </div>
 </div>

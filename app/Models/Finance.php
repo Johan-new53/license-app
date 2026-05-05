@@ -42,6 +42,41 @@ class Finance extends Model
     {
         return $this->hasMany(History_approval::class,'id_finance');
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'id_category');
+    }
+
+    public function dept()
+    {
+        return $this->belongsTo(Department::class, 'id_dept');
+    }
+
+    public function rek_sumber()
+    {
+        return $this->belongsTo(Hu_reksumber::class, 'id_rek_sumber');
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class, 'id_bank');
+    }
+
+    public function matauang()
+    {
+        return $this->belongsTo(Matauang::class, 'id_currency');
+    }
+
+    public function ppn()
+    {
+        return $this->belongsTo(Ppn::class, 'id_ppn');
+    }
+
+    public function rektujuan()
+    {
+        return $this->belongsTo(Rektujuan::class, 'id_rek_tujuan');
+    }
 }
 
 
