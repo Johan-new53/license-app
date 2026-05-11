@@ -77,6 +77,7 @@ class Approval1Controller extends Controller
         }
 
         $approvals = $query
+            ->whereDate('invoice_date', '>=', '2026-05-01')
             ->orderBy('id', 'desc')
             ->paginate(6)
             ->appends($request->query());

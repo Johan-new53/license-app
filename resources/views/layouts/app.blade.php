@@ -161,7 +161,7 @@
                 <!-- BRAND -->
                 <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url('/') }}" title="Home">
                     <img src="{{ asset('siloam.png') }}" alt="Logo">
-                    <span>Siloam</span>
+                    <span style="text-decoration: underline;">Home</span>
                 </a>
 
                 <!-- TOGGLER MOBILE -->

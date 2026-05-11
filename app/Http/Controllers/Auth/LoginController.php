@@ -76,10 +76,17 @@ class LoginController extends Controller
                
                 'name'  => $name,
                 'email'     => $email,
+                'level'     => 0,
                 'password'  => bcrypt(bin2hex(random_bytes(8))), // password dummy
                 
                 'created_at'=> now(),
                 'updated_at'=> now(),
+            ]);
+            // Tambahkan role ke tabel model_has_roles
+            \DB::table('model_has_roles')->insert([
+                'role_id'    => 8,
+                'model_type' => \App\Models\User::class,
+                'model_id'   => $user->id,
             ]);
         }
 
