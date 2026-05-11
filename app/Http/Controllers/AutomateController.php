@@ -54,9 +54,18 @@ class AutomateController extends Controller
             ->orderBy('nama')
             ->get();
 
-        $query = Finance::query()
+       
+        if (auth()->user()->level==0)
+        {
+            $query = Finance::query()
             ->where('user_entry', auth()->id())
-            ->where('type', 'automate');
+            ->where('type', 'automate')
+            ->orderBy('invoice_date','desc');
+        } else {
+            $query = Finance::query()             
+            ->where('type', 'automate')
+            ->orderBy('invoice_date','desc');
+        }            
 
         // filter tanggal invoice_date
         if ($request->filled('date_from')) {

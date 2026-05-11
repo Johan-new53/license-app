@@ -56,10 +56,12 @@ class DigitalController extends Controller
         {
             $query = Finance::query()
             ->where('user_entry', auth()->id())
-            ->where('type', 'digital');
+            ->where('type', 'digital')
+            ->orderBy('invoice_date','desc');
         } else {
             $query = Finance::query()             
-            ->where('type', 'digital');
+            ->where('type', 'digital')
+            ->orderBy('invoice_date','desc');
         }    
         
 
