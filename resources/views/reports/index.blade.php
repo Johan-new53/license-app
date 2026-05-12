@@ -81,15 +81,15 @@
         <thead>
             <tr>
                 <th style="width:3%">No</th>
-                <th style="width:7%">Type</th>
+                <th style="width:8%">Invoice Date</th>
+                <th style="width:8%">Created Date</th>
+                <th style="width:15%">Nama</th>
+                <th style="width:3%">Top</th>
+                <th style="width:8%">Due Date</th>
+                <th style="width:8%">Type</th>
                 <th style="width:15%">Document No.</th>
                 <th style="width:25%">Description</th>
-                <th style="width:10%">Department</th>
-                <th style="width:10%">Amount</th>
-                <th style="width:5%">Curr</th>
-                <th style="width:15%">Rekening Tujuan</th>
-                <th style="width:10%">Invoice Date</th>
-                <th style="width:10%">Payment Date</th>
+                <th style="width:7%">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -97,24 +97,15 @@
             @foreach ($finances as $finance)
             <tr>
                 <td>{{ ++$i }}</td>
-                <td>
-                    {{$finance->type}}
-                </td>
+                <td style="white-space:nowrap;">{{ $finance->invoice_date ? date('d-m-Y', strtotime($finance->invoice_date)) : '-' }}</td>
+                <td style="white-space:nowrap;">{{ $finance->created_at->format('d-m-Y') }}</td>
+                <td style="word-break:break-word;">{{ $finance->payableto->nama ?? '-' }}</td>
+                <td>{{ $finance->top_hari }}</td>
+                <td style="white-space:nowrap;">{{ $finance->due_date ? (is_string($finance->due_date) ? date('d-m-Y', strtotime($finance->due_date)) : $finance->due_date->format('d-m-Y')) : '-' }}</td>
+                <td style="white-space:nowrap;">{{ $finance->type }}</td>
                 <td style="word-break:break-word;">{{ $finance->doc_no }}</td>
                 <td style="word-break:break-word;">{{ $finance->description }}</td>
-                <td>{{ $finance->dept->nama ?? '-' }}</td>
-                <td class="text-end">{{ number_format($finance->total_amount, 2) }}</td>
-                <td>{{ $finance->matauang->nama ?? '-' }}</td>
-                <td style="word-break:break-word;">
-                    @if($finance->nama_rekening_tujuan)
-                        <strong>{{ $finance->nama_rekening_tujuan }}</strong><br>
-                        <small>{{ $finance->bank->nama ?? '' }} - {{ $finance->no_rek_tujuan }}</small>
-                    @else
-                        {{ $finance->rektujuan->nama ?? '-' }}
-                    @endif
-                </td>
-                <td style="white-space:nowrap;">{{ $finance->invoice_date ? date('d-m-Y', strtotime($finance->invoice_date)) : '-' }}</td>
-                <td style="white-space:nowrap;">{{ $finance->payment_date ? date('d-m-Y', strtotime($finance->payment_date)) : '-' }}</td>
+                <td style="white-space:nowrap;">{{ $finance->status }}</td>
             </tr>
             @endforeach
         @else

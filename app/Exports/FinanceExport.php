@@ -18,7 +18,7 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
 
     public function collection()
     {
-        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn'])
+        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto'])
             ->where(function($q) {
                 $q->where('status', 'LIKE', 'approved%')
                   ->orWhere('status', 'paid');
@@ -49,40 +49,46 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
-            'No',
-            'Module',
-            'Doc Number',
-            'Description',
-            'Department',
-            'Amount',
-            'Currency',
-            'Rekening Tujuan',
+            'RECEIPT DATE INVOICE FROM DIVISION',
+            'UNIT HOSPITALS',
+            'SUPPLIER NAME',
             'Invoice Date',
-            'Payment Date',
-            'Status'
+            'Invoice No. (Kwitansi No.)',
+            'DESCRIPTION',
+            'PAYMENT TERM',
+            'PO/AGREEMENT NO',
+            'PO/AGREEMENT CATEGORY',
+            'DEPT',
+            'CURRENCY',
+            'Amount',
+            'PPN (IDR)',
+            'KURS /Rupiah',
+            'COURIER SERVICE/OTHERS',
+            'WITHHOLDING TAX (PPh 23 & 4(2))',
+            'GRAND TOTAL IDR'
         ];
     }
 
     public function map($finance): array
     {
-        static $no = 1;
-        
-        $rek_tujuan = $finance->nama_rekening_tujuan 
-            ? $finance->nama_rekening_tujuan . " (" . ($finance->bank->nama ?? '') . " - " . $finance->no_rek_tujuan . ")"
-            : ($finance->rektujuan->nama ?? '-');
-
         return [
-            $no++,
-            ucfirst($finance->type),
+            $finance->created_at ? $finance->created_at->format('d-m-Y') : '',
+            $finance->rek_sumber->nama ?? '',
+            $finance->payableto->nama ?? '',
+            $finance->invoice_date ? $finance->invoice_date->format('d-m-Y') : '',
             $finance->doc_no,
             $finance->description,
-            $finance->dept->nama ?? '-',
-            number_format($finance->total_amount, 2),
-            $finance->matauang->nama ?? '-',
-            $rek_tujuan,
-            $finance->invoice_date ? $finance->invoice_date->format('d-m-Y') : '-',
-            $finance->payment_date ? date('d-m-Y', strtotime($finance->payment_date)) : '-',
-            $finance->status
+            $finance->payment_term,
+            $finance->po_no,
+            $finance->category->nama ?? '',
+            $finance->dept->nama ?? '',
+            $finance->matauang->nama ?? '',
+            $finance->dpp,
+            $finance->nilai_ppn,
+            '',
+            '',
+            ($finance->pph * -1),
+            $finance->total_amount
         ];
     }
 }
