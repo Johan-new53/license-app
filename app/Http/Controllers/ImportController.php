@@ -10,6 +10,8 @@ use App\Models\Hu_reksumber;
 use App\Models\Payableto;
 use App\Models\Bank;
 use App\Models\Matauang;
+use App\Models\Category;
+use App\Models\Rektujuan;
 use DB;
 
 class ImportController extends Controller
@@ -56,18 +58,74 @@ class ImportController extends Controller
         };
 
         $now     = now();
-        $inserts = [];
-
         // Ambil data PPN dari database
         $allPpn = \App\Models\Ppn::where('valid', 1)->get();
         $ppnOther = $allPpn->where('flag_ubah', 1)->first();
 
-        foreach (array_slice($rows, 1) as $r) {
+        $errors  = [];
+        foreach (array_slice($rows, 1) as $rowIndex => $r) {
+            $rowNum = $rowIndex + 2; // header adalah baris 1
+            
             // skip row kosong
             if (count(array_filter($r, fn($v) => $v !== null && $v !== '')) === 0) continue;
 
-            $typeRaw = $cell($r, 'type'); // aman kalau null
+            $typeRaw = $cell($r, 'type');
             $typeNorm = $typeRaw ? strtolower(str_replace(' ', '', (string)$typeRaw)) : null;
+            if (!$typeNorm || !in_array($typeNorm, ['hardcopy', 'softcopy', 'automate', 'digital'])) {
+                $errors[] = "Baris $rowNum: Kolom 'type' (hardcopy/softcopy/automate/digital) tidak valid atau kosong.";
+            }
+
+            // Validasi Category
+            $valCategory = $cell($r, 'category');
+            $id_category = $this->findIdByName(Category::class, $valCategory);
+            if ($valCategory && !$id_category) {
+                $errors[] = "Baris $rowNum: Kategori '$valCategory' tidak ditemukan di Master Data.";
+            }
+
+            // Validasi Dept
+            $valDept = $cell($r, 'Requesting Department');
+            $id_dept = $this->findIdByName(Department::class, $valDept);
+            if ($valDept && !$id_dept) {
+                $errors[] = "Baris $rowNum: Department '$valDept' tidak ditemukan di Master Data.";
+            }
+
+            // Validasi Rek Sumber
+            $valRekSumber = $cell($r, 'Hospital Unit & Rekening Sumber');
+            $id_rek_sumber = $this->findIdByName(Hu_reksumber::class, $valRekSumber);
+            if ($valRekSumber && !$id_rek_sumber) {
+                $errors[] = "Baris $rowNum: Rekening Sumber '$valRekSumber' tidak ditemukan di Master Data.";
+            }
+
+            // Validasi Payable To
+            $valPayable = $cell($r, 'Payable To');
+            $id_payable = $this->findPayableIdByNameAndType($valPayable, $typeNorm);
+            if ($valPayable && !$id_payable) {
+                $errors[] = "Baris $rowNum: Payable To '$valPayable' dengan tipe '$typeNorm' tidak ditemukan di Master Data.";
+            }
+
+            // Validasi Bank
+            $valBank = $cell($r, 'Bank Tujuan');
+            $id_bank = $this->findIdByName(Bank::class, $valBank);
+            if ($valBank && !$id_bank) {
+                $errors[] = "Baris $rowNum: Bank '$valBank' tidak ditemukan di Master Data.";
+            }
+
+            // Validasi Currency
+            $valCurr = $cell($r, 'currency');
+            $id_currency = $this->findIdByName(Matauang::class, $valCurr);
+            if ($valCurr && !$id_currency) {
+                $errors[] = "Baris $rowNum: Currency '$valCurr' tidak ditemukan di Master Data.";
+            }
+
+            // Validasi Rek Tujuan (khusus softcopy)
+            $valRekTujuan = $cell($r, 'Nama Rekening Tujuan');
+            $id_rek_tujuan = null;
+            if (in_array($typeNorm, ['softcopy', 'automate', 'digital'])) {
+                $id_rek_tujuan = $this->findIdByName(Rektujuan::class, $valRekTujuan);
+                if ($valRekTujuan && !$id_rek_tujuan) {
+                    $errors[] = "Baris $rowNum: Rekening Tujuan '$valRekTujuan' tidak ditemukan di Master Data.";
+                }
+            }
 
             $dpp = $this->toNumber($cell($r, 'dpp')) ?? 0;
             $nilai_ppn = $this->toNumber($cell($r, 'ppn')) ?? 0;
@@ -108,32 +166,32 @@ class ImportController extends Controller
                 }
             }
 
+            if ($errors) continue; // Jangan kumpulkan data insert jika sudah ada error
+
             $inserts[] = [
                 'type' => $typeNorm,
                 'po_no' => $cell($r, 'PO Number'),
-                'id_category' => null,
+                'id_category' => $id_category,
 
                 'form_submission_time' => $this->parseDate($cell($r, 'Form Submission Time')),
                 'final_validation_time' => $this->parseDate($cell($r, 'Final Validation Time')),
                 'email' => $cell($r, 'email'),
 
-                'id_dept' => $this->findIdByName(Department::class, $cell($r, 'Requesting Department')),
-                'id_rek_sumber' => $this->findIdByName(Hu_reksumber::class, $cell($r, 'Hospital Unit & Rekening Sumber')),
-                'id_payable' => $this->findPayableIdByNameAndType(
-                    $cell($r, 'Payable To'),
-                    $typeNorm
-                ),
+                'id_dept' => $id_dept,
+                'id_rek_sumber' => $id_rek_sumber,
+                'id_payable' => $id_payable,
 
-                'nama_rekening_tujuan' => $cell($r, 'Nama Rekening Tujuan'),
-                'id_bank' => $this->findIdByName(Bank::class, $cell($r, 'Bank Tujuan')),
+                'nama_rekening_tujuan' => $valRekTujuan,
+                'id_bank' => $id_bank,
 
+                'id_rek_tujuan' => $id_rek_tujuan,
                 'no_rek_tujuan' => $cell($r, 'VA Number (no rekening tujuan)'),
 
                 'invoice_date' => $this->parseDate($cell($r, 'Invoice Date')),
                 'doc_no' => $this->normDocNo($cell($r, 'Document number(s)')),
 
                 'description' => $cell($r, 'description'),
-                'id_currency' => $this->findIdByName(Matauang::class, $cell($r, 'currency')),
+                'id_currency' => $id_currency,
 
                 'id_ppn' => $id_ppn,
                 'dpp' => $dpp,
@@ -157,6 +215,10 @@ class ImportController extends Controller
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
+        }
+
+        if (count($errors) > 0) {
+            return back()->withErrors($errors);
         }
 
         if (count($inserts) === 0) {

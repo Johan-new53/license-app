@@ -4,11 +4,10 @@
 <div class="login-card">
 
     {{-- Brand --}}
-    <div class="brand-logo">
-        <img src="{{ asset('siloam.png') }}" alt="Logo">
-        <span class="brand-name">{{ config('app.name', 'Finance App') }}</span>
+    {{-- Brand Logo Centered --}}
+    <div class="brand-logo" style="justify-content: center; margin-bottom: 2rem;">
+        <img src="{{ asset('siloam.png') }}" alt="Logo" style="width: 100px; height: 100px; padding: 10px;">
     </div>
-    <p class="login-subtitle">Masuk ke akun Anda untuk melanjutkan</p>
 
     {{-- Microsoft SSO --}}
     <a href="{{ route('login.microsoft') }}" class="btn-microsoft">
@@ -64,7 +63,7 @@
     </form>
 
     <p class="form-footer">
-        &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+        &copy; {{ date('Y') }} Siloam Hospitals. All rights reserved.
     </p>
 </div>
 @endsection

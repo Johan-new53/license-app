@@ -98,7 +98,25 @@
                         <div class="form-group">
                             <strong>File Softcopy :</strong><br>
                             @if($finance->input_file)
-                                <a href="{{ asset('storage/' . $finance->input_file) }}"
+                                
+@php
+    $fileLink = $finance->input_file;
+    $isUrl = false;
+    $href = asset('storage/' . $fileLink);
+    if ($fileLink) {
+        if (filter_var($fileLink, FILTER_VALIDATE_URL)) {
+            $isUrl = true;
+            $href = $fileLink;
+        } elseif (preg_match('/^(www\.)[a-z0-9\-]+\.[a-z]{2,}/i', $fileLink)) {
+            $isUrl = true;
+            $href = 'http://' . $fileLink;
+        } elseif (preg_match('/^(http|https):\/\//i', $fileLink)) {
+            $isUrl = true;
+            $href = $fileLink;
+        }
+    }
+@endphp
+<a href="{{ $href }}"
                                 target="_blank"
                                 class="btn btn-success btn-sm">
                                     Lihat / Download File
