@@ -54,7 +54,12 @@ class ImportController extends Controller
         $cell = function(array $row, string $key) use ($idx) {
             $k = $this->normHeader($key);          // normalize key yang diminta
             if (!isset($idx[$k])) return null;     // header tidak ada
-            return $row[$idx[$k]] ?? null;         // value cell
+            $val = $row[$idx[$k]] ?? null;
+            if (is_string($val)) {
+                $val = str_replace(["\xc2\xa0", "\xa0"], ' ', $val); // Hapus non-breaking space
+                $val = trim($val);                                   // Trim spasi di awal/akhir
+            }
+            return $val;
         };
 
         $now     = now();
@@ -62,68 +67,106 @@ class ImportController extends Controller
         $allPpn = \App\Models\Ppn::where('valid', 1)->get();
         $ppnOther = $allPpn->where('flag_ubah', 1)->first();
 
-        $errors  = [];
+        $detailedErrors = [];
+        $missingCategories = [];
+        $missingDepts = [];
+        $missingRekSumber = [];
+        $missingPayables = [];
+        $missingBanks = [];
+        $missingCurrencies = [];
+        $missingRekTujuan = [];
+        $hasAnyError = false;
+
         foreach (array_slice($rows, 1) as $rowIndex => $r) {
             $rowNum = $rowIndex + 2; // header adalah baris 1
             
             // skip row kosong
             if (count(array_filter($r, fn($v) => $v !== null && $v !== '')) === 0) continue;
 
+            $hasRowError = false;
+
             $typeRaw = $cell($r, 'type');
             $typeNorm = $typeRaw ? strtolower(str_replace(' ', '', (string)$typeRaw)) : null;
             if (!$typeNorm || !in_array($typeNorm, ['hardcopy', 'softcopy', 'automate', 'digital'])) {
-                $errors[] = "Baris $rowNum: Kolom 'type' (hardcopy/softcopy/automate/digital) tidak valid atau kosong.";
+                $detailedErrors[] = "Baris $rowNum: Kolom 'type' (hardcopy/softcopy/automate/digital) tidak valid atau kosong.";
+                $hasRowError = true;
             }
 
             // Validasi Category
             $valCategory = $cell($r, 'category');
             $id_category = $this->findIdByName(Category::class, $valCategory);
             if ($valCategory && !$id_category) {
-                $errors[] = "Baris $rowNum: Kategori '$valCategory' tidak ditemukan di Master Data.";
+                $detailedErrors[] = "Baris $rowNum: Kategori '$valCategory' tidak ditemukan di Master Data.";
+                $missingCategories[$valCategory] = true;
+                $hasRowError = true;
             }
 
             // Validasi Dept
             $valDept = $cell($r, 'Requesting Department');
             $id_dept = $this->findIdByName(Department::class, $valDept);
             if ($valDept && !$id_dept) {
-                $errors[] = "Baris $rowNum: Department '$valDept' tidak ditemukan di Master Data.";
+                $detailedErrors[] = "Baris $rowNum: Department '$valDept' tidak ditemukan di Master Data.";
+                $missingDepts[$valDept] = true;
+                $hasRowError = true;
             }
 
             // Validasi Rek Sumber
             $valRekSumber = $cell($r, 'Hospital Unit & Rekening Sumber');
             $id_rek_sumber = $this->findIdByName(Hu_reksumber::class, $valRekSumber);
             if ($valRekSumber && !$id_rek_sumber) {
-                $errors[] = "Baris $rowNum: Rekening Sumber '$valRekSumber' tidak ditemukan di Master Data.";
+                $detailedErrors[] = "Baris $rowNum: Rekening Sumber '$valRekSumber' tidak ditemukan di Master Data.";
+                $missingRekSumber[$valRekSumber] = true;
+                $hasRowError = true;
             }
 
             // Validasi Payable To
             $valPayable = $cell($r, 'Payable To');
             $id_payable = $this->findPayableIdByNameAndType($valPayable, $typeNorm);
             if ($valPayable && !$id_payable) {
-                $errors[] = "Baris $rowNum: Payable To '$valPayable' dengan tipe '$typeNorm' tidak ditemukan di Master Data.";
+                $detailedErrors[] = "Baris $rowNum: Payable To '$valPayable' dengan tipe '$typeNorm' tidak ditemukan di Master Data.";
+                $missingPayables["$valPayable" . ($typeNorm ? " [Tipe: $typeNorm]" : "")] = true;
+                $hasRowError = true;
             }
 
             // Validasi Bank
             $valBank = $cell($r, 'Bank Tujuan');
             $id_bank = $this->findIdByName(Bank::class, $valBank);
             if ($valBank && !$id_bank) {
-                $errors[] = "Baris $rowNum: Bank '$valBank' tidak ditemukan di Master Data.";
+                $detailedErrors[] = "Baris $rowNum: Bank '$valBank' tidak ditemukan di Master Data.";
+                $missingBanks[$valBank] = true;
+                $hasRowError = true;
             }
 
             // Validasi Currency
             $valCurr = $cell($r, 'currency');
             $id_currency = $this->findIdByName(Matauang::class, $valCurr);
             if ($valCurr && !$id_currency) {
-                $errors[] = "Baris $rowNum: Currency '$valCurr' tidak ditemukan di Master Data.";
+                $detailedErrors[] = "Baris $rowNum: Currency '$valCurr' tidak ditemukan di Master Data.";
+                $missingCurrencies[$valCurr] = true;
+                $hasRowError = true;
             }
 
             // Validasi Rek Tujuan (khusus softcopy)
             $valRekTujuan = $cell($r, 'Nama Rekening Tujuan');
             $id_rek_tujuan = null;
-            if (in_array($typeNorm, ['softcopy', 'automate', 'digital'])) {
-                $id_rek_tujuan = $this->findIdByName(Rektujuan::class, $valRekTujuan);
+            if ($typeNorm === 'softcopy') {
+                $noRekExcel = $cell($r, 'VA Number (no rekening tujuan)');
+                $bankExcel = $cell($r, 'Bank Tujuan');
+
+                // Gabungkan Nama - NoRek - Bank sesuai format kolom 'nama' di m_rek_tujuan
+                $fullNameRek = trim($valRekTujuan);
+                if ($noRekExcel !== null && $noRekExcel !== '') {
+                    $fullNameRek .= ' - ' . trim($noRekExcel);
+                }
+                if ($bankExcel !== null && $bankExcel !== '') {
+                    $fullNameRek .= ' - ' . trim($bankExcel);
+                }
+
+                $id_rek_tujuan = $this->findIdByName(Rektujuan::class, $fullNameRek);
                 if ($valRekTujuan && !$id_rek_tujuan) {
-                    $errors[] = "Baris $rowNum: Rekening Tujuan '$valRekTujuan' tidak ditemukan di Master Data.";
+                    $detailedErrors[] = "Baris $rowNum: Rekening Tujuan '$fullNameRek' tidak ditemukan di Master Data.";
+                    $missingRekTujuan[$fullNameRek] = true;
+                    $hasRowError = true;
                 }
             }
 
@@ -166,7 +209,11 @@ class ImportController extends Controller
                 }
             }
 
-            if ($errors) continue; // Jangan kumpulkan data insert jika sudah ada error
+            if ($hasRowError) {
+                $hasAnyError = true;
+            }
+
+            if ($hasRowError || $hasAnyError) continue;
 
             $inserts[] = [
                 'type' => $typeNorm,
@@ -217,6 +264,38 @@ class ImportController extends Controller
             ];
         }
 
+        $errors = $detailedErrors;
+
+        $summaryErrors = [];
+
+        if (!empty($missingCategories)) {
+            $summaryErrors[] = "Kategori:\n" . implode("\n", array_map(fn($v) => "- $v", array_keys($missingCategories))) . "\n";
+        }
+        if (!empty($missingDepts)) {
+            $summaryErrors[] = "Department:\n" . implode("\n", array_map(fn($v) => "- $v", array_keys($missingDepts))) . "\n";
+        }
+        if (!empty($missingRekSumber)) {
+            $summaryErrors[] = "Rekening Sumber:\n" . implode("\n", array_map(fn($v) => "- $v", array_keys($missingRekSumber))) . "\n";
+        }
+        if (!empty($missingPayables)) {
+            $summaryErrors[] = "Payable To:\n" . implode("\n", array_map(fn($v) => "- $v", array_keys($missingPayables))) . "\n";
+        }
+        if (!empty($missingBanks)) {
+            $summaryErrors[] = "Bank:\n" . implode("\n", array_map(fn($v) => "- $v", array_keys($missingBanks))) . "\n";
+        }
+        if (!empty($missingCurrencies)) {
+            $summaryErrors[] = "Currency:\n" . implode("\n", array_map(fn($v) => "- $v", array_keys($missingCurrencies))) . "\n";
+        }
+        if (!empty($missingRekTujuan)) {
+            $summaryErrors[] = "Rekening Tujuan:\n" . implode("\n", array_map(fn($v) => "- $v", array_keys($missingRekTujuan))) . "\n";
+        }
+
+        if (!empty($summaryErrors)) {
+            $errors[] = "--------------------------------------------------";
+            $errors[] = "DAFTAR MASTER DATA YANG BELUM ADA:";
+            $errors = array_merge($errors, $summaryErrors);
+        }
+
         if (count($errors) > 0) {
             return back()->withErrors($errors);
         }
@@ -226,7 +305,9 @@ class ImportController extends Controller
         }
 
         DB::transaction(function () use ($inserts) {
-            Finance::insert($inserts);
+            foreach (array_chunk($inserts, 500) as $chunk) {
+                Finance::insert($chunk);
+            }
         });
 
         return back()->with('status', 'Import berhasil. Total row: ' . count($inserts));
@@ -359,9 +440,14 @@ class ImportController extends Controller
 
         if (!$typeNorm) return null;
 
+        $dbType = $typeNorm;
+        if (in_array($typeNorm, ['hardcopy', 'automate', 'digital'])) {
+            $dbType = 'main';
+        }
+
         $row = Payableto::query()
             ->whereRaw('LOWER(nama) = ?', [strtolower($name)])
-            ->whereRaw('LOWER(REPLACE(type, " ", "")) = ?', [$typeNorm])
+            ->whereRaw('LOWER(REPLACE(type, " ", "")) = ?', [$dbType])
             ->where('valid', 1)
             ->first();
 
