@@ -34,7 +34,7 @@ class ReportController extends Controller
             $query->whereIn('status', $statuses);
         }
 
-        $finances = $query->orderBy('invoice_date', 'desc')->paginate(10);
+        $finances = $query->orderBy('invoice_date', 'desc')->paginate(10)->withQueryString();
 
         return view('reports.index', compact('finances'));
     }
