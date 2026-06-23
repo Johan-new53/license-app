@@ -11,11 +11,7 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto'])
-            ->where(function($q) {
-                $q->where('status', 'LIKE', 'approved%')
-                  ->orWhere('status', 'paid');
-            });
+        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto']);
 
         // Filter seperti di Hardcopy
         if ($request->filled('date_from')) {
@@ -34,7 +30,8 @@ class ReportController extends Controller
             $query->where('type', $request->type);
         }
         if ($request->filled('status')) {
-            $query->where('status', 'like', $request->status . '%');
+            $statuses = (array) $request->status;
+            $query->whereIn('status', $statuses);
         }
 
         $finances = $query->orderBy('invoice_date', 'desc')->paginate(10);

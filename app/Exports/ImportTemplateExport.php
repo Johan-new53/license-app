@@ -16,6 +16,7 @@ class ImportTemplateExport implements FromArray, WithHeadings, WithStyles
             [
                 'hardcopy', // type
                 'PO-12345', // PO Number
+                'CAPEX', // PO Category (Master Data Category)
                 '2024-01-01 10:00:00', // Form Submission Time
                 '2024-01-02 14:00:00', // Final Validation Time
                 'example@email.com', // email
@@ -49,6 +50,7 @@ class ImportTemplateExport implements FromArray, WithHeadings, WithStyles
         return [
             'type',
             'PO Number',
+            'PO Category',
             'Form Submission Time',
             'Final Validation Time',
             'email',
@@ -79,7 +81,7 @@ class ImportTemplateExport implements FromArray, WithHeadings, WithStyles
     public function styles(Worksheet $sheet)
     {
         return [
-            1    => ['font' => ['bold' => true]],
+            1 => ['font' => ['bold' => true]],
         ];
     }
 }

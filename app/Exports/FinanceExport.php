@@ -18,11 +18,7 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
 
     public function collection()
     {
-        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto'])
-            ->where(function($q) {
-                $q->where('status', 'LIKE', 'approved%')
-                  ->orWhere('status', 'paid');
-            });
+        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto']);
 
         if (!empty($this->filters['date_from'])) {
             $query->whereDate('invoice_date', '>=', $this->filters['date_from']);
@@ -40,7 +36,8 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
             $query->where('type', $this->filters['type']);
         }
         if (!empty($this->filters['status'])) {
-            $query->where('status', 'like', $this->filters['status'] . '%');
+            $statuses = (array) $this->filters['status'];
+            $query->whereIn('status', $statuses);
         }
 
         return $query->orderBy('invoice_date', 'desc')->get();
@@ -49,6 +46,7 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
+            'TYPE',
             'RECEIPT DATE INVOICE FROM DIVISION',
             'UNIT HOSPITALS',
             'SUPPLIER NAME',
@@ -72,6 +70,7 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
     public function map($finance): array
     {
         return [
+            $finance->type,
             $finance->created_at ? $finance->created_at->format('d-m-Y') : '',
             $finance->rek_sumber->nama ?? '',
             $finance->payableto->nama ?? '',
