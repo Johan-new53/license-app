@@ -298,7 +298,7 @@
                                     </a>
                                     @endcan
                                     @can('payable-list')
-                                    <a class="dropdown-item" href="{{ route('payable.index', ['type' => 'hardcopy']) }}">
+                                    <a class="dropdown-item" href="{{ route('payable.index', ['type' => 'main']) }}">
                                         <i class="fa-solid fa-file-invoice-dollar me-2"></i> Payable
                                     </a>
                                     @endcan

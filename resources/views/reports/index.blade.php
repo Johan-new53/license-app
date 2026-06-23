@@ -32,33 +32,39 @@
                 <option value="digital" {{ request('type') == 'digital' ? 'selected' : '' }}>digital</option>
             </select>
         </div>
-        <div class="col-lg-2">
-            <label class="form-label">Status</label>
-            <select name="status" class="form-control">
-                <option value="">-- All Status --</option>
-                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
-                <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
-            </select>
-        </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <label class="form-label">Document No</label>
             <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" placeholder="Search..">
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <label class="form-label">Description</label>
             <input type="text" name="description" value="{{ request('description') }}" class="form-control" placeholder="Search..">
         </div>
 
-        <div class="row g-1 mb-0 mt-2">
-            <div class="col-10">
-                <button class="btn btn-primary w-100" type="submit">
-                    <i class="fa fa-search"></i> Filter
-                </button>
-            </div>
-            <div class="col-2">
-                <a href="{{ route('reports.index') }}" class="btn btn-secondary w-100">
-                    Reset
-                </a>
+        <div class="col-12 mt-2">
+            <label class="form-label">Status</label>
+            <select name="status[]" class="form-control select2-status" multiple="multiple">
+                <option value="requested" {{ is_array(request('status')) && in_array('requested', request('status')) ? 'selected' : '' }}>Requested</option>
+                <option value="approved 1" {{ is_array(request('status')) && in_array('approved 1', request('status')) ? 'selected' : '' }}>Approved 1</option>
+                <option value="approved 2" {{ is_array(request('status')) && in_array('approved 2', request('status')) ? 'selected' : '' }}>Approved 2</option>
+                <option value="rejected 1" {{ is_array(request('status')) && in_array('rejected 1', request('status')) ? 'selected' : '' }}>Rejected 1</option>
+                <option value="rejected 2" {{ is_array(request('status')) && in_array('rejected 2', request('status')) ? 'selected' : '' }}>Rejected 2</option>
+                <option value="paid" {{ is_array(request('status')) && in_array('paid', request('status')) ? 'selected' : '' }}>Paid</option>
+            </select>
+        </div>
+
+        <div class="col-12 mt-3">
+            <div class="row g-2">
+                <div class="col-10">
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="fa fa-search"></i> Filter
+                    </button>
+                </div>
+                <div class="col-2">
+                    <a href="{{ route('reports.index') }}" class="btn btn-secondary w-100">
+                        Reset
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -118,5 +124,15 @@
 </div>
 
 {{ $finances->links('pagination::bootstrap-5') }}
+
+<script>
+    $(document).ready(function() {
+        $('.select2-status').select2({
+            placeholder: "-- All Status --",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
 
 @endsection

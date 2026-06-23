@@ -93,7 +93,7 @@ class ImportController extends Controller
             }
 
             // Validasi Category
-            $valCategory = $cell($r, 'category');
+            $valCategory = $cell($r, 'PO Category');
             $id_category = $this->findIdByName(Category::class, $valCategory);
             if ($valCategory && !$id_category) {
                 $detailedErrors[] = "Baris $rowNum: Kategori '$valCategory' tidak ditemukan di Master Data.";
@@ -209,6 +209,22 @@ class ImportController extends Controller
                 }
             }
 
+            // Validasi Status
+            $statusRaw = $cell($r, 'status');
+            $statusNorm = null;
+            if ($statusRaw !== null && $statusRaw !== '') {
+                $statusNorm = preg_replace('/\s+/', ' ', strtolower(trim((string)$statusRaw)));
+                if ($statusNorm === 'approve' || $statusNorm === 'approved') {
+                    $statusNorm = 'approved 2';
+                }
+            }
+
+            $allowedStatuses = ['requested', 'approved 1', 'approved 2', 'rejected 1', 'rejected 2', 'paid'];
+            if (!$statusNorm || !in_array($statusNorm, $allowedStatuses)) {
+                $detailedErrors[] = "Baris $rowNum: Kolom 'status' tidak valid atau kosong. Hanya boleh: " . implode(', ', $allowedStatuses);
+                $hasRowError = true;
+            }
+
             if ($hasRowError) {
                 $hasAnyError = true;
             }
@@ -253,7 +269,7 @@ class ImportController extends Controller
                 'payment_term' => $cell($r, 'Payment Term'),
                 'journal_no' => $cell($r, 'Journal Number'),
 
-                'status' => $cell($r, 'status'),
+                'status' => $statusNorm,
                 'payment_date' => $this->parseDate($cell($r, 'Due Date')),
 
                 'user_payment_entry' => null,
