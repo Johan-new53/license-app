@@ -56,10 +56,27 @@ class RektujuanController extends Controller
             'nama' => 'required',
         ]);
 
+        $namaInput = trim($request->input('nama'));
+        $norek = trim($request->input('norek') ?? '');
+        $bank = trim($request->input('bank') ?? '');
+
+        // Ambil nama bersih (jika user memasukkan nama gabungan secara manual, ambil bagian pertama saja)
+        $parts = explode(' - ', $namaInput);
+        $cleanNama = trim($parts[0]);
+
+        // Buat nama gabungan otomatis
+        $fullName = $cleanNama;
+        if ($norek !== '') {
+            $fullName .= ' - ' . $norek;
+        }
+        if ($bank !== '') {
+            $fullName .= ' - ' . $bank;
+        }
+
         Rektujuan::create([
-            'nama' => $request->input('nama'),
-            'norek' => $request->input('norek'),
-            'bank' => $request->input('bank'),
+            'nama' => $fullName,
+            'norek' => $norek !== '' ? $norek : null,
+            'bank' => $bank !== '' ? $bank : null,
             'valid' => 1,
             'user_entry' => auth()->user()->name,
         ]);
@@ -71,6 +88,11 @@ class RektujuanController extends Controller
     public function edit($id): View
     {
         $rektujuan = Rektujuan::find($id);
+        
+        // Pisahkan nama gabungan untuk ditampilkan sebagai nama asli di form edit
+        $parts = explode(' - ', $rektujuan->nama);
+        $rektujuan->nama = trim($parts[0]);
+        
         return view('masterdata.rektujuan.edit', compact('rektujuan'));
     }
 
@@ -81,9 +103,27 @@ class RektujuanController extends Controller
         ]);
 
         $rektujuan = Rektujuan::find($id);
-        $rektujuan->nama = $request->input('nama');
-        $rektujuan->norek = $request->input('norek');
-        $rektujuan->bank = $request->input('bank');
+        
+        $namaInput = trim($request->input('nama'));
+        $norek = trim($request->input('norek') ?? '');
+        $bank = trim($request->input('bank') ?? '');
+
+        // Ambil nama bersih (jika user memasukkan nama gabungan secara manual, ambil bagian pertama saja)
+        $parts = explode(' - ', $namaInput);
+        $cleanNama = trim($parts[0]);
+
+        // Buat nama gabungan otomatis
+        $fullName = $cleanNama;
+        if ($norek !== '') {
+            $fullName .= ' - ' . $norek;
+        }
+        if ($bank !== '') {
+            $fullName .= ' - ' . $bank;
+        }
+
+        $rektujuan->nama = $fullName;
+        $rektujuan->norek = $norek !== '' ? $norek : null;
+        $rektujuan->bank = $bank !== '' ? $bank : null;
         $rektujuan->valid = $request->input('valid');
         $rektujuan->user_entry = auth()->user()->name;
         $rektujuan->save();

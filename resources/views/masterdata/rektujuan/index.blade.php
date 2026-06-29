@@ -61,11 +61,12 @@
     <thead>
         <tr>
             <th class="text-center" width="100px">No</th>
-            <th class="text-center">Name</th>
+            <th class="text-center">Nama Sistem (Gabungan)</th>
+            <th class="text-center">Nama Rekening</th>
             <th class="text-center">No Rekening</th>
             <th class="text-center">Bank</th>
             <th class="text-center" width="100px">Valid</th>
-            <th class="text-center" width="280px">Action</th>
+            <th class="text-center" width="100px">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -74,6 +75,7 @@
 
             <td class="text-center">{{ ++$i }}</td>
             <td>{{ $d->nama }}</td>
+            <td>{{ explode(' - ', $d->nama)[0] }}</td>
             <td class="text-center">{{ $d->norek }}</td>
             <td class="text-center">{{ $d->bank }}</td>
             <td class="text-center">
