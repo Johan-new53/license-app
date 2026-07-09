@@ -31,7 +31,7 @@ class ReksumberController extends Controller
             $query->where('valid', $request->valid);
         }
 
-        $reksumber = $query->orderBy('nama', 'ASC')->paginate(10);
+        $reksumber = $query->orderBy('id', 'desc')->paginate(10);
         return view('masterdata.reksumber.index', compact('reksumber'))
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }

@@ -55,12 +55,10 @@ class SoftcopyController extends Controller
         {
             $query = Finance::query()
             ->where('user_entry', auth()->id())
-            ->where('type', 'softcopy')
-            ->orderBy('invoice_date','desc');
+            ->where('type', 'softcopy');
         } else {
             $query = Finance::query()             
-            ->where('type', 'softcopy')
-            ->orderBy('invoice_date','desc');
+            ->where('type', 'softcopy');
         }        
 
         // filter tanggal invoice_date

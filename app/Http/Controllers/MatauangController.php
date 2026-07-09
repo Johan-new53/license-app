@@ -31,7 +31,7 @@ class MatauangController extends Controller
             $query->where('valid', $request->valid);
         }
 
-        $matauang = $query->orderBy('nama', 'ASC')->paginate(10);
+        $matauang = $query->orderBy('id', 'desc')->paginate(10);
         return view('masterdata.matauang.index', compact('matauang'))
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }

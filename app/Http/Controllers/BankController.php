@@ -31,7 +31,7 @@ class BankController extends Controller
             $query->where('valid', $request->valid);
         }
 
-        $bank = $query->orderBy('nama', 'ASC')->paginate(10);
+        $bank = $query->orderBy('id', 'desc')->paginate(10);
         return view('masterdata.bank.index', compact('bank'))
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }

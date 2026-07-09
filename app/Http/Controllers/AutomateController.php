@@ -59,12 +59,10 @@ class AutomateController extends Controller
         {
             $query = Finance::query()
             ->where('user_entry', auth()->id())
-            ->where('type', 'automate')
-            ->orderBy('invoice_date','desc');
+            ->where('type', 'automate');
         } else {
             $query = Finance::query()             
-            ->where('type', 'automate')
-            ->orderBy('invoice_date','desc');
+            ->where('type', 'automate');
         }            
 
         // filter tanggal invoice_date

@@ -45,7 +45,7 @@ class ProductController extends Controller
             $query->where('pic', 'like', '%' . $request->pic . '%');
         }
 
-        $products = $query->paginate(6);
+        $products = $query->orderBy('id', 'desc')->paginate(6);
 
         return view('products.index', compact('products'));
     }
@@ -70,7 +70,7 @@ class ProductController extends Controller
             $query->where('pic', 'like', '%' . $request->pic . '%');
         }
 
-        $products = $query->paginate(6);
+        $products = $query->orderBy('id', 'desc')->paginate(6);
 
         return view('products.index', compact('products'));
     }

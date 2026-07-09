@@ -39,7 +39,7 @@ class PpnController extends Controller
             $query->where('valid', $request->valid);
         }
 
-        $ppn = $query->orderBy('nama', 'ASC')->paginate(10);
+        $ppn = $query->orderBy('id', 'desc')->paginate(10);
         return view('masterdata.ppn.index', compact('ppn'))
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }

@@ -62,20 +62,23 @@
 
 
 <div class="container mt-4">
-    @if(Auth::user()->level != 0)
     <ul class="nav nav-tabs" id="myTab" role="tablist">
+        @if(Auth::user()->level != 0)
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="data1-tab" data-bs-toggle="tab" data-bs-target="#data1"
                 type="button" role="tab" aria-controls="data1" aria-selected="true">Document Information</button>
         </li>
+        @endif
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="data2-tab" data-bs-toggle="tab" data-bs-target="#data2"
-                type="button" role="tab" aria-controls="data2" aria-selected="true">Requesting</button>
+            <button class="nav-link {{ Auth::user()->level == 0 ? 'active' : '' }}" id="data2-tab" data-bs-toggle="tab" data-bs-target="#data2"
+                type="button" role="tab" aria-controls="data2" aria-selected="{{ Auth::user()->level == 0 ? 'true' : 'false' }}">Requesting</button>
         </li>
+        @if(Auth::user()->level != 0)
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="data3-tab" data-bs-toggle="tab" data-bs-target="#data3"
                 type="button" role="tab" aria-controls="data3" aria-selected="false">Rekening Tujuan</button>
         </li>
+        @endif
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="data4-tab" data-bs-toggle="tab" data-bs-target="#data4"
                 type="button" role="tab" aria-controls="data4" aria-selected="false">Document Number</button>
@@ -88,6 +91,7 @@
     </ul>
 
     <div class="tab-content" id="myTabContent">
+        @if(Auth::user()->level != 0)
         <div class="tab-pane fade show active p-3" id="data1" role="tabpanel" aria-labelledby="data1-tab">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
@@ -116,7 +120,8 @@
                 </select>
             </div>
         </div>
-        <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
+        @endif
+        <div class="tab-pane fade {{ Auth::user()->level == 0 ? 'show active' : '' }} p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
 
             <div class="col-xs-4 col-sm-4 col-md-4">
             <strong>Requesting Department * :</strong>
@@ -132,6 +137,7 @@
             </div>
             <br>
 
+            @if(Auth::user()->level != 0)
             <div class="col-xs-4 col-sm-4 col-md-4">
                     <strong>Hospital unit dan Rekening sumber * :</strong>
                     <select name="id_rek_sumber" class="form-control select2" required>
@@ -145,6 +151,7 @@
                     </select>
             </div>
             <br>
+            @endif
 
             <div class="col-xs-4 col-sm-4 col-md-4">
                     <strong>Payable To * :</strong>
@@ -160,6 +167,7 @@
             </div>
             <br>
         </div>
+        @if(Auth::user()->level != 0)
         <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">
 
             <div class="col-xs-6 col-sm-6 col-md-6">
@@ -196,8 +204,10 @@
                 </div>
             </div>
         </div>
+        @endif
         <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">
 
+            @if(Auth::user()->level != 0)
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Document Number(s) * :</strong><br>
@@ -239,6 +249,7 @@
                         </select>
                 </div>
                 <br>
+            @endif
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Journal Number * :</strong>
@@ -309,19 +320,7 @@
 
         </div>
     </div>
-
-    @else
-        <div class="p-3">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group mb-3">
-                        <strong>Journal Number * :</strong>
-                        <input type="text" name="journal_no" value="{{ $finance->journal_no }}" class="form-control" placeholder="Masukkan Journal Number" required>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
+</div>
 
 
 
