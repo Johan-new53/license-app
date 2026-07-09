@@ -39,7 +39,7 @@ class RektujuanController extends Controller
             $query->where('valid', $request->valid);
         }
 
-        $rektujuan = $query->orderBy('nama', 'ASC')->paginate(10);
+        $rektujuan = $query->orderBy('id', 'desc')->paginate(10);
         return view('masterdata.rektujuan.index', compact('rektujuan'))
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }

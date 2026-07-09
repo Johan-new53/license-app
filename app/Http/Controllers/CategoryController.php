@@ -31,7 +31,7 @@ class CategoryController extends Controller
             $query->where('valid', $request->valid);
         }
 
-        $category = $query->orderBy('nama', 'ASC')->paginate(10);
+        $category = $query->orderBy('id', 'desc')->paginate(10);
         return view('masterdata.category.index', compact('category'))
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }

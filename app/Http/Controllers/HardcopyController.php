@@ -57,12 +57,10 @@ class HardcopyController extends Controller
         {
             $query = Finance::query()
             ->where('user_entry', auth()->id())
-            ->where('type', 'hardcopy')
-            ->orderBy('invoice_date','desc');
+            ->where('type', 'hardcopy');
         } else {
             $query = Finance::query()             
-            ->where('type', 'hardcopy')
-            ->orderBy('invoice_date','desc');
+            ->where('type', 'hardcopy');
         }        
 
         // filter tanggal invoice_date

@@ -47,7 +47,7 @@ class PayableController extends Controller
             $query->where('valid', $request->valid);
         }
 
-        $payable = $query->orderBy('nama', 'ASC')->paginate(10)->appends($request->query());
+        $payable = $query->orderBy('id', 'desc')->paginate(10)->appends($request->query());
 
         return view('masterdata.payable.index', compact('payable', 'type', 'lastSync'))
             ->with('i', ($request->input('page', 1) - 1) * 10);

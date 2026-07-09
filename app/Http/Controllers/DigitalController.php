@@ -56,12 +56,10 @@ class DigitalController extends Controller
         {
             $query = Finance::query()
             ->where('user_entry', auth()->id())
-            ->where('type', 'digital')
-            ->orderBy('invoice_date','desc');
+            ->where('type', 'digital');
         } else {
             $query = Finance::query()             
-            ->where('type', 'digital')
-            ->orderBy('invoice_date','desc');
+            ->where('type', 'digital');
         }    
         
 
@@ -144,6 +142,10 @@ class DigitalController extends Controller
         if (auth()->user()->level == 0) {
             $request->validate([
                 'journal_no' => 'required',
+                'id_dept' => 'required',
+                'id_payable' => 'required',
+                'dpp' => 'required',
+                'id_ppn' => 'required',
             ]);
         } else {
             $request->validate([
@@ -293,14 +295,30 @@ class DigitalController extends Controller
         if (auth()->user()->level == 0) {
             $request->validate([
                 'journal_no' => 'required',
+                'id_dept' => 'required',
+                'id_payable' => 'required',
+                'dpp' => 'required',
+                'id_ppn' => 'required',
                 'alasan' => 'required',
             ]);
 
             DB::transaction(function () use ($finance, $request) {
-                $finance->update([
-                    'journal_no' => $request->journal_no,
-                    'description' => 'Journal Number : '.$request->journal_no,
+                $data = $request->only([
+                    'journal_no', 'id_dept', 'id_payable', 'dpp', 'id_ppn', 'persen_ppn', 'nilai_ppn', 'pph', 'total_amount'
                 ]);
+
+                if ($request->filled('id_payable')) {
+                    $hari = Payableto::where('id', $request->id_payable)->value('hari') ?? 0;
+                    $data['top_hari'] = $hari;
+                    $data['due_date'] = $finance->created_at ? $finance->created_at->addDays($hari) : now()->addDays($hari);
+                } else {
+                    $data['top_hari'] = 0;
+                    $data['due_date'] = $finance->created_at ? $finance->created_at : now();
+                }
+
+                $data['description'] = 'Journal Number : '.$request->journal_no;
+
+                $finance->update($data);
 
                 History_approval::create([
                     'id_finance' => $finance->id,
@@ -311,13 +329,13 @@ class DigitalController extends Controller
             });
 
             if ($request->source == 'approval_index') {
-                return redirect()->route('approvals.index')->with('success', 'Journal Number updated successfully');
+                return redirect()->route('approvals.index')->with('success', 'Digital updated successfully');
             } elseif ($request->source == 'approval_show') {
-                return redirect()->route('approvals.show', $finance->id)->with('success', 'Journal Number updated successfully');
+                return redirect()->route('approvals.show', $finance->id)->with('success', 'Digital updated successfully');
             }
 
             return redirect()->route('digitals.index')
-                ->with('success', 'Journal Number updated successfully');
+                ->with('success', 'Digital updated successfully');
         }
 
         $request->validate([

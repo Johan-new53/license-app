@@ -31,7 +31,7 @@ class DepartmentController extends Controller
             $query->where('valid', $request->valid);
         }
 
-        $department = $query->orderBy('nama', 'ASC')->paginate(10);
+        $department = $query->orderBy('id', 'desc')->paginate(10);
         return view('masterdata.department.index', compact('department'))
             ->with('i', ($request->input('page', 1) - 1) * 10);
     }
