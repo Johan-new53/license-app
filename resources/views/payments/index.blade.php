@@ -68,15 +68,16 @@
         <thead>
             <tr>
                 <th style="width:3%">No</th>
-                <th style="width:8%">Invoice Date</th>
-                <th style="width:8%">Created Date</th>
+                <th style="width:7%">Invoice Date</th>
+                <th style="width:7%">Created Date</th>
                 <th style="width:15%">Nama</th>
                 <th style="width:3%">Top</th>
                 <th style="width:8%">Due Date</th>
                 <th style="width:8%">Type</th>
                 <th style="width:15%">Document No.</th>
-                <th style="width:25%">Description</th>
+                <th style="width:20%">Description</th>
                 <th style="width:7%">Status</th>
+                <th style="width:7%">Payment Date</th>
                 <th style="width:5%">Action</th>
             </tr>
         </thead>
@@ -94,6 +95,7 @@
             <td style="word-break:break-word;">{{ $payment->doc_no }}</td>
             <td style="word-break:break-word;">{{ $payment->description }}</td>
             <td style="white-space:nowrap;">{{ $payment->status }}</td>
+            <td style="white-space:nowrap;">{{ $payment->payment_date ? $payment->payment_date->format('d-m-Y') : '-' }}</td>
             <td>
                 <form action="" method="POST">
                     <a class="btn btn-info btn-sm" href="{{ route('payments.show',$payment->id) }}">
