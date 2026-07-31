@@ -92,12 +92,13 @@
 <table class="table table-bordered" style="width:100%;">
     <thead>
         <tr>
-            <th style="width:5%">No</th>
-            <th style="width:10%">Invoice Date</th>
-            <th style="width:16%">Payable To</th>
+            <th style="width:3%">No</th>
+            <th style="width:8%">Invoice Date</th>
+            <th style="width:12%">Payable To</th>
             <th style="width:18%">Document No.</th>
             <th style="width:35%">Description</th>
             <th style="width:8%">Status</th>
+            <th style="width:8%">Payment Date</th>
             <th style="width:8%">Action</th>
         </tr>
     </thead>
@@ -119,6 +120,9 @@
             </td>
             <td style="white-space:nowrap;">
                 {{ $hardcopy->status }}
+            </td>
+            <td style="white-space:nowrap;">
+                {{ $hardcopy->payment_date ? $hardcopy->payment_date->format('d-m-Y') : '-' }}
             </td>
             <td>
                 <form action="{{ route('hardcopys.destroy',$hardcopy->id) }}" method="POST"

@@ -88,12 +88,13 @@
 <div class="table-responsive">
     <table class="table table-bordered">
         <tr>
-            <th style="width:5%">No</th>
-            <th style="width:10%">Invoice Date</th>
-            <th style="width:16%">Payable To</th>
+            <th style="width:3%">No</th>
+            <th style="width:8%">Invoice Date</th>
+            <th style="width:12%">Payable To</th>
             <th style="width:18%">Document No.</th>
             <th style="width:35%">Description</th>
             <th style="width:8%">Status</th>
+            <th style="width:8%">Payment Date</th>
             <th style="width:8%">Action</th>
         </tr>
         @foreach ($automates as $automate)
@@ -113,6 +114,9 @@
             </td>
             <td style="white-space:nowrap;">
                 {{ $automate->status }}
+            </td>
+            <td style="white-space:nowrap;">
+                {{ $automate->payment_date ? $automate->payment_date->format('d-m-Y') : '-' }}
             </td>
             <td>
                 <form action="{{ route('automates.destroy',$automate->id) }}" method="POST"

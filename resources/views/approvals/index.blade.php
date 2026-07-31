@@ -86,12 +86,13 @@
     <table class="table table-bordered" style="width:100%;">
         <thead>
             <tr>
-                <th style="width:5%">No</th>
-                <th style="width:10%">Invoice Date</th>
+                <th style="width:3%">No</th>
+                <th style="width:8%">Invoice Date</th>
                 <th style="width:8%">Type</th>
                 <th style="width:24%">Document No.</th>
-                <th style="width:35%">Description</th>
+                <th style="width:31%">Description</th>
                 <th style="width:8%">Status</th>
+                <th style="width:8%">Payment Date</th>
                 <th style="width:8%">Action</th>
             </tr>
         </thead>
@@ -106,6 +107,10 @@
             <td style="word-break:break-word;">{{ $approval->doc_no }}</td>
             <td style="word-break:break-word;">{{ $approval->description }}</td>
             <td style="white-space:nowrap;">{{ $approval->status }}</td>
+            <td style="white-space:nowrap;">
+                {{ $approval->payment_date ? $approval->payment_date->format('d-m-Y') : '-' }}
+            </td>
+
             <td>
                 <form action="" method="POST" style="display:flex; flex-direction:column; gap:5px;">
                     @if($approval->type == 'digital')

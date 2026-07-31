@@ -87,15 +87,16 @@
         <thead>
             <tr>
                 <th style="width:3%">No</th>
-                <th style="width:8%">Invoice Date</th>
-                <th style="width:8%">Created Date</th>
+                <th style="width:7%">Invoice Date</th>
+                <th style="width:7%">Created Date</th>
                 <th style="width:15%">Nama</th>
                 <th style="width:3%">Top</th>
                 <th style="width:8%">Due Date</th>
                 <th style="width:8%">Type</th>
                 <th style="width:15%">Document No.</th>
-                <th style="width:25%">Description</th>
+                <th style="width:20%">Description</th>
                 <th style="width:7%">Status</th>
+                <th style="width:7%">Payment Date</th>
             </tr>
         </thead>
         <tbody>
@@ -112,6 +113,7 @@
                 <td style="word-break:break-word;">{{ $finance->doc_no }}</td>
                 <td style="word-break:break-word;">{{ $finance->description }}</td>
                 <td style="white-space:nowrap;">{{ $finance->status }}</td>
+                <td style="white-space:nowrap;">{{ $finance->payment_date ? date('d-m-Y', strtotime($finance->payment_date)) : '-' }}</td>
             </tr>
             @endforeach
         @else

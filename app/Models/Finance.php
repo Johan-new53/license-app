@@ -9,6 +9,9 @@ class Finance extends Model
    
     protected $casts = [
     'invoice_date' => 'datetime',
+    'payment_date' => 'datetime',
+    'created_at' => 'datetime',
+    'updated_at' => 'datetime',
     'due_date' => 'date',
     ];
     protected $table = 'finances';

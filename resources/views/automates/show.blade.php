@@ -95,6 +95,30 @@
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
+                            <strong>Created At:</strong>
+                            {{ $finance->created_at ? \Carbon\Carbon::parse($finance->created_at)->format('d-M-Y') : '-' }}
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <strong>Top(hari):</strong>
+                            {{ $finance->top_hari }}
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <strong>Due Date:</strong>
+                            {{ $finance->due_date ? \Carbon\Carbon::parse($finance->due_date)->format('d-M-Y') : '-' }}
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <strong>Payment Date:</strong>
+                            {{ $finance->payment_date ? \Carbon\Carbon::parse($finance->payment_date)->format('d-M-Y') : '-' }}
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
                             <strong>Document number(s) :</strong>
                             {{ $finance->doc_no }}
                         </div>
