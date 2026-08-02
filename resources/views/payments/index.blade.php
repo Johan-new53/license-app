@@ -86,16 +86,16 @@
         @foreach ($payments as $payment)
         <tr>
             <td>{{ ++$i }}</td>
-            <td style="white-space:nowrap;">{{ $payment->invoice_date ? $payment->invoice_date->format('d-m-Y') : '-' }}</td>
-            <td style="white-space:nowrap;">{{ $payment->created_at->format('d-m-Y') }}</td>
+            <td style="white-space:nowrap;">{{ $payment->invoice_date ? \Carbon\Carbon::parse($payment->invoice_date)->format('d-m-Y') : '-' }}</td>
+            <td style="white-space:nowrap;">{{ $payment->created_at ? \Carbon\Carbon::parse($payment->created_at)->format('d-m-Y') : '-' }}</td>
             <td style="word-break:break-word;">{{ $payment->nama_payable }}</td>
             <td>{{ $payment->top_hari }}</td>            
-            <td style="white-space:nowrap;">{{ $payment->due_date ? $payment->due_date->format('d-m-Y') : '-' }}</td>
+            <td style="white-space:nowrap;">{{ $payment->due_date ? \Carbon\Carbon::parse($payment->due_date)->format('d-m-Y') : '-' }}</td>
             <td style="white-space:nowrap;">{{ $payment->type }}</td>
             <td style="word-break:break-word;">{{ $payment->doc_no }}</td>
             <td style="word-break:break-word;">{{ $payment->description }}</td>
             <td style="white-space:nowrap;">{{ $payment->status }}</td>
-            <td style="white-space:nowrap;">{{ $payment->payment_date ? $payment->payment_date->format('d-m-Y') : '-' }}</td>
+            <td style="white-space:nowrap;">{{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('d-m-Y') : '-' }}</td>
             <td>
                 <form action="" method="POST">
                     <a class="btn btn-info btn-sm" href="{{ route('payments.show',$payment->id) }}">

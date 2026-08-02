@@ -106,7 +106,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td style="white-space:nowrap;">
-                {{ $approval->invoice_date ? $approval->invoice_date->format('d-m-Y') : '-' }}
+                {{ $approval->invoice_date ? \Carbon\Carbon::parse($approval->invoice_date)->format('d-m-Y') : '-' }}
             </td>
             <td style="white-space:nowrap;">{{ $approval->type }}</td>
             <td style="word-break:break-word;">
@@ -116,7 +116,7 @@
             <td style="word-break:break-word;">{{ $approval->description }}</td>
             <td style="white-space:nowrap;">{{ $approval->status }}</td>
             <td style="white-space:nowrap;">
-                {{ $approval->payment_date ? $approval->payment_date->format('d-m-Y') : '-' }}
+                {{ $approval->payment_date ? \Carbon\Carbon::parse($approval->payment_date)->format('d-m-Y') : '-' }}
             </td>
 
             <td>

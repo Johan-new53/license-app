@@ -114,7 +114,7 @@
             <tr>
                 <td class="text-center">{{ ++$i }}</td>
                 <td><span class="badge bg-primary text-uppercase">{{ $finance->type }}</span></td>
-                <td>{{ $finance->created_at ? $finance->created_at->format('d-m-Y') : '-' }}</td>
+                <td>{{ $finance->created_at ? \Carbon\Carbon::parse($finance->created_at)->format('d-m-Y') : '-' }}</td>
                 <td>{{ $finance->rek_sumber->nama ?? '-' }}</td>
                 <td>{{ $finance->payableto->nama ?? '-' }}</td>
                 <td>{{ $finance->invoice_date ? date('d-m-Y', strtotime($finance->invoice_date)) : '-' }}</td>

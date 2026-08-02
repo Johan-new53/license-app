@@ -104,7 +104,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td style="white-space:nowrap;">
-                {{ $digital->invoice_date ? $digital->invoice_date->format('d-m-Y') : '-' }}
+                {{ $digital->invoice_date ? \Carbon\Carbon::parse($digital->invoice_date)->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
                 {{ $digital->payableto->nama ?? null }}
@@ -119,7 +119,7 @@
                 {{ $digital->status }}
             </td>
             <td style="white-space:nowrap;">
-                {{ $digital->payment_date ? $digital->payment_date->format('d-m-Y') : '-' }}
+                {{ $digital->payment_date ? \Carbon\Carbon::parse($digital->payment_date)->format('d-m-Y') : '-' }}
             </td>
 
             <td>

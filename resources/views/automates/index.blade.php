@@ -95,7 +95,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td style="white-space:nowrap;">
-                {{ $automate->invoice_date ? $automate->invoice_date->format('d-m-Y') : '-' }}
+                {{ $automate->invoice_date ? \Carbon\Carbon::parse($automate->invoice_date)->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
                 {{ $automate->payableto->nama ?? null }}
@@ -110,7 +110,7 @@
                 {{ $automate->status }}
             </td>
             <td style="white-space:nowrap;">
-                {{ $automate->payment_date ? $automate->payment_date->format('d-m-Y') : '-' }}
+                {{ $automate->payment_date ? \Carbon\Carbon::parse($automate->payment_date)->format('d-m-Y') : '-' }}
             </td>
             <td>
                 <form action="{{ route('automates.destroy',$automate->id) }}" method="POST"

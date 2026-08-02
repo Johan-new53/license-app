@@ -101,7 +101,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td style="white-space:nowrap;">
-                {{ $hardcopy->invoice_date ? $hardcopy->invoice_date->format('d-m-Y') : '-' }}
+                {{ $hardcopy->invoice_date ? \Carbon\Carbon::parse($hardcopy->invoice_date)->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
                 {{ $hardcopy->payableto->nama ?? null }}
@@ -116,7 +116,7 @@
                 {{ $hardcopy->status }}
             </td>
             <td style="white-space:nowrap;">
-                {{ $hardcopy->payment_date ? $hardcopy->payment_date->format('d-m-Y') : '-' }}
+                {{ $hardcopy->payment_date ? \Carbon\Carbon::parse($hardcopy->payment_date)->format('d-m-Y') : '-' }}
             </td>
             <td>
                 <form action="{{ route('hardcopys.destroy',$hardcopy->id) }}" method="POST"

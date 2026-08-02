@@ -95,7 +95,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td style="white-space:nowrap;">
-                {{ $softcopy->invoice_date ? $softcopy->invoice_date->format('d-m-Y') : '-' }}
+                {{ $softcopy->invoice_date ? \Carbon\Carbon::parse($softcopy->invoice_date)->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
                 {{ $softcopy->payableto->nama ?? null }}
@@ -110,7 +110,7 @@
                 {{ $softcopy->status }}
             </td>
             <td style="white-space:nowrap;">
-                {{ $softcopy->payment_date ? $softcopy->payment_date->format('d-m-Y') : '-' }}
+                {{ $softcopy->payment_date ? \Carbon\Carbon::parse($softcopy->payment_date)->format('d-m-Y') : '-' }}
             </td>
             <td>
                 <form action="{{ route('softcopys.destroy',$softcopy->id) }}" method="POST"
