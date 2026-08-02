@@ -9,7 +9,8 @@ class DocNoCheckService
     private const FILTER_MAP = [
         'id_dept'       => 'id_dept',
         'id_rek_sumber' => 'id_rek_sumber',
-        'id_payable_h'  => 'id_payable_h',
+        'id_payable'    => 'id_payable',
+        'id_payable_h'  => 'id_payable',
         'id_bank'       => 'id_bank',
         'id_currency'   => 'id_currency',
     ];

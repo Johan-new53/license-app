@@ -340,8 +340,8 @@
     url: "{{ route('checkDocNo') }}",
     type: "all",
     ignore_id: {{ $finance->id }},
-    filter_field: "id_dept", // bersifat optional contoh: "id_dept" (sesuaikan dengan nama field filter di form)
-    filter_label: "Departemen", // label untuk pesan error (sesuaikan dengan nama field filter di form)
+    filter_field: "id_payable",
+    filter_label: "Payable To",
   };
 </script>
 <script src="{{ asset('js/docno-check.js') }}"></script>

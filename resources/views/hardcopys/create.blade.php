@@ -68,14 +68,14 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Payment Term * :</strong>
-                    <input type="text" name="payment_term" class="form-control" placeholder="" required>
+                    <input type="text" name="payment_term" value="{{ old('payment_term') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br/>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>PO Number :</strong>
-                    <input type="text" name="po_no" class="form-control" placeholder="">
+                    <input type="text" name="po_no" value="{{ old('po_no') }}" class="form-control" placeholder="">
                 </div>
             </div>
             <br/>
@@ -84,7 +84,7 @@
                 <select name="id_category" class="form-control select2" required>
                     <option value="">-- Pilih --</option>
                     @foreach ($categorys as $category)
-                        <option value="{{ $category->id }}">
+                        <option value="{{ $category->id }}" {{ old('id_category') == $category->id ? 'selected' : '' }}>
                             {{ $category->nama }}
                         </option>
                     @endforeach
@@ -100,7 +100,7 @@
                     <select name="id_dept" class="form-control select2" required>
                         <option value="">-- Pilih --</option>
                         @foreach ($departments as $dept)
-                            <option value="{{ $dept->id }}">
+                            <option value="{{ $dept->id }}" {{ old('id_dept') == $dept->id ? 'selected' : '' }}>
                                 {{ $dept->nama }}
                             </option>
                         @endforeach
@@ -112,7 +112,7 @@
                     <select name="id_rek_sumber" class="form-control select2" required>
                         <option value="">-- Pilih --</option>
                         @foreach ($hu_rek_sumbers as $hu_rek_sumber)
-                            <option value="{{ $hu_rek_sumber->id }}">
+                            <option value="{{ $hu_rek_sumber->id }}" {{ old('id_rek_sumber') == $hu_rek_sumber->id ? 'selected' : '' }}>
                                 {{ $hu_rek_sumber->nama }}
                             </option>
                         @endforeach
@@ -124,7 +124,7 @@
                     <select name="id_payable" class="form-control select2" required>
                         <option value="">-- Pilih --</option>
                         @foreach ($payabletos as $payableto)
-                            <option value="{{ $payableto->id }}">
+                            <option value="{{ $payableto->id }}" {{ old('id_payable') == $payableto->id ? 'selected' : '' }}>
                                 {{ $payableto->nama }}
                             </option>
                         @endforeach
@@ -137,7 +137,7 @@
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>Nama Rekening Tujuan * :</strong>
-                    <input type="text" name="nama_rekening_tujuan" class="form-control" placeholder="Nama Rekening Tujuan" required>
+                    <input type="text" name="nama_rekening_tujuan" value="{{ old('nama_rekening_tujuan') }}" class="form-control" placeholder="Nama Rekening Tujuan" required>
                 </div>
             </div>
             <br>
@@ -146,7 +146,7 @@
                         <select name="id_bank" class="form-control select2" required>
                             <option value="">-- Pilih --</option>
                             @foreach ($banks as $bank)
-                                <option value="{{ $bank->id }}">
+                                <option value="{{ $bank->id }}" {{ old('id_bank') == $bank->id ? 'selected' : '' }}>
                                     {{ $bank->nama }}
                                 </option>
                             @endforeach
@@ -156,14 +156,14 @@
             <div class="col-xs-6 col-sm-6 col-md-6">
                 <div class="form-group">
                     <strong>No Rekening Tujuan * :</strong>
-                    <input type="text" name="no_rek_tujuan" class="form-control" placeholder="" required>
+                    <input type="text" name="no_rek_tujuan" value="{{ old('no_rek_tujuan') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br>
             <div class="col-xs-2 col-sm-2 col-md-2 ">
                 <div class="form-group">
                     <strong>Invoice date * :</strong>
-                    <input type="date" name="invoice_date" value="{{ date('Y-m-d') }}" class="form-control" placeholder="" required>
+                    <input type="date" name="invoice_date" value="{{ old('invoice_date', date('Y-m-d')) }}" class="form-control" placeholder="" required>
                 </div>
             </div>
         </div>
@@ -174,7 +174,7 @@
                     <strong>Document Number(s) * :</strong><br>
                     <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678;456789123)</strong><br>
 
-                    <input id="doc_no" type="text" name="doc_no" class="form-control" placeholder="" required>
+                    <input id="doc_no" type="text" name="doc_no" value="{{ old('doc_no') }}" class="form-control" placeholder="" required>
                     <div id="docNoResult" class="mt-2"></div>
                 </div>
             </div>
@@ -183,7 +183,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Description * :</strong>
-                    <input type="text" name="description" class="form-control" placeholder="" required>
+                    <input type="text" name="description" value="{{ old('description') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br>
@@ -191,7 +191,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Activity code * :</strong>
-                    <input type="text" name="activity_code" class="form-control" placeholder="" required>
+                    <input type="text" name="activity_code" value="{{ old('activity_code') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
             <br>
@@ -202,7 +202,7 @@
                         <select name="id_currency" class="form-control select2" required>
                             <option value="">-- Pilih --</option>
                             @foreach ($currencys as $currency)
-                                <option value="{{ $currency->id }}">
+                                <option value="{{ $currency->id }}" {{ old('id_currency') == $currency->id ? 'selected' : '' }}>
                                     {{ $currency->nama }}
                                 </option>
                             @endforeach
@@ -219,7 +219,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Dpp * :</strong>   <br>
-                    <input type="text" id="dpp" name="dpp" class="form-control" placeholder="" required>
+                    <input type="text" id="dpp" name="dpp" value="{{ old('dpp') }}" class="form-control" placeholder="" required>
                 </div>
             </div>
 
@@ -231,7 +231,7 @@
                 @foreach ($ppns as $ppn)
                     <option value="{{ $ppn->id }}"
                         data-ppn="{{ $ppn->ppn }}"
-                        data-flag="{{ $ppn->flag_ubah }}">
+                        data-flag="{{ $ppn->flag_ubah }}" {{ old('id_ppn') == $ppn->id ? 'selected' : '' }}>
                         {{ $ppn->nama }}
                     </option>
                 @endforeach
@@ -242,14 +242,14 @@
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Ppn% </strong>   <br>
-                    <input type="number" id="ppn_persen" name="persen_ppn" class="form-control" value=0 placeholder="" readonly>
+                    <input type="number" id="ppn_persen" name="persen_ppn" class="form-control" value="{{ old('persen_ppn', 0) }}" placeholder="" readonly>
                 </div>
             </div>
 
              <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Nilai Ppn * :</strong>   <br>
-                    <input type="text" id="nilai_ppn" name="nilai_ppn" class="form-control" placeholder="" readonly>
+                    <input type="text" id="nilai_ppn" name="nilai_ppn" value="{{ old('nilai_ppn') }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
 
@@ -257,7 +257,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>PPH * :</strong>   <br>
-                    <input type="text" id="pph" name="pph" class="form-control" value=0 placeholder="" required>
+                    <input type="text" id="pph" name="pph" class="form-control" value="{{ old('pph', 0) }}" placeholder="" required>
                 </div>
             </div>
 
@@ -265,7 +265,7 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="form-group">
                     <strong>Total Amount * :</strong>   <br>
-                    <input type="text" id="total_amount" name="total_amount" class="form-control" placeholder="" readonly>
+                    <input type="text" id="total_amount" name="total_amount" value="{{ old('total_amount') }}" class="form-control" placeholder="" readonly>
                 </div>
             </div>
 
@@ -288,9 +288,9 @@
 <script>
   window.DOCNO_CHECK = {
     url: "{{ route('checkDocNo') }}",
-    type: "all", // "hardcopy" / "softcopy" / "all"
-    filter_field: "id_dept", // bersifat optional contoh: "id_dept" (sesuaikan dengan nama field filter di form)
-    filter_label: "Departemen", // label untuk pesan error (sesuaikan dengan nama field filter di form)
+    type: "all",
+    filter_field: "id_payable",
+    filter_label: "Payable To",
   };
 </script>
 <script src="{{ asset('js/docno-check.js') }}"></script>

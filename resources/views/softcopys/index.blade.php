@@ -27,50 +27,44 @@
             <label class="form-label">Invoice Date (To)</label>
             <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control">
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <label class="form-label">Payable To</label>
-            <select name="id_payable" class="form-control select2">
-                <option value="">-- Pilih --</option>
-                @foreach ($payabletos as $payableto)
-                    <option value="{{ $payableto->id }}">
-                        {{ $payableto->nama }}
-                    </option>
-                @endforeach
-            </select>
+            <input type="text" name="payable_to" value="{{ request('payable_to') }}" class="form-control">
         </div>
         <div class="col-lg-2">
             <label class="form-label">Document No</label>
             <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control">
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <label class="form-label">Description</label>
             <input type="text" name="description" value="{{ request('description') }}" class="form-control">
         </div>
-        <div class="col-lg-2">
+
+        <div class="col-12 mt-2">
             <label class="form-label">Status</label>
-            <select name="status" class="form-select">
-                <option value="">-- Semua --</option>
+            <select name="status[]" class="form-control select2-status" multiple="multiple">
                 @foreach($statusOptions as $st)
-                    <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
+                    <option value="{{ $st }}" {{ is_array(request('status')) && in_array($st, request('status')) ? 'selected' : '' }}>
                         {{ $st }}
                     </option>
                 @endforeach
             </select>
         </div>
 
-            <div class="row g-1 mb-0">
+        <div class="col-12 mt-3">
+            <div class="row g-2">
                 <div class="col-10">
                     <button class="btn btn-primary w-100" type="submit">
                         <i class="fa fa-search"></i> Filter
                     </button>
                 </div>
-
                 <div class="col-2">
                     <a href="{{ route('softcopys.index') }}" class="btn btn-secondary w-100">
                         Reset
                     </a>
                 </div>
             </div>
+        </div>
     </div>
 </form>
 </div>
@@ -159,6 +153,16 @@
 
 
 {{ $softcopys->links('pagination::bootstrap-5') }}
+
+<script>
+    $(document).ready(function() {
+        $('.select2-status').select2({
+            placeholder: "-- Pilih Status --",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
 @endsection
 
 

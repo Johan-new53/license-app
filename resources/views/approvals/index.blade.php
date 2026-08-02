@@ -29,11 +29,15 @@
             <label class="form-label">Type</label>
             <select name="type" class="form-control">
                 <option value="">-- Pilih --</option>
-                <option value="hardcopy">hardcopy</option>
-                <option value="softcopy">softcopy</option>
-                <option value="automate">automate</option>
-                <option value="digital">digital</option>
+                <option value="hardcopy" {{ request('type') == 'hardcopy' ? 'selected' : '' }}>hardcopy</option>
+                <option value="softcopy" {{ request('type') == 'softcopy' ? 'selected' : '' }}>softcopy</option>
+                <option value="automate" {{ request('type') == 'automate' ? 'selected' : '' }}>automate</option>
+                <option value="digital" {{ request('type') == 'digital' ? 'selected' : '' }}>digital</option>
             </select>
+        </div>
+        <div class="col-lg-2">
+            <label class="form-label">Payable To</label>
+            <input type="text" name="payable_to" value="{{ request('payable_to') }}" class="form-control">
         </div>
         <div class="col-lg-2">
             <label class="form-label">Document No</label>
@@ -43,28 +47,28 @@
             <label class="form-label">Description</label>
             <input type="text" name="description" value="{{ request('description') }}" class="form-control">
         </div>
-        <div class="col-lg-2">
+        <div class="col-12 mt-2">
             <label class="form-label">Status</label>
-            <select name="status" class="form-select">
-                <option value="">-- Semua --</option>
+            <select name="status[]" class="form-control select2-status" multiple="multiple">
                 @foreach($statusOptions as $st)
-                    <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
+                    <option value="{{ $st }}" {{ is_array(request('status')) && in_array($st, request('status')) ? 'selected' : '' }}>
                         {{ $st }}
                     </option>
                 @endforeach
             </select>
         </div>
-        <div class="row g-1 mb-0">
-            <div class="col-10">
-                <button class="btn btn-primary w-100" type="submit">
-                    <i class="fa fa-search"></i> Filter
-                </button>
-            </div>
-
-            <div class="col-2">
-                <a href="{{ route('approvals.index') }}" class="btn btn-secondary w-100">
-                    Reset
-                </a>
+        <div class="col-12 mt-3">
+            <div class="row g-2">
+                <div class="col-10">
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="fa fa-search"></i> Filter
+                    </button>
+                </div>
+                <div class="col-2">
+                    <a href="{{ route('approvals.index') }}" class="btn btn-secondary w-100">
+                        Reset
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -86,11 +90,12 @@
     <table class="table table-bordered" style="width:100%;">
         <thead>
             <tr>
-                <th style="width:3%">No</th>
-                <th style="width:8%">Invoice Date</th>
-                <th style="width:8%">Type</th>
-                <th style="width:24%">Document No.</th>
-                <th style="width:31%">Description</th>
+                <th style="width:4%">No</th>
+                <th style="width:9%">Invoice Date</th>
+                <th style="width:7%">Type</th>
+                <th style="width:16%">Payable To</th>
+                <th style="width:18%">Document No.</th>
+                <th style="width:30%">Description</th>
                 <th style="width:8%">Status</th>
                 <th style="width:8%">Payment Date</th>
                 <th style="width:8%">Action</th>
@@ -104,6 +109,9 @@
                 {{ $approval->invoice_date ? $approval->invoice_date->format('d-m-Y') : '-' }}
             </td>
             <td style="white-space:nowrap;">{{ $approval->type }}</td>
+            <td style="word-break:break-word;">
+                {{ $approval->payableto->nama ?? '-' }}
+            </td>
             <td style="word-break:break-word;">{{ $approval->doc_no }}</td>
             <td style="word-break:break-word;">{{ $approval->description }}</td>
             <td style="white-space:nowrap;">{{ $approval->status }}</td>
@@ -135,8 +143,17 @@
 </div>
 <br>
 
-
 {{ $approvals->links('pagination::bootstrap-5') }}
+
+<script>
+    $(document).ready(function() {
+        $('.select2-status').select2({
+            placeholder: "-- Pilih Status --",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
 @endsection
 
 

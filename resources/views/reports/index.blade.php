@@ -82,43 +82,65 @@
 @endphp
 <hr class="mt-0">
 
-<div class="table-responsive">
-    <table class="table table-bordered" style="width:100%;">
-        <thead>
+<div class="table-responsive shadow-sm border rounded mb-3" style="overflow: auto; max-height: 70vh;">
+    <table class="table table-bordered table-striped table-hover text-nowrap mb-0" style="min-width: 2800px; font-size: 13px;">
+        <thead class="table-light text-center align-middle" style="position: sticky; top: 0; z-index: 2; background-color: #f8f9fa;">
             <tr>
-                <th style="width:3%">No</th>
-                <th style="width:7%">Invoice Date</th>
-                <th style="width:7%">Created Date</th>
-                <th style="width:15%">Nama</th>
-                <th style="width:3%">Top</th>
-                <th style="width:8%">Due Date</th>
-                <th style="width:8%">Type</th>
-                <th style="width:15%">Document No.</th>
-                <th style="width:20%">Description</th>
-                <th style="width:7%">Status</th>
-                <th style="width:7%">Payment Date</th>
+                <th style="width:40px;">No</th>
+                <th>TYPE</th>
+                <th>RECEIPT DATE INVOICE FROM DIVISION</th>
+                <th>UNIT HOSPITALS</th>
+                <th>SUPPLIER NAME</th>
+                <th>Invoice Date</th>
+                <th>Document No</th>
+                <th>DESCRIPTION</th>
+                <th>STATUS</th>
+                <th>PAYMENT TERM</th>
+                <th>PO/AGREEMENT NO</th>
+                <th>PO/AGREEMENT CATEGORY</th>
+                <th>DEPT</th>
+                <th>CURRENCY</th>
+                <th>Amount</th>
+                <th>PPN (IDR)</th>
+                <th>KURS / Rupiah</th>
+                <th>COURIER SERVICE/OTHERS</th>
+                <th>WITHHOLDING TAX (PPh)</th>
+                <th>GRAND TOTAL IDR</th>
             </tr>
         </thead>
         <tbody>
         @if(count($finances) > 0)
             @foreach ($finances as $finance)
             <tr>
-                <td>{{ ++$i }}</td>
-                <td style="white-space:nowrap;">{{ $finance->invoice_date ? date('d-m-Y', strtotime($finance->invoice_date)) : '-' }}</td>
-                <td style="white-space:nowrap;">{{ $finance->created_at->format('d-m-Y') }}</td>
-                <td style="word-break:break-word;">{{ $finance->payableto->nama ?? '-' }}</td>
-                <td>{{ $finance->top_hari }}</td>
-                <td style="white-space:nowrap;">{{ $finance->due_date ? (is_string($finance->due_date) ? date('d-m-Y', strtotime($finance->due_date)) : $finance->due_date->format('d-m-Y')) : '-' }}</td>
-                <td style="white-space:nowrap;">{{ $finance->type }}</td>
-                <td style="word-break:break-word;">{{ $finance->doc_no }}</td>
-                <td style="word-break:break-word;">{{ $finance->description }}</td>
-                <td style="white-space:nowrap;">{{ $finance->status }}</td>
-                <td style="white-space:nowrap;">{{ $finance->payment_date ? date('d-m-Y', strtotime($finance->payment_date)) : '-' }}</td>
+                <td class="text-center">{{ ++$i }}</td>
+                <td><span class="badge bg-primary text-uppercase">{{ $finance->type }}</span></td>
+                <td>{{ $finance->created_at ? $finance->created_at->format('d-m-Y') : '-' }}</td>
+                <td>{{ $finance->rek_sumber->nama ?? '-' }}</td>
+                <td>{{ $finance->payableto->nama ?? '-' }}</td>
+                <td>{{ $finance->invoice_date ? date('d-m-Y', strtotime($finance->invoice_date)) : '-' }}</td>
+                <td style="min-width: 250px; width: 300px; white-space: normal; word-break: break-word;">
+                    <strong>{{ $finance->doc_no }}</strong>
+                </td>
+                <td style="min-width: 400px; width: 500px; white-space: normal; word-break: break-word;">
+                    {{ $finance->description }}
+                </td>
+                <td><span class="badge bg-info text-dark">{{ $finance->status }}</span></td>
+                <td>{{ $finance->payment_term ?? '-' }}</td>
+                <td>{{ $finance->po_no ?? '-' }}</td>
+                <td>{{ $finance->category->nama ?? '-' }}</td>
+                <td>{{ $finance->dept->nama ?? '-' }}</td>
+                <td>{{ $finance->matauang->nama ?? '-' }}</td>
+                <td class="text-end">{{ number_format($finance->dpp, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($finance->nilai_ppn, 0, ',', '.') }}</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-end">{{ number_format(($finance->pph * -1), 0, ',', '.') }}</td>
+                <td class="text-end fw-bold">{{ number_format($finance->total_amount, 0, ',', '.') }}</td>
             </tr>
             @endforeach
         @else
             <tr>
-                <td colspan="10" class="text-center">Data tidak ditemukan</td>
+                <td colspan="20" class="text-center py-4 text-muted">Data tidak ditemukan</td>
             </tr>
         @endif
         </tbody>

@@ -39,13 +39,16 @@ class DigitalController extends Controller
     public function index(Request $request): View
     {
         $statusOptions = Finance::query()
-            ->where('user_entry', auth()->id())
             ->where('type', 'digital')
             ->whereNotNull('status')
-            ->select('status')
+            ->where('status', '!=', '')
             ->distinct()
             ->orderBy('status')
             ->pluck('status');
+
+        if ($statusOptions->isEmpty()) {
+            $statusOptions = collect(['requested', 'approved 1', 'approved 2', 'rejected 1', 'rejected 2', 'paid']);
+        }
 
         $payabletos = Payableto::where('valid', 1)
             ->where('type', 'main')
@@ -71,9 +74,11 @@ class DigitalController extends Controller
             $query->whereDate('invoice_date', '<=', $request->date_to);
         }
 
-        // Filter payable To
-        if ($request->filled('id_payable')) {
-            $query->where('id_payable', $request->id_payable);
+        // Filter payable To (pencarian nama payable)
+        if ($request->filled('payable_to')) {
+            $query->whereHas('payableto', function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->payable_to . '%');
+            });
         }
 
         // filter doc_no
@@ -88,7 +93,8 @@ class DigitalController extends Controller
 
         // filter status
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $statuses = (array) $request->status;
+            $query->whereIn('status', $statuses);
         }
 
         $digitals = $query
@@ -97,7 +103,7 @@ class DigitalController extends Controller
             ->paginate(6)
             ->appends($request->query());
 
-        return view('digitals.index', compact('digitals', 'statusOptions', 'payabletos'))
+        return view('digitals.index', compact('digitals', 'statusOptions'))
             ->with('i', ($digitals->currentPage() - 1) * $digitals->perPage());
     }
 
@@ -168,11 +174,11 @@ class DigitalController extends Controller
 
         $docNoCheckService = new DocNoCheckService();
         if ($request->filled('doc_no')) {
-            $check = $docNoCheckService->check($request->doc_no, 'digital');
+            $check = $docNoCheckService->check($request->doc_no, 'all', null, 'id_payable', $request->id_payable);
             if (!empty($check['exists'])) {
                 return back()
                     ->withInput()
-                    ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+                    ->withErrors(['doc_no' => 'Doc No sudah terpakai untuk Payable To ini: '.implode(', ', $check['exists'])]);
             }
         }
 
@@ -356,11 +362,11 @@ class DigitalController extends Controller
         ]);
 
         $docNoCheckService = new DocNoCheckService();
-        $check = $docNoCheckService->check($request->doc_no, 'digital', $finance->id);
+        $check = $docNoCheckService->check($request->doc_no, 'all', $finance->id, 'id_payable', $request->id_payable);
         if (!empty($check['exists'])) {
             return back()
                 ->withInput()
-                ->withErrors(['doc_no' => 'Doc No sudah terpakai: '.implode(', ', $check['exists'])]);
+                ->withErrors(['doc_no' => 'Doc No sudah terpakai untuk Payable To ini: '.implode(', ', $check['exists'])]);
         }
 
 
