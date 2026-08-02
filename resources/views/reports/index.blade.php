@@ -95,6 +95,7 @@
                 <th>Document No</th>
                 <th>DESCRIPTION</th>
                 <th>STATUS</th>
+                <th>Payment Date</th>
                 <th>PAYMENT TERM</th>
                 <th>PO/AGREEMENT NO</th>
                 <th>PO/AGREEMENT CATEGORY</th>
@@ -125,6 +126,7 @@
                     {{ $finance->description }}
                 </td>
                 <td><span class="badge bg-info text-dark">{{ $finance->status }}</span></td>
+                <td>{{ $finance->payment_date ? \Carbon\Carbon::parse($finance->payment_date)->format('d-m-Y') : '-' }}</td>
                 <td>{{ $finance->payment_term ?? '-' }}</td>
                 <td>{{ $finance->po_no ?? '-' }}</td>
                 <td>{{ $finance->category->nama ?? '-' }}</td>
@@ -140,7 +142,7 @@
             @endforeach
         @else
             <tr>
-                <td colspan="20" class="text-center py-4 text-muted">Data tidak ditemukan</td>
+                <td colspan="21" class="text-center py-4 text-muted">Data tidak ditemukan</td>
             </tr>
         @endif
         </tbody>
