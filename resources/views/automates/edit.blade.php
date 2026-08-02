@@ -329,7 +329,9 @@
   window.DOCNO_CHECK = {
     url: "{{ route('checkDocNo') }}",
     type: "all",
-    ignore_id: {{ $finance->id }}
+    ignore_id: {{ $finance->id }},
+    filter_field: "id_payable",
+    filter_label: "Payable To",
   };
 </script>
 <script src="{{ asset('js/docno-check.js') }}"></script>

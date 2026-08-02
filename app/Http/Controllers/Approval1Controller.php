@@ -41,10 +41,14 @@ class Approval1Controller extends Controller
     {
         $statusOptions = Finance::query()
             ->whereNotNull('status')
-            ->select('status')
+            ->where('status', '!=', '')
             ->distinct()
             ->orderBy('status')
             ->pluck('status');
+
+        if ($statusOptions->isEmpty()) {
+            $statusOptions = collect(['requested', 'approved 1', 'approved 2', 'rejected 1', 'rejected 2', 'paid']);
+        }
 
         $query = Finance::query();
 
@@ -56,9 +60,16 @@ class Approval1Controller extends Controller
             $query->whereDate('invoice_date', '<=', $request->date_to);
         }
 
-        // Filter payable To
+        // Filter type
         if ($request->filled('type')) {
             $query->where('type', $request->type);
+        }
+
+        // Filter payable To (pencarian nama payable)
+        if ($request->filled('payable_to')) {
+            $query->whereHas('payableto', function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->payable_to . '%');
+            });
         }
 
         // filter doc_no
@@ -73,16 +84,18 @@ class Approval1Controller extends Controller
 
         // filter status
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $statuses = (array) $request->status;
+            $query->whereIn('status', $statuses);
         }
 
         $approvals = $query
+            ->with('payableto')
             ->whereDate('invoice_date', '>=', '2026-05-01')
             ->orderBy('id', 'desc')
             ->paginate(6)
             ->appends($request->query());
 
-        return view('approvals.index', compact('approvals', 'statusOptions',))
+        return view('approvals.index', compact('approvals', 'statusOptions'))
             ->with('i', ($approvals->currentPage() - 1) * $approvals->perPage());
 
         // $approvals = Finance::orderBy('id', 'desc')
@@ -196,19 +209,34 @@ class Approval1Controller extends Controller
             elseif ($request->status == 'rejected' and $request->level == 2) {
                 $finance->status = 'rejected 2';}
 
-            $finance->due_date=$request->due_date;
-            $finance->payment_term=$request->payment_term;
-            $finance->po_no=$request->po_no;
-            $finance->id_category=$request->id_category;
-            $keterangan=$request->keterangan;
-            DB::transaction(function () use ($finance, $request) {
+            $oldJournalNo = trim((string)$finance->journal_no);
+            $newJournalNo = trim((string)$request->journal_no);
+
+            $finance->due_date = $request->due_date;
+            $finance->payment_term = $request->payment_term;
+            $finance->po_no = $request->po_no;
+            $finance->id_category = $request->id_category;
+            $finance->journal_no = $newJournalNo !== '' ? $newJournalNo : null;
+
+            $keteranganHistory = $request->keterangan;
+            if ($newJournalNo !== '' && $newJournalNo !== $oldJournalNo) {
+                if ($oldJournalNo === '') {
+                    $changeNote = "Journal No diisi: " . $newJournalNo;
+                } else {
+                    $changeNote = "Journal No diubah: " . $oldJournalNo . " -> " . $newJournalNo;
+                }
+                $keteranganHistory .= " | " . $changeNote;
+            }
+
+            $keterangan = $request->keterangan;
+            DB::transaction(function () use ($finance, $keteranganHistory) {
 
                 $finance->save();
 
                 History_approval::create([
                     'id_finance' => $finance->id,
                     'status' => $finance->status,
-                    'keterangan' => $request->keterangan,
+                    'keterangan' => $keteranganHistory,
                     'user_entry' => auth()->id(),
                 ]);
                 

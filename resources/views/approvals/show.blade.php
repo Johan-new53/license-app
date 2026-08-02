@@ -77,6 +77,13 @@
                             {{ $finance->doc_no }}
                         </div>
                     </div>
+
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <strong>Journal No :</strong>
+                            {{ $finance->journal_no ?? '-' }}
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-6">
@@ -192,8 +199,8 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4">
+                    <div class="row mt-2">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <strong>Category :</strong>
                                 <select name="id_category" class="form-control select2" required>
@@ -207,7 +214,16 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <strong>Journal No :</strong>
+                                <input type="text" id="journal_no" name="journal_no" value="{{ old('journal_no', $finance->journal_no) }}" class="form-control" placeholder="Nomor Journal">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <strong>Keterangan * :</strong>
                                 <input type="text" 
