@@ -213,7 +213,7 @@
                     <strong>Document Number(s) * :</strong><br>
                     <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678;456789123)</strong><br>
 
-                    <input id="doc_no" type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" placeholder="" required>
+                    <input id="doc_no" type="text" name="doc_no" value="{{ $finance->doc_no }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()" placeholder="" required>
                     <div id="docNoResult" class="mt-2"></div>
                 </div>
             </div>

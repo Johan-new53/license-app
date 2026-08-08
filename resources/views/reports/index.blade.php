@@ -34,7 +34,7 @@
         </div>
         <div class="col-lg-3">
             <label class="form-label">Document No</label>
-            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" placeholder="Search..">
+            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()" placeholder="Search..">
         </div>
         <div class="col-lg-3">
             <label class="form-label">Description</label>
@@ -95,7 +95,7 @@
                 <th>Document No</th>
                 <th>DESCRIPTION</th>
                 <th>STATUS</th>
-                <th>Payment Date</th>
+                <th class="text-center">Due / Payment Date</th>
                 <th>PAYMENT TERM</th>
                 <th>PO/AGREEMENT NO</th>
                 <th>PO/AGREEMENT CATEGORY</th>
@@ -112,21 +112,38 @@
         <tbody>
         @if(count($finances) > 0)
             @foreach ($finances as $finance)
-            <tr>
+            <tr class="align-middle">
                 <td class="text-center">{{ ++$i }}</td>
-                <td><span class="badge bg-primary text-uppercase">{{ $finance->type }}</span></td>
-                <td>{{ $finance->created_at ? \Carbon\Carbon::parse($finance->created_at)->format('d-m-Y') : '-' }}</td>
+                <td class="text-center"><span class="badge bg-primary text-uppercase">{{ $finance->type }}</span></td>
+                <td class="text-center">{{ $finance->created_at ? \Carbon\Carbon::parse($finance->created_at)->format('d-m-Y') : '-' }}</td>
                 <td>{{ $finance->rek_sumber->nama ?? '-' }}</td>
                 <td>{{ $finance->payableto->nama ?? '-' }}</td>
-                <td>{{ $finance->invoice_date ? date('d-m-Y', strtotime($finance->invoice_date)) : '-' }}</td>
+                <td class="text-center">{{ $finance->invoice_date ? date('d-m-Y', strtotime($finance->invoice_date)) : '-' }}</td>
                 <td style="min-width: 250px; width: 300px; white-space: normal; word-break: break-word;">
                     <strong>{{ $finance->doc_no }}</strong>
                 </td>
                 <td style="min-width: 400px; width: 500px; white-space: normal; word-break: break-word;">
                     {{ $finance->description }}
                 </td>
-                <td><span class="badge bg-info text-dark">{{ $finance->status }}</span></td>
-                <td>{{ $finance->payment_date ? \Carbon\Carbon::parse($finance->payment_date)->format('d-m-Y') : '-' }}</td>
+                <td class="text-center">
+                    @php
+                        $statusClass = match(strtolower($finance->status ?? '')) {
+                            'paid' => 'bg-success text-white',
+                            'approved 2' => 'bg-primary text-white',
+                            'approved 1' => 'bg-info text-dark',
+                            'requested' => 'bg-warning text-dark',
+                            'rejected 1', 'rejected 2' => 'bg-danger text-white',
+                            default => 'bg-secondary text-white',
+                        };
+                    @endphp
+                    <span class="badge {{ $statusClass }}">{{ $finance->status }}</span>
+                </td>
+                <td class="text-center" style="white-space:nowrap;">
+                    <strong>Due</strong><br>
+                    {{ in_array($finance->status, ['approved 2', 'paid']) && $finance->due_date ? \Carbon\Carbon::parse($finance->due_date)->format('d-m-Y') : '-' }}<br>
+                    <strong>Paid</strong><br>
+                    {{ $finance->payment_date ? \Carbon\Carbon::parse($finance->payment_date)->format('d-m-Y') : '-' }}
+                </td>
                 <td>{{ $finance->payment_term ?? '-' }}</td>
                 <td>{{ $finance->po_no ?? '-' }}</td>
                 <td>{{ $finance->category->nama ?? '-' }}</td>

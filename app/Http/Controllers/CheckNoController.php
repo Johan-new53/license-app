@@ -20,7 +20,7 @@ class CheckNoController extends Controller
         $filterValue = $request->input('filter_value');
 
         $clean = collect(explode(';', $raw))
-            ->map(fn($v) => trim($v))
+            ->map(fn($v) => mb_strtoupper(trim($v)))
             ->filter()
             ->values()
             ->all();

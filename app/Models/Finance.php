@@ -23,8 +23,12 @@ class Finance extends Model
     'id_ppn','persen_ppn','nilai_ppn','pph','total_amount','input_file',	'send_email',
     'payment_term','journal_no','status','payment_date','user_payment_entry',
     'payment_entry','user_entry','created_at','updated_at'
-
     ];
+
+    public function setDocNoAttribute($value)
+    {
+        $this->attributes['doc_no'] = $value !== null ? mb_strtoupper(trim($value)) : null;
+    }
 
     public function user()
     {

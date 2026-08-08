@@ -15,7 +15,7 @@
   function normalize(raw) {
     return (raw || '')
       .split(';')
-      .map(s => s.trim())
+      .map(s => s.trim().toUpperCase())
       .filter(Boolean);
   }
 
@@ -168,6 +168,12 @@
         submitBtn.disabled = true;
       }
     };
+
+    // auto uppercase input
+    docEl.style.textTransform = 'uppercase';
+    docEl.addEventListener('input', function () {
+      this.value = this.value.toUpperCase();
+    });
 
     // check saat input doc_no
     docEl.addEventListener('input', debounce(doCheck, 500));

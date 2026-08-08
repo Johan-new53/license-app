@@ -41,7 +41,7 @@
         </div>
         <div class="col-lg-2">
             <label class="form-label">Document No</label>
-            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control">
+            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
         </div>
         <div class="col-lg-2">
             <label class="form-label">Description</label>
@@ -89,37 +89,52 @@
 <div class="table-responsive">
     <table class="table table-bordered" style="width:100%;">
         <thead>
-            <tr>
-                <th style="width:4%">No</th>
-                <th style="width:9%">Invoice Date</th>
-                <th style="width:7%">Type</th>
+            <tr class="align-middle">
+                <th class="text-center" style="width:4%">No</th>
+                <th class="text-center" style="width:9%">Invoice Date</th>
+                <th class="text-center" style="width:7%">Type</th>
                 <th style="width:16%">Payable To</th>
                 <th style="width:18%">Document No.</th>
                 <th style="width:30%">Description</th>
-                <th style="width:8%">Status</th>
-                <th style="width:8%">Payment Date</th>
-                <th style="width:8%">Action</th>
+                <th class="text-center" style="width:8%">Status</th>
+                <th class="text-center" style="width:12%">Due / Payment Date</th>
+                <th class="text-center" style="width:8%">Action</th>
             </tr>
         </thead>
         <tbody>
         @foreach ($approvals as $approval)
-        <tr>
-            <td>{{ ++$i }}</td>
-            <td style="white-space:nowrap;">
+        <tr class="align-middle">
+            <td class="text-center">{{ ++$i }}</td>
+            <td class="text-center" style="white-space:nowrap;">
                 {{ $approval->invoice_date ? \Carbon\Carbon::parse($approval->invoice_date)->format('d-m-Y') : '-' }}
             </td>
-            <td style="white-space:nowrap;">{{ $approval->type }}</td>
+            <td class="text-center" style="white-space:nowrap;">{{ $approval->type }}</td>
             <td style="word-break:break-word;">
                 {{ $approval->payableto->nama ?? '-' }}
             </td>
             <td style="word-break:break-word;">{{ $approval->doc_no }}</td>
             <td style="word-break:break-word;">{{ $approval->description }}</td>
-            <td style="white-space:nowrap;">{{ $approval->status }}</td>
-            <td style="white-space:nowrap;">
+            <td class="text-center" style="white-space:nowrap;">
+                @php
+                    $statusClass = match(strtolower($approval->status ?? '')) {
+                        'paid' => 'bg-success text-white',
+                        'approved 2' => 'bg-primary text-white',
+                        'approved 1' => 'bg-info text-dark',
+                        'requested' => 'bg-warning text-dark',
+                        'rejected 1', 'rejected 2' => 'bg-danger text-white',
+                        default => 'bg-secondary text-white',
+                    };
+                @endphp
+                <span class="badge {{ $statusClass }}">{{ $approval->status }}</span>
+            </td>
+            <td class="text-center" style="white-space:nowrap;">
+                <strong>Due</strong><br>
+                {{ in_array($approval->status, ['approved 2', 'paid']) && $approval->due_date ? \Carbon\Carbon::parse($approval->due_date)->format('d-m-Y') : '-' }}<br>
+                <strong>Paid</strong><br>
                 {{ $approval->payment_date ? \Carbon\Carbon::parse($approval->payment_date)->format('d-m-Y') : '-' }}
             </td>
 
-            <td>
+            <td class="text-center">
                 <form action="" method="POST" style="display:flex; flex-direction:column; gap:5px;">
                     @if($approval->type == 'digital')
                         <a class="btn btn-info btn-sm" href="{{ route('approvals.show',$approval->id) }}">

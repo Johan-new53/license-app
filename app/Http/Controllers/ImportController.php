@@ -427,7 +427,7 @@ class ImportController extends Controller
             if ($p === '') continue;
             if ($dropDashOnly && $p === '-') continue;
 
-            $out[] = $p;
+            $out[] = mb_strtoupper($p);
         }
 
         // gabungkan pakai ;

@@ -33,7 +33,7 @@
         </div>
         <div class="col-lg-2">
             <label class="form-label">Document No</label>
-            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control">
+            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
         </div>
         <div class="col-lg-3">
             <label class="form-label">Description</label>
@@ -81,20 +81,20 @@
 <hr class="mt-0">
 <div class="table-responsive">
     <table class="table table-bordered">
-        <tr>
-            <th style="width:3%">No</th>
-            <th style="width:8%">Invoice Date</th>
+        <tr class="align-middle">
+            <th class="text-center" style="width:3%">No</th>
+            <th class="text-center" style="width:8%">Invoice Date</th>
             <th style="width:12%">Payable To</th>
             <th style="width:18%">Document No.</th>
             <th style="width:35%">Description</th>
-            <th style="width:8%">Status</th>
-            <th style="width:8%">Payment Date</th>
-            <th style="width:8%">Action</th>
+            <th class="text-center" style="width:8%">Status</th>
+            <th class="text-center" style="width:12%">Due / Payment Date</th>
+            <th class="text-center" style="width:8%">Action</th>
         </tr>
         @foreach ($automates as $automate)
-        <tr>
-            <td>{{ ++$i }}</td>
-            <td style="white-space:nowrap;">
+        <tr class="align-middle">
+            <td class="text-center">{{ ++$i }}</td>
+            <td class="text-center" style="white-space:nowrap;">
                 {{ $automate->invoice_date ? \Carbon\Carbon::parse($automate->invoice_date)->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
@@ -106,13 +106,26 @@
             <td style="word-break:break-word;">
                 {{ $automate->description }}
             </td>
-            <td style="white-space:nowrap;">
-                {{ $automate->status }}
+            <td class="text-center" style="white-space:nowrap;">
+                @php
+                    $statusClass = match(strtolower($automate->status ?? '')) {
+                        'paid' => 'bg-success text-white',
+                        'approved 2' => 'bg-primary text-white',
+                        'approved 1' => 'bg-info text-dark',
+                        'requested' => 'bg-warning text-dark',
+                        'rejected 1', 'rejected 2' => 'bg-danger text-white',
+                        default => 'bg-secondary text-white',
+                    };
+                @endphp
+                <span class="badge {{ $statusClass }}">{{ $automate->status }}</span>
             </td>
-            <td style="white-space:nowrap;">
+            <td class="text-center" style="white-space:nowrap;">
+                <strong>Due</strong><br>
+                {{ in_array($automate->status, ['approved 2', 'paid']) && $automate->due_date ? \Carbon\Carbon::parse($automate->due_date)->format('d-m-Y') : '-' }}<br>
+                <strong>Paid</strong><br>
                 {{ $automate->payment_date ? \Carbon\Carbon::parse($automate->payment_date)->format('d-m-Y') : '-' }}
             </td>
-            <td>
+            <td class="text-center">
                 <form action="{{ route('automates.destroy',$automate->id) }}" method="POST"
                       style="display:flex; flex-direction:column; gap:5px;">
 

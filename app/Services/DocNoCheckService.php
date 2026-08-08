@@ -23,7 +23,7 @@ class DocNoCheckService
         $filterValue = null
     ): array {
         $tokens = collect(explode(';', $input))
-            ->map(fn($v) => trim($v))
+            ->map(fn($v) => mb_strtoupper(trim($v)))
             ->filter()
             ->values();
 
@@ -83,7 +83,7 @@ class DocNoCheckService
 
         foreach ($rows as $row) {
             foreach (explode(';', (string) $row->doc_no) as $t) {
-                $t = trim($t);
+                $t = mb_strtoupper(trim($t));
 
                 if (in_array($t, $clean, true)) {
                     $exists[$t] = true;

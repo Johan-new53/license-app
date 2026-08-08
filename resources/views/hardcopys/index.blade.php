@@ -35,7 +35,7 @@
         </div>
         <div class="col-lg-2">
             <label class="form-label">Document No</label>
-            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control">
+            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
         </div>
         <div class="col-lg-3">
             <label class="form-label">Description</label>
@@ -85,22 +85,22 @@
 <div class="table-responsive">
 <table class="table table-bordered" style="width:100%;">
     <thead>
-        <tr>
-            <th style="width:3%">No</th>
-            <th style="width:8%">Invoice Date</th>
+        <tr class="align-middle">
+            <th class="text-center" style="width:3%">No</th>
+            <th class="text-center" style="width:8%">Invoice Date</th>
             <th style="width:12%">Payable To</th>
             <th style="width:18%">Document No.</th>
             <th style="width:35%">Description</th>
-            <th style="width:8%">Status</th>
-            <th style="width:8%">Payment Date</th>
-            <th style="width:8%">Action</th>
+            <th class="text-center" style="width:8%">Status</th>
+            <th class="text-center" style="width:12%">Due / Payment Date</th>
+            <th class="text-center" style="width:8%">Action</th>
         </tr>
     </thead>
     <tbody>
     @foreach ($hardcopys as $hardcopy)
-        <tr>
-            <td>{{ ++$i }}</td>
-            <td style="white-space:nowrap;">
+        <tr class="align-middle">
+            <td class="text-center">{{ ++$i }}</td>
+            <td class="text-center" style="white-space:nowrap;">
                 {{ $hardcopy->invoice_date ? \Carbon\Carbon::parse($hardcopy->invoice_date)->format('d-m-Y') : '-' }}
             </td>
             <td style="word-break:break-word;">
@@ -112,13 +112,26 @@
             <td style="word-break:break-word;">
                 {{ $hardcopy->description }}
             </td>
-            <td style="white-space:nowrap;">
-                {{ $hardcopy->status }}
+            <td class="text-center" style="white-space:nowrap;">
+                @php
+                    $statusClass = match(strtolower($hardcopy->status ?? '')) {
+                        'paid' => 'bg-success text-white',
+                        'approved 2' => 'bg-primary text-white',
+                        'approved 1' => 'bg-info text-dark',
+                        'requested' => 'bg-warning text-dark',
+                        'rejected 1', 'rejected 2' => 'bg-danger text-white',
+                        default => 'bg-secondary text-white',
+                    };
+                @endphp
+                <span class="badge {{ $statusClass }}">{{ $hardcopy->status }}</span>
             </td>
-            <td style="white-space:nowrap;">
+            <td class="text-center" style="white-space:nowrap;">
+                <strong>Due</strong><br>
+                {{ in_array($hardcopy->status, ['approved 2', 'paid']) && $hardcopy->due_date ? \Carbon\Carbon::parse($hardcopy->due_date)->format('d-m-Y') : '-' }}<br>
+                <strong>Paid</strong><br>
                 {{ $hardcopy->payment_date ? \Carbon\Carbon::parse($hardcopy->payment_date)->format('d-m-Y') : '-' }}
             </td>
-            <td>
+            <td class="text-center">
                 <form action="{{ route('hardcopys.destroy',$hardcopy->id) }}" method="POST"
                       style="display:flex; flex-direction:column; gap:5px;">
 
