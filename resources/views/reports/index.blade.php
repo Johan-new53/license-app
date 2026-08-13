@@ -100,6 +100,9 @@
                 <th>PO/AGREEMENT NO</th>
                 <th>PO/AGREEMENT CATEGORY</th>
                 <th>DEPT</th>
+                <th>NAMA REKENING TUJUAN</th>
+                <th>BANK TUJUAN</th>
+                <th>NO REKENING TUJUAN</th>
                 <th>CURRENCY</th>
                 <th>Amount</th>
                 <th>PPN (IDR)</th>
@@ -144,11 +147,14 @@
                     <strong>Paid</strong><br>
                     {{ $finance->payment_date ? \Carbon\Carbon::parse($finance->payment_date)->format('d-m-Y') : '-' }}
                 </td>
-                <td>{{ $finance->payment_term ?? '-' }}</td>
+                <td class="text-center">{{ $finance->payment_term ?? '-' }}</td>
                 <td>{{ $finance->po_no ?? '-' }}</td>
-                <td>{{ $finance->category->nama ?? '-' }}</td>
+                <td class="text-center">{{ $finance->category->nama ?? '-' }}</td>
                 <td>{{ $finance->dept->nama ?? '-' }}</td>
-                <td>{{ $finance->matauang->nama ?? '-' }}</td>
+                <td>{{ $finance->nama_rekening_tujuan ?: ($finance->rektujuan->nama ?? '-') }}</td>
+                <td>{{ $finance->bank->nama ?? ($finance->rektujuan->bank ?? '-') }}</td>
+                <td>{{ $finance->no_rek_tujuan ?: ($finance->rektujuan->norek ?? '-') }}</td>
+                <td class="text-center">{{ $finance->matauang->nama ?? '-' }}</td>
                 <td class="text-end">{{ number_format($finance->dpp, 0, ',', '.') }}</td>
                 <td class="text-end">{{ number_format($finance->nilai_ppn, 0, ',', '.') }}</td>
                 <td class="text-center">-</td>
@@ -159,7 +165,7 @@
             @endforeach
         @else
             <tr>
-                <td colspan="21" class="text-center py-4 text-muted">Data tidak ditemukan</td>
+                <td colspan="24" class="text-center py-4 text-muted">Data tidak ditemukan</td>
             </tr>
         @endif
         </tbody>

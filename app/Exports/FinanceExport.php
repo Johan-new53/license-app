@@ -18,7 +18,7 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
 
     public function collection()
     {
-        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto']);
+        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto', 'rektujuan']);
 
         if (!empty($this->filters['date_from'])) {
             $query->whereDate('invoice_date', '>=', $this->filters['date_from']);
@@ -59,6 +59,9 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
             'PO/AGREEMENT NO',
             'PO/AGREEMENT CATEGORY',
             'DEPT',
+            'NAMA REKENING TUJUAN',
+            'BANK TUJUAN',
+            'NO REKENING TUJUAN',
             'CURRENCY',
             'Amount',
             'PPN (IDR)',
@@ -71,6 +74,10 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
 
     public function map($finance): array
     {
+        $namaRekTujuan = $finance->nama_rekening_tujuan ?: ($finance->rektujuan->nama ?? '');
+        $bankTujuan = $finance->bank->nama ?? ($finance->rektujuan->bank ?? '');
+        $noRekTujuan = $finance->no_rek_tujuan ?: ($finance->rektujuan->norek ?? '');
+
         return [
             $finance->type,
             $finance->created_at ? $finance->created_at->format('d-m-Y') : '',
@@ -85,6 +92,9 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
             $finance->po_no,
             $finance->category->nama ?? '',
             $finance->dept->nama ?? '',
+            $namaRekTujuan,
+            $bankTujuan,
+            $noRekTujuan,
             $finance->matauang->nama ?? '',
             $finance->dpp,
             $finance->nilai_ppn,
