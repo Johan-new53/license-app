@@ -232,7 +232,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Email pic:</strong>
-                    <input type="email" name="mail_pic" class="form-control" placeholder="mail_pic">
+                    <input type="text" name="mail_pic" class="form-control" placeholder="mail_pic">
                 </div>
             </div>
             <br>
