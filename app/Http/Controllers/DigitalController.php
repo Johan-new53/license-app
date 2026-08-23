@@ -359,6 +359,7 @@ class DigitalController extends Controller
             'id_currency' => 'required',
             'journal_no' => 'required',
             'dpp' => 'required',
+            'alasan' => 'required',
         ]);
 
         $docNoCheckService = new DocNoCheckService();
@@ -369,31 +370,53 @@ class DigitalController extends Controller
                 ->withErrors(['doc_no' => 'Doc No sudah terpakai untuk Payable To ini: '.implode(', ', $check['exists'])]);
         }
 
-
         $data = $request->all();
-        $data['status'] = 'requested';
         $data['type'] = 'digital';
 
-        DB::transaction(function () use ($data, $finance) {
+        if (auth()->user()->level == 1) {
+            $newStatus = 'approved 1';
+        } elseif (auth()->user()->level == 2) {
+            $newStatus = 'approved 2';
+        } else {
+            $newStatus = 'approved 1';
+        }
+        $data['status'] = $newStatus;
+
+        if ($request->filled('id_payable')) {
+            $hari = Payableto::where('id', $request->id_payable)->value('hari') ?? 0;
+            $data['top_hari'] = $hari;
+            if ($request->filled('invoice_date')) {
+                $data['due_date'] = \Carbon\Carbon::parse($request->invoice_date)->addDays((int) $hari);
+            } elseif ($finance->created_at) {
+                $data['due_date'] = $finance->created_at->addDays((int) $hari);
+            } else {
+                $data['due_date'] = now()->addDays((int) $hari);
+            }
+        }
+
+        DB::transaction(function () use ($data, $finance, $newStatus) {
             $finance->update($data);
 
             History_approval::create([
                 'id_finance' => $finance->id,
-                'status' => 'requested',
+                'status' => $newStatus,
                 'keterangan' => $data['alasan'],
                 'user_entry' => auth()->id(),
             ]);
         });
 
+        $successMsg = auth()->user()->level == 1
+            ? 'Digital updated and auto approved 1 successfully'
+            : 'Digital updated successfully';
 
         if ($request->source == 'approval_index') {
-            return redirect()->route('approvals.index')->with('success', 'Digital updated successfully');
+            return redirect()->route('approvals.index')->with('success', $successMsg);
         } elseif ($request->source == 'approval_show') {
-            return redirect()->route('approvals.show', $finance->id)->with('success', 'Digital updated successfully');
+            return redirect()->route('approvals.show', $finance->id)->with('success', $successMsg);
         }
 
         return redirect()->route('digitals.index')
-            ->with('success', 'Digital updated successfully');
+            ->with('success', $successMsg);
     }
 
 

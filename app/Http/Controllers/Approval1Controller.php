@@ -90,7 +90,10 @@ class Approval1Controller extends Controller
 
         $approvals = $query
             ->with('payableto')
-            ->whereDate('invoice_date', '>=', '2026-05-01')
+            ->where(function ($q) {
+                $q->where('type', 'digital')
+                  ->orWhereDate('invoice_date', '>=', '2026-05-01');
+            })
             ->orderBy('id', 'desc')
             ->paginate(6)
             ->appends($request->query());
