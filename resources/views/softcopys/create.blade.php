@@ -1,10 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/cleave.js@1/dist/cleave.min.js"></script>
+<script src="{{ asset('vendor/cleave/cleave.min.js') }}"></script>
 
 
 <div class="row mb-3">

@@ -61,4 +61,148 @@
     font-size:13px;
 }
 
+/* ── Choices.js Bootstrap 5 Match Height (38px) ── */
+.choices {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    position: relative;
+    width: 100%;
+}
+
+.choices .choices__inner {
+    min-height: 38px !important;
+    height: 38px !important;
+    padding: 0 0.75rem !important;
+    background-color: #fff !important;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.choices[data-type*="select-one"] .choices__inner {
+    padding-bottom: 0 !important;
+}
+
+.choices[data-type*="select-one"] .choices__list--single {
+    padding: 0 !important;
+    line-height: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.choices[data-type*="select-one"] .choices__list--single .choices__item {
+    font-size: 0.875rem !important;
+    color: #212529 !important;
+    padding: 0 !important;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.choices[data-type*="select-one"] .choices__list--single .choices__placeholder {
+    color: #6c757d !important;
+    opacity: 1 !important;
+}
+
+.choices.is-focused .choices__inner,
+.choices.is-open .choices__inner {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    background-color: #fff !important;
+}
+
+.choices[data-type*="select-one"]:after {
+    top: 50% !important;
+    margin-top: -2px !important;
+    right: 14px !important;
+    border-color: #6c757d transparent transparent transparent !important;
+    border-width: 5px 4px 0 4px !important;
+}
+
+.choices[data-type*="select-one"].is-open:after {
+    border-color: transparent transparent #6c757d transparent !important;
+    border-width: 0 4px 5px 4px !important;
+    margin-top: -3px !important;
+}
+
+/* Choices multiple select */
+.choices[data-type*="select-multiple"] .choices__inner {
+    min-height: 38px !important;
+    height: auto !important;
+    padding: 3px 6px !important;
+}
+
+.choices[data-type*="select-multiple"] .choices__list--multiple .choices__item {
+    background-color: #0d6efd !important;
+    border: 1px solid #0d6efd !important;
+    border-radius: 4px;
+    font-size: 0.775rem;
+    padding: 2px 6px;
+    margin: 2px 3px;
+    color: #ffffff !important;
+}
+
+.choices[data-type*="select-multiple"] .choices__button {
+    margin: 0 -3px 0 5px;
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    padding-left: 4px;
+}
+
+/* Choices dropdown & search input */
+.choices__list--dropdown {
+    z-index: 1050 !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 0.375rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    margin-top: 2px;
+}
+
+.choices__list--dropdown .choices__input {
+    padding: 6px 10px !important;
+    margin: 6px 8px !important;
+    width: calc(100% - 16px) !important;
+    border-radius: 4px;
+    border: 1px solid #ced4da !important;
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+    font-size: 0.85rem;
+}
+
+.choices__list--dropdown .choices__item {
+    padding: 8px 12px !important;
+    font-size: 0.875rem;
+    color: #212529 !important;
+    background-color: transparent !important;
+}
+
+/* State: Dipilih (Selected) tapi sedang tidak di-hover */
+.choices__list--dropdown .choices__item--selectable.is-selected {
+    background-color: #e9ecef !important;
+    color: #212529 !important;
+    font-weight: 600 !important;
+}
+
+/* State: Sedang di-hover / disorot keyboard */
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+}
+
+/* State: Sudah dipilih DAN sedang di-hover */
+.choices__list--dropdown .choices__item--selectable.is-selected.is-highlighted {
+    background-color: #0b5ed7 !important;
+    color: #ffffff !important;
+}
+
+
 

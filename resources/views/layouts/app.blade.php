@@ -3,9 +3,9 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="{{ asset('vendor/choices/css/choices.min.css') }}" rel="stylesheet" />
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/choices/js/choices.min.js') }}"></script>
 
     <link rel="icon" type="image/png" href="{{ asset('siloam.png') }}">
     <meta charset="utf-8">
@@ -14,12 +14,11 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/inter/inter.css') }}">
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 
     <style>
@@ -336,6 +335,12 @@
                                         <i class="fa-solid fa-users me-2"></i> User
                                     </a>
                                     @endcan
+                                    {{-- 
+                                    <div class="dropdown-divider border-secondary opacity-25"></div>
+                                    <a class="dropdown-item text-info" href="{{ route('test-sharepoint.index') }}">
+                                        <i class="fa-solid fa-cloud-arrow-up me-2"></i> Test SharePoint
+                                    </a>
+                                    --}}
                                 </div>
                             </li>
                             @endcanany
@@ -388,7 +393,37 @@
                 </div>
             </div>
         </main>
-
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.choicesInstances = window.choicesInstances || [];
+            
+            window.initChoices = function (context) {
+                const root = context || document;
+                const selects = root.querySelectorAll('select:not(.no-choices)');
+                selects.forEach(function (select) {
+                    if (!select.classList.contains('choices__input') && !select.closest('.choices')) {
+                        const isMultiple = select.hasAttribute('multiple');
+                        try {
+                            const choice = new Choices(select, {
+                                searchEnabled: true,
+                                searchPlaceholderValue: 'Cari...',
+                                itemSelectText: '',
+                                removeItemButton: isMultiple,
+                                shouldSort: false,
+                                allowHTML: false
+                            });
+                            window.choicesInstances.push(choice);
+                        } catch (err) {
+                            console.warn('Choices initialization skipped for:', select, err);
+                        }
+                    }
+                });
+            };
+
+            window.initChoices();
+        });
+    </script>
 </body>
 </html>
