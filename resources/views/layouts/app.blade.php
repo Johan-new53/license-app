@@ -149,6 +149,7 @@
         .card { border-radius: 12px; }
         .btn { border-radius: 8px; }
         .form-control, .form-select { border-radius: 8px; }
+        input::placeholder { text-transform: none !important; }
         table.table thead { background-color: #f7f9fc; }
     </style>
 </head>

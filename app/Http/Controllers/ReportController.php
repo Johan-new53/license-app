@@ -11,30 +11,54 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto', 'rektujuan']);
+        $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto', 'rektujuan'])
+            ->select('finances.*')
+            ->selectRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) as submission_date')
+            ->selectRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) as approved2_date");
 
-        // Filter seperti di Hardcopy
+        // Filter Submission Date
+        if ($request->filled('submission_date_from')) {
+            $query->whereRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) >= ?', [$request->submission_date_from]);
+        }
+        if ($request->filled('submission_date_to')) {
+            $query->whereRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) <= ?', [$request->submission_date_to]);
+        }
+
+        // Filter Approved 2 Date
+        if ($request->filled('approved2_date_from')) {
+            $query->whereRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) >= ?", [$request->approved2_date_from]);
+        }
+        if ($request->filled('approved2_date_to')) {
+            $query->whereRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) <= ?", [$request->approved2_date_to]);
+        }
+
+        // Filter Invoice Date
         if ($request->filled('date_from')) {
-            $query->whereDate('invoice_date', '>=', $request->date_from);
+            $query->whereDate('finances.invoice_date', '>=', $request->date_from);
         }
         if ($request->filled('date_to')) {
-            $query->whereDate('invoice_date', '<=', $request->date_to);
+            $query->whereDate('finances.invoice_date', '<=', $request->date_to);
+        }
+        if ($request->filled('payable_to')) {
+            $query->whereHas('payableto', function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->payable_to . '%');
+            });
         }
         if ($request->filled('doc_no')) {
-            $query->where('doc_no', 'like', '%' . $request->doc_no . '%');
+            $query->where('finances.doc_no', 'like', '%' . $request->doc_no . '%');
         }
         if ($request->filled('description')) {
-            $query->where('description', 'like', '%' . $request->description . '%');
+            $query->where('finances.description', 'like', '%' . $request->description . '%');
         }
         if ($request->filled('type')) {
-            $query->where('type', $request->type);
+            $query->where('finances.type', $request->type);
         }
         if ($request->filled('status')) {
             $statuses = (array) $request->status;
-            $query->whereIn('status', $statuses);
+            $query->whereIn('finances.status', $statuses);
         }
 
-        $finances = $query->orderBy('invoice_date', 'desc')->paginate(10)->withQueryString();
+        $finances = $query->orderBy('finances.invoice_date', 'desc')->paginate(10)->withQueryString();
 
         return view('reports.index', compact('finances'));
     }

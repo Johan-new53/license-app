@@ -52,6 +52,22 @@ class Approval1Controller extends Controller
 
         $query = Finance::query();
 
+        // Filter Submission Date
+        if ($request->filled('submission_date_from')) {
+            $query->whereRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) >= ?', [$request->submission_date_from]);
+        }
+        if ($request->filled('submission_date_to')) {
+            $query->whereRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) <= ?', [$request->submission_date_to]);
+        }
+
+        // Filter Approved 2 Date
+        if ($request->filled('approved2_date_from')) {
+            $query->whereRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) >= ?", [$request->approved2_date_from]);
+        }
+        if ($request->filled('approved2_date_to')) {
+            $query->whereRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) <= ?", [$request->approved2_date_to]);
+        }
+
         // filter tanggal invoice_date
         if ($request->filled('date_from')) {
             $query->whereDate('invoice_date', '>=', $request->date_from);
@@ -89,6 +105,9 @@ class Approval1Controller extends Controller
         }
 
         $approvals = $query
+            ->select('finances.*')
+            ->selectRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) as submission_date')
+            ->selectRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) as approved2_date")
             ->with('payableto')
             ->where(function ($q) {
                 $q->where('type', 'digital')

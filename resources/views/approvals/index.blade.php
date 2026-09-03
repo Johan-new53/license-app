@@ -26,6 +26,23 @@
             <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control">
         </div>
         <div class="col-lg-2">
+            <label class="form-label">Submission Date (From)</label>
+            <input type="date" name="submission_date_from" value="{{ request('submission_date_from') }}" class="form-control">
+        </div>
+        <div class="col-lg-2">
+            <label class="form-label">Submission Date (To)</label>
+            <input type="date" name="submission_date_to" value="{{ request('submission_date_to') }}" class="form-control">
+        </div>
+        <div class="col-lg-2">
+            <label class="form-label">Approved 2 Date (From)</label>
+            <input type="date" name="approved2_date_from" value="{{ request('approved2_date_from') }}" class="form-control">
+        </div>
+        <div class="col-lg-2">
+            <label class="form-label">Approved 2 Date (To)</label>
+            <input type="date" name="approved2_date_to" value="{{ request('approved2_date_to') }}" class="form-control">
+        </div>
+
+        <div class="col-lg-3 mt-2">
             <label class="form-label">Type</label>
             <select name="type" class="form-control">
                 <option value="">-- Pilih --</option>
@@ -35,17 +52,17 @@
                 <option value="digital" {{ request('type') == 'digital' ? 'selected' : '' }}>digital</option>
             </select>
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3 mt-2">
             <label class="form-label">Payable To</label>
-            <input type="text" name="payable_to" value="{{ request('payable_to') }}" class="form-control">
+            <input type="text" name="payable_to" value="{{ request('payable_to') }}" class="form-control" placeholder="Search">
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3 mt-2">
             <label class="form-label">Document No</label>
-            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()" placeholder="Search">
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3 mt-2">
             <label class="form-label">Description</label>
-            <input type="text" name="description" value="{{ request('description') }}" class="form-control">
+            <input type="text" name="description" value="{{ request('description') }}" class="form-control" placeholder="Search">
         </div>
         <div class="col-12 mt-2">
             <label class="form-label">Status</label>
@@ -87,24 +104,29 @@
 <hr class="mt-0">
 
 <div class="table-responsive">
-    <table class="table table-bordered" style="width:100%;">
+    <table class="table table-bordered" style="width:100%; min-width: 1200px;">
         <thead>
             <tr class="align-middle">
                 <th class="text-center" style="width:4%">No</th>
+                <th class="text-center" style="width:9%">Submission Date</th>
                 <th class="text-center" style="width:9%">Invoice Date</th>
                 <th class="text-center" style="width:7%">Type</th>
-                <th style="width:16%">Payable To</th>
-                <th style="width:18%">Document No.</th>
-                <th style="width:30%">Description</th>
+                <th style="width:15%">Payable To</th>
+                <th style="width:15%">Document No.</th>
+                <th style="width:23%">Description</th>
                 <th class="text-center" style="width:8%">Status</th>
-                <th class="text-center" style="width:12%">Due / Payment Date</th>
-                <th class="text-center" style="width:8%">Action</th>
+                <th class="text-center" style="width:9%">Approved 2 Date</th>
+                <th class="text-center" style="width:10%">Due / Payment Date</th>
+                <th class="text-center" style="width:7%">Action</th>
             </tr>
         </thead>
         <tbody>
         @foreach ($approvals as $approval)
         <tr class="align-middle">
             <td class="text-center">{{ ++$i }}</td>
+            <td class="text-center" style="white-space:nowrap;">
+                {{ $approval->submission_date ? \Carbon\Carbon::parse($approval->submission_date)->format('d-m-Y') : '-' }}
+            </td>
             <td class="text-center" style="white-space:nowrap;">
                 {{ $approval->invoice_date ? \Carbon\Carbon::parse($approval->invoice_date)->format('d-m-Y') : '-' }}
             </td>
@@ -126,6 +148,9 @@
                     };
                 @endphp
                 <span class="badge {{ $statusClass }}">{{ $approval->status }}</span>
+            </td>
+            <td class="text-center" style="white-space:nowrap;">
+                {{ $approval->approved2_date ? \Carbon\Carbon::parse($approval->approved2_date)->format('d-m-Y') : '-' }}
             </td>
             <td class="text-center" style="white-space:nowrap;">
                 <strong>Due</strong><br>

@@ -23,6 +23,23 @@
             <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control">
         </div>
         <div class="col-lg-2">
+            <label class="form-label">Submission Date (From)</label>
+            <input type="date" name="submission_date_from" value="{{ request('submission_date_from') }}" class="form-control">
+        </div>
+        <div class="col-lg-2">
+            <label class="form-label">Submission Date (To)</label>
+            <input type="date" name="submission_date_to" value="{{ request('submission_date_to') }}" class="form-control">
+        </div>
+        <div class="col-lg-2">
+            <label class="form-label">Approved 2 Date (From)</label>
+            <input type="date" name="approved2_date_from" value="{{ request('approved2_date_from') }}" class="form-control">
+        </div>
+        <div class="col-lg-2">
+            <label class="form-label">Approved 2 Date (To)</label>
+            <input type="date" name="approved2_date_to" value="{{ request('approved2_date_to') }}" class="form-control">
+        </div>
+
+        <div class="col-lg-3 mt-2">
             <label class="form-label">Type</label>
             <select name="type" class="form-control">
                 <option value="">-- All Type --</option>
@@ -32,13 +49,17 @@
                 <option value="digital" {{ request('type') == 'digital' ? 'selected' : '' }}>digital</option>
             </select>
         </div>
-        <div class="col-lg-3">
-            <label class="form-label">Document No</label>
-            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()" placeholder="Search..">
+        <div class="col-lg-3 mt-2">
+            <label class="form-label">Payable To</label>
+            <input type="text" name="payable_to" value="{{ request('payable_to') }}" class="form-control" placeholder="Search">
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-3 mt-2">
+            <label class="form-label">Document No</label>
+            <input type="text" name="doc_no" value="{{ request('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()" placeholder="Search">
+        </div>
+        <div class="col-lg-3 mt-2">
             <label class="form-label">Description</label>
-            <input type="text" name="description" value="{{ request('description') }}" class="form-control" placeholder="Search..">
+            <input type="text" name="description" value="{{ request('description') }}" class="form-control" placeholder="Search">
         </div>
 
         <div class="col-12 mt-2">
@@ -89,12 +110,14 @@
                 <th style="width:40px;">No</th>
                 <th>TYPE</th>
                 <th>RECEIPT DATE INVOICE FROM DIVISION</th>
+                <th>SUBMISSION DATE</th>
                 <th>UNIT HOSPITALS</th>
                 <th>SUPPLIER NAME</th>
                 <th>Invoice Date</th>
                 <th>Document No</th>
                 <th>DESCRIPTION</th>
                 <th>STATUS</th>
+                <th>APPROVED 2 DATE</th>
                 <th class="text-center">Due / Payment Date</th>
                 <th>PAYMENT TERM</th>
                 <th>PO/AGREEMENT NO</th>
@@ -119,6 +142,7 @@
                 <td class="text-center">{{ ++$i }}</td>
                 <td class="text-center"><span class="badge bg-primary text-uppercase">{{ $finance->type }}</span></td>
                 <td class="text-center">{{ $finance->created_at ? \Carbon\Carbon::parse($finance->created_at)->format('d-m-Y') : '-' }}</td>
+                <td class="text-center">{{ $finance->submission_date ? \Carbon\Carbon::parse($finance->submission_date)->format('d-m-Y') : '-' }}</td>
                 <td>{{ $finance->rek_sumber->nama ?? '-' }}</td>
                 <td>{{ $finance->payableto->nama ?? '-' }}</td>
                 <td class="text-center">{{ $finance->invoice_date ? date('d-m-Y', strtotime($finance->invoice_date)) : '-' }}</td>
@@ -141,6 +165,7 @@
                     @endphp
                     <span class="badge {{ $statusClass }}">{{ $finance->status }}</span>
                 </td>
+                <td class="text-center">{{ $finance->approved2_date ? \Carbon\Carbon::parse($finance->approved2_date)->format('d-m-Y') : '-' }}</td>
                 <td class="text-center" style="white-space:nowrap;">
                     <strong>Due</strong><br>
                     {{ in_array($finance->status, ['approved 2', 'paid']) && $finance->due_date ? \Carbon\Carbon::parse($finance->due_date)->format('d-m-Y') : '-' }}<br>
@@ -165,7 +190,7 @@
             @endforeach
         @else
             <tr>
-                <td colspan="24" class="text-center py-4 text-muted">Data tidak ditemukan</td>
+                <td colspan="26" class="text-center py-4 text-muted">Data tidak ditemukan</td>
             </tr>
         @endif
         </tbody>
