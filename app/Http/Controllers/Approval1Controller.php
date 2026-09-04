@@ -109,10 +109,14 @@ class Approval1Controller extends Controller
             ->selectRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) as submission_date')
             ->selectRaw("COALESCE((SELECT created_at FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1), finances.final_validation_time) as approved2_date")
             ->with('payableto')
-            ->where(function ($q) {
-                $q->where('type', 'digital')
-                  ->orWhereDate('invoice_date', '>=', '2026-05-01');
-            })
+            // CATATAN PERUBAHAN METODE FILTER:
+            // Sebelumnya menggunakan:
+            //   ->where(function ($q) { $q->where('type', 'digital')->orWhereDate('invoice_date', '>=', '2026-05-01'); })
+            // Alasan perubahan:
+            // 1. Filter lama berbasis invoice_date >= 2026-05-01 menyebabkan PRF baru yang invoice-nya backdate (misal: invoice Apr-2026 yang baru dibuat Sep-2026) hilang dari menu approval.
+            // 2. Menggunakan whereHas('histories') memastikan HANYA PRF yang dibuat resmi melalui form submission (Hardcopy, Softcopy, Automate, Digital) yang muncul di approval.
+            // 3. Ribuan data arsip / sampah hasil Import Excel massal (yang tidak memiliki record di history_approval) otomatis tersaring dan tidak akan mengotori menu approval, termasuk jika ada import data baru di kemudian hari.
+            ->whereHas('histories')
             ->orderBy('id', 'desc')
             ->paginate(6)
             ->appends($request->query());
