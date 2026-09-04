@@ -14,27 +14,19 @@
 
 <form action="{{ route('reports.index') }}" method="GET" class="mb-3">
     <div class="row g-2 align-items-end">
-        <div class="col-lg-2">
-            <label class="form-label">Invoice Date (From)</label>
-            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control">
-        </div>
-        <div class="col-lg-2">
-            <label class="form-label">Invoice Date (To)</label>
-            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control">
-        </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <label class="form-label">Submission Date (From)</label>
             <input type="date" name="submission_date_from" value="{{ request('submission_date_from') }}" class="form-control">
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <label class="form-label">Submission Date (To)</label>
             <input type="date" name="submission_date_to" value="{{ request('submission_date_to') }}" class="form-control">
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <label class="form-label">Approved 2 Date (From)</label>
             <input type="date" name="approved2_date_from" value="{{ request('approved2_date_from') }}" class="form-control">
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <label class="form-label">Approved 2 Date (To)</label>
             <input type="date" name="approved2_date_to" value="{{ request('approved2_date_to') }}" class="form-control">
         </div>
@@ -117,6 +109,7 @@
                 <th>Document No</th>
                 <th>DESCRIPTION</th>
                 <th>STATUS</th>
+                <th>APPROVED 1 DATE</th>
                 <th>APPROVED 2 DATE</th>
                 <th class="text-center">Due / Payment Date</th>
                 <th>PAYMENT TERM</th>
@@ -165,6 +158,7 @@
                     @endphp
                     <span class="badge {{ $statusClass }}">{{ $finance->status }}</span>
                 </td>
+                <td class="text-center">{{ $finance->approved1_date ? \Carbon\Carbon::parse($finance->approved1_date)->format('d-m-Y') : '-' }}</td>
                 <td class="text-center">{{ $finance->approved2_date ? \Carbon\Carbon::parse($finance->approved2_date)->format('d-m-Y') : '-' }}</td>
                 <td class="text-center" style="white-space:nowrap;">
                     <strong>Due</strong><br>
@@ -190,7 +184,7 @@
             @endforeach
         @else
             <tr>
-                <td colspan="26" class="text-center py-4 text-muted">Data tidak ditemukan</td>
+                <td colspan="27" class="text-center py-4 text-muted">Data tidak ditemukan</td>
             </tr>
         @endif
         </tbody>

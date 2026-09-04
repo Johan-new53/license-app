@@ -21,6 +21,7 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
         $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto', 'rektujuan'])
             ->select('finances.*')
             ->selectRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) as submission_date')
+            ->selectRaw("(SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 1' ORDER BY id DESC LIMIT 1) as approved1_date")
             ->selectRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) as approved2_date");
 
         if (!empty($this->filters['submission_date_from'])) {
@@ -75,6 +76,7 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
             'Document No',
             'DESCRIPTION',
             'STATUS',
+            'APPROVED 1 DATE',
             'APPROVED 2 DATE',
             'PAYMENT DATE',
             'PAYMENT TERM',
@@ -105,6 +107,10 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
             ? \Carbon\Carbon::parse($finance->submission_date)->format('d-m-Y') 
             : '';
 
+        $approved1Date = $finance->approved1_date 
+            ? \Carbon\Carbon::parse($finance->approved1_date)->format('d-m-Y') 
+            : '';
+
         $approved2Date = $finance->approved2_date 
             ? \Carbon\Carbon::parse($finance->approved2_date)->format('d-m-Y') 
             : '';
@@ -119,6 +125,7 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
             $finance->doc_no,
             $finance->description,
             $finance->status,
+            $approved1Date,
             $approved2Date,
             $finance->payment_date ? \Carbon\Carbon::parse($finance->payment_date)->format('d-m-Y') : '',
             $finance->payment_term,

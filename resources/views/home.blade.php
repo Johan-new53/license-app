@@ -69,7 +69,7 @@
             <div class="dash-card-icon"><i class="fa-solid fa-book-bookmark"></i></div>
             <div>
                 <div class="dash-card-title">Hard Copy</div>
-                <div class="dash-card-sub">Dokumen fisik PRF</div>
+                <div class="dash-card-sub">PRF Manual</div>
             </div>
         </a>
     </div>
@@ -81,7 +81,7 @@
             <div class="dash-card-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
             <div>
                 <div class="dash-card-title">Soft Copy</div>
-                <div class="dash-card-sub">Upload file digital PRF</div>
+                <div class="dash-card-sub">Payment HO to HU</div>
             </div>
         </a>
     </div>
@@ -105,7 +105,7 @@
             <div class="dash-card-icon"><i class="fa-solid fa-robot"></i></div>
             <div>
                 <div class="dash-card-title">Digital</div>
-                <div class="dash-card-sub">PRF digital</div>
+                <div class="dash-card-sub">PRF Digital (NPOI)</div>
             </div>
         </a>
     </div>
