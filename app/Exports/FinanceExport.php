@@ -21,8 +21,8 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
         $query = Finance::with(['category', 'dept', 'rek_sumber', 'bank', 'matauang', 'ppn', 'payableto', 'rektujuan'])
             ->select('finances.*')
             ->selectRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) as submission_date')
-            ->selectRaw("(SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 1' ORDER BY id DESC LIMIT 1) as approved1_date")
-            ->selectRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) as approved2_date");
+            ->selectRaw("(SELECT created_at FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 1' ORDER BY id DESC LIMIT 1) as approved1_date")
+            ->selectRaw("COALESCE((SELECT created_at FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1), finances.final_validation_time) as approved2_date");
 
         if (!empty($this->filters['submission_date_from'])) {
             $query->whereRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) >= ?', [$this->filters['submission_date_from']]);
@@ -31,10 +31,10 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
             $query->whereRaw('COALESCE(finances.form_submission_time, DATE(finances.created_at)) <= ?', [$this->filters['submission_date_to']]);
         }
         if (!empty($this->filters['approved2_date_from'])) {
-            $query->whereRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) >= ?", [$this->filters['approved2_date_from']]);
+            $query->whereRaw("COALESCE((SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1), finances.final_validation_time) >= ?", [$this->filters['approved2_date_from']]);
         }
         if (!empty($this->filters['approved2_date_to'])) {
-            $query->whereRaw("COALESCE(finances.final_validation_time, (SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1)) <= ?", [$this->filters['approved2_date_to']]);
+            $query->whereRaw("COALESCE((SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1), finances.final_validation_time) <= ?", [$this->filters['approved2_date_to']]);
         }
         if (!empty($this->filters['date_from'])) {
             $query->whereDate('finances.invoice_date', '>=', $this->filters['date_from']);
