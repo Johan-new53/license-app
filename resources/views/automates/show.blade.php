@@ -144,23 +144,17 @@
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <strong>File Softcopy :</strong><br>
-                            @if($finance->input_file)
+                            @if($finance->input_file && trim($finance->input_file) !== '' && trim($finance->input_file) !== '#REF!')
                                 
 @php
-    $fileLink = $finance->input_file;
-    $isUrl = false;
+    $fileLink = trim($finance->input_file);
     $href = asset('storage/' . $fileLink);
-    if ($fileLink) {
-        if (filter_var($fileLink, FILTER_VALIDATE_URL)) {
-            $isUrl = true;
-            $href = $fileLink;
-        } elseif (preg_match('/^(www\.)[a-z0-9\-]+\.[a-z]{2,}/i', $fileLink)) {
-            $isUrl = true;
-            $href = 'http://' . $fileLink;
-        } elseif (preg_match('/^(http|https):\/\//i', $fileLink)) {
-            $isUrl = true;
-            $href = $fileLink;
-        }
+    if (filter_var($fileLink, FILTER_VALIDATE_URL)) {
+        $href = $fileLink;
+    } elseif (preg_match('/^(www\.)[a-z0-9\-]+\.[a-z]{2,}/i', $fileLink)) {
+        $href = 'http://' . $fileLink;
+    } elseif (preg_match('/^(http|https):\/\//i', $fileLink)) {
+        $href = $fileLink;
     }
 @endphp
 <a href="{{ $href }}"

@@ -212,25 +212,19 @@
                 </div>
             <br>
 
-            @if($finance->input_file)
+            @if($finance->input_file && trim($finance->input_file) !== '' && trim($finance->input_file) !== '#REF!')
             <div class="mt-2">
                 <strong>File Saat Ini:</strong><br>
                 
 @php
-    $fileLink = $finance->input_file;
-    $isUrl = false;
+    $fileLink = trim($finance->input_file);
     $href = asset('storage/' . $fileLink);
-    if ($fileLink) {
-        if (filter_var($fileLink, FILTER_VALIDATE_URL)) {
-            $isUrl = true;
-            $href = $fileLink;
-        } elseif (preg_match('/^(www\.)[a-z0-9\-]+\.[a-z]{2,}/i', $fileLink)) {
-            $isUrl = true;
-            $href = 'http://' . $fileLink;
-        } elseif (preg_match('/^(http|https):\/\//i', $fileLink)) {
-            $isUrl = true;
-            $href = $fileLink;
-        }
+    if (filter_var($fileLink, FILTER_VALIDATE_URL)) {
+        $href = $fileLink;
+    } elseif (preg_match('/^(www\.)[a-z0-9\-]+\.[a-z]{2,}/i', $fileLink)) {
+        $href = 'http://' . $fileLink;
+    } elseif (preg_match('/^(http|https):\/\//i', $fileLink)) {
+        $href = $fileLink;
     }
 @endphp
 <a href="{{ $href }}" target="_blank">
