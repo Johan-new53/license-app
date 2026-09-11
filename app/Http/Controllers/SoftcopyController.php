@@ -159,7 +159,7 @@ class SoftcopyController extends Controller
           'description' => 'required',
           'id_currency' => 'required',
           'dpp' => 'required',
-          'file_softcopy' => 'mimes:pdf|max:204800',
+          'file_softcopy' => 'required|mimes:pdf|max:204800',
 
         ]);
 
@@ -319,51 +319,38 @@ class SoftcopyController extends Controller
     }
 
     $data = $request->all();
+    $data['status'] = 'requested';
+    $data['type'] = 'softcopy';
 
-    //if ($request->hasFile('file_softcopy')) {
+    if ($request->hasFile('file_softcopy')) {
         // hapus file lama
-    //    if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
-    //        Storage::disk('public')->delete($finance->input_file);
-    //    }
-
-        // upload file baru
-    //    $file = $request->file('file_softcopy');
-    //    $path = $file->store('softcopy_files', 'public');
-
-    //    $data['input_file'] = $path;
-    //}
-        $path = null;
-        if ($request->hasFile('file_softcopy')) {
-
-            $file = $request->file('file_softcopy');
-
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            $sharePointFile = $sharePoint->upload(
-                $file->getRealPath(),
-                $filename
-            );
-
-            $path = $sharePointFile['webUrl'] ?? null;
-            // Simpan URL file SharePoint ke database 
-            $data['input_file'] = $path;
+        if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
+            Storage::disk('public')->delete($finance->input_file);
         }
 
+        // upload file baru
+        $file = $request->file('file_softcopy');
+        $path = $file->store('softcopy_files', 'public');
 
-        //$data = $request->all();
+        $data['input_file'] = $path;
+    }
+
+
+
+        $data = $request->all();
         $data['status'] = 'requested';
         $data['type'] = 'softcopy';
 
         DB::transaction(function () use ($data, $finance) {
             $finance->update($data);
 
-            History_approval::create([
-                'id_finance' => $finance->id,
-                'status' => 'requested',
-                'keterangan' => $data['alasan'],
-                'user_entry' => auth()->id(),
-            ]);
-        });
+        History_approval::create([
+            'id_finance' => $finance->id,
+            'status' => 'requested',
+            'keterangan' => $request->alasan ?? 'edit prf softcopy',
+            'user_entry' => auth()->id(),
+        ]);
+    });
 
     return redirect()->route('softcopys.index')
         ->with('success', 'Softcopy berhasil diupdate.');
