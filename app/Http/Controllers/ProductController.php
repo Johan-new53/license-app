@@ -41,6 +41,10 @@ class ProductController extends Controller
             $query->where('description', 'like', '%' . $request->description . '%');
         }
 
+        if ($request->vendor) {
+            $query->where('vendor', 'like', '%' . $request->vendor . '%');
+        }
+
         if ($request->pic) {
             $query->where('pic', 'like', '%' . $request->pic . '%');
         }

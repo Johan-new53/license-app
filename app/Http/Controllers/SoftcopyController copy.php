@@ -1,9 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-use App\Services\SharePointService;
-
 
 use App\Models\Finance;
 use Illuminate\Http\Request;
@@ -23,7 +20,7 @@ use App\Models\History_approval;
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
-//use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage;
 use App\Services\DocNoCheckService;
 
 class SoftcopyController extends Controller
@@ -143,8 +140,7 @@ class SoftcopyController extends Controller
         return view('softcopys.create', compact('categorys','departments','hu_rek_sumbers','payabletos','rek_tujuans','banks','currencys','ppns'));
     }
 
-    //public function store(Request $request): RedirectResponse
-    public function store(Request $request,SharePointService $sharePoint): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
 
         request()->validate([
@@ -171,27 +167,11 @@ class SoftcopyController extends Controller
                 ->withErrors(['doc_no' => 'Doc No sudah terpakai untuk Payable To ini: '.implode(', ', $check['exists'])]);
         }
 
-        //if ($request->hasFile('file_softcopy')) {
-        //    $file = $request->file('file_softcopy');
-        //    $filename = time() . '_' . $file->getClientOriginalName();
-        //    $path = $file->storeAs('softcopy_files', $filename, 'public');
-        // }
-        
-        $path = null;
         if ($request->hasFile('file_softcopy')) {
-
             $file = $request->file('file_softcopy');
-
             $filename = time() . '_' . $file->getClientOriginalName();
-
-            $sharePointFile = $sharePoint->upload(
-                $file->getRealPath(),
-                $filename
-            );
-
-            $path = $sharePointFile['webUrl'] ?? null;
+            $path = $file->storeAs('softcopy_files', $filename, 'public');
         }
-
 
         $data = $request->all();
         $hari = Payableto::where('id', $request->id_payable)->value('hari');
@@ -290,9 +270,8 @@ class SoftcopyController extends Controller
 
         }
 
-        //public function store(Request $request,SharePointService $sharePoint): RedirectResponse
-    public function update(Request $request, $id,SharePointService $sharePoint): RedirectResponse
-    {
+    public function update(Request $request, $id)
+{
     $finance = Finance::findOrFail($id);
 
     $validated = $request->validate([
@@ -320,37 +299,22 @@ class SoftcopyController extends Controller
 
     $data = $request->all();
 
-    //if ($request->hasFile('file_softcopy')) {
+    if ($request->hasFile('file_softcopy')) {
         // hapus file lama
-    //    if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
-    //        Storage::disk('public')->delete($finance->input_file);
-    //    }
-
-        // upload file baru
-    //    $file = $request->file('file_softcopy');
-    //    $path = $file->store('softcopy_files', 'public');
-
-    //    $data['input_file'] = $path;
-    //}
-        $path = null;
-        if ($request->hasFile('file_softcopy')) {
-
-            $file = $request->file('file_softcopy');
-
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            $sharePointFile = $sharePoint->upload(
-                $file->getRealPath(),
-                $filename
-            );
-
-            $path = $sharePointFile['webUrl'] ?? null;
-            // Simpan URL file SharePoint ke database 
-            $data['input_file'] = $path;
+        if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
+            Storage::disk('public')->delete($finance->input_file);
         }
 
+        // upload file baru
+        $file = $request->file('file_softcopy');
+        $path = $file->store('softcopy_files', 'public');
 
-        //$data = $request->all();
+        $data['input_file'] = $path;
+    }
+
+
+
+        $data = $request->all();
         $data['status'] = 'requested';
         $data['type'] = 'softcopy';
 
