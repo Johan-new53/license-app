@@ -290,12 +290,8 @@ class SoftcopyController extends Controller
 
         }
 
-        
-    public function update(
-    Request $request,
-    $id,
-    SharePointService $sharePoint
-    ): RedirectResponse 
+        //public function store(Request $request,SharePointService $sharePoint): RedirectResponse
+    public function update(Request $request, $id,SharePointService $sharePoint): RedirectResponse
     {
     $finance = Finance::findOrFail($id);
 
@@ -311,75 +307,43 @@ class SoftcopyController extends Controller
         'description' => 'required',
         'id_currency' => 'required',
         'dpp' => 'required',
-        'file_softcopy' => 'nullable|mimes:pdf|max:204800',
-        'alasan' => 'nullable',
+        'file_softcopy' => 'mimes:pdf|max:204800',
     ]);
 
-    // Cek Doc No
     $docNoCheckService = new DocNoCheckService();
-
-    $check = $docNoCheckService->check(
-        $request->doc_no,
-        'all',
-        $finance->id,
-        'id_payable',
-        $request->id_payable
-    );
-
+    $check = $docNoCheckService->check($request->doc_no, 'all', $finance->id, 'id_payable', $request->id_payable);
     if (!empty($check['exists'])) {
         return back()
             ->withInput()
-            ->withErrors([
-                'doc_no' => 'Doc No sudah terpakai untuk Payable To ini: '
-                    . implode(', ', $check['exists'])
-            ]);
+            ->withErrors(['doc_no' => 'Doc No sudah terpakai untuk Payable To ini: '.implode(', ', $check['exists'])]);
     }
 
-    /*
-     * Data yang akan di-update
-     */
     $data = $request->all();
-    //$data = $validated;
-
     $data['status'] = 'requested';
     $data['type'] = 'softcopy';
 
-    /*
-     * Upload file baru ke SharePoint
-     */
     if ($request->hasFile('file_softcopy')) {
-        $file = $request->file('file_softcopy');
-
-        $filename = time() . '_' . $file->getClientOriginalName();
-
-        $sharePointFile = $sharePoint->upload(
-            $file->getRealPath(),
-            $filename
-        );
-
-        $path = $sharePointFile['webUrl'] ?? null;
-
-        if (!$path) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'file_softcopy' => 'File berhasil diproses tetapi URL SharePoint tidak ditemukan.'
-                ]);
+        // hapus file lama
+        if ($finance->input_file && Storage::disk('public')->exists($finance->input_file)) {
+            Storage::disk('public')->delete($finance->input_file);
         }
 
-        // Simpan URL file baru pada kolom database yang benar
+        // upload file baru
+        $file = $request->file('file_softcopy');
+        $path = $file->store('softcopy_files', 'public');
+
         $data['input_file'] = $path;
     }
 
-    /*
-     * Update database + history dalam satu transaction
-     */
-    DB::transaction(function () use ($data, $finance, $request) {
 
-        // Update data Finance
-        $finance->update($data);
 
-        // Simpan history approval
+        $data = $request->all();
+        $data['status'] = 'requested';
+        $data['type'] = 'softcopy';
+
+        DB::transaction(function () use ($data, $finance) {
+            $finance->update($data);
+
         History_approval::create([
             'id_finance' => $finance->id,
             'status' => 'requested',
@@ -388,10 +352,10 @@ class SoftcopyController extends Controller
         ]);
     });
 
-    return redirect()
-        ->route('softcopys.index')
+    return redirect()->route('softcopys.index')
         ->with('success', 'Softcopy berhasil diupdate.');
     }
+
 
 
     public function destroy($id): RedirectResponse
