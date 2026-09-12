@@ -1,0 +1,417 @@
+@extends('layouts.app')
+
+@section('content')
+<script src="{{ asset('vendor/cleave/cleave.min.js') }}"></script>
+
+
+<div class="row mb-3">
+    <div class="col-lg-12">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2>Add New Soft Copy</h2>
+            </div>
+            <div>
+                <a class="btn btn-primary btn-sm" href="{{ route('softcopys.index') }}">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+
+<form action="{{ route('softcopys.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+    @csrf
+
+
+<div class="container mt-4">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="data1-tab" data-bs-toggle="tab" data-bs-target="#data1"
+                type="button" role="tab" aria-controls="data1" aria-selected="true">Document Information</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="data2-tab" data-bs-toggle="tab" data-bs-target="#data2"
+                type="button" role="tab" aria-controls="data2" aria-selected="true">Requesting</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="data3-tab" data-bs-toggle="tab" data-bs-target="#data3"
+                type="button" role="tab" aria-controls="data3" aria-selected="false">Rekening Tujuan</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="data4-tab" data-bs-toggle="tab" data-bs-target="#data4"
+                type="button" role="tab" aria-controls="data4" aria-selected="false">Document Number</button>
+        </li>
+         <li class="nav-item" role="presentation">
+            <button class="nav-link" id="data5-tab" data-bs-toggle="tab" data-bs-target="#data5"
+                type="button" role="tab" aria-controls="data5" aria-selected="false">Amount</button>
+        </li>
+
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active p-3" id="data1" role="tabpanel" aria-labelledby="data1-tab">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Payment Term * :</strong>
+                    <input type="text" name="payment_term" value="{{ old('payment_term') }}" class="form-control" placeholder="" required>
+                </div>
+            </div>
+            <br/>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>PO Number :</strong>
+                    <input type="text" name="po_no" value="{{ old('po_no') }}" class="form-control" placeholder="">
+                </div>
+            </div>
+            <br/>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+                <strong>PO Category * :</strong>
+                <select name="id_category" class="form-control select2" required>
+                    <option value="">-- Pilih --</option>
+                    @foreach ($categorys as $category)
+                        <option value="{{ $category->id }}" {{ old('id_category') == $category->id ? 'selected' : '' }}>
+                            {{ $category->nama }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="tab-pane fade p-3" id="data2" role="tabpanel" aria-labelledby="data2-tab">
+
+
+
+           <div class="col-xs-4 col-sm-4 col-md-4">
+                    <strong>Requesting Department * :</strong>
+                    <select name="id_dept" class="form-control select2" required>
+                        <option value="">-- Pilih --</option>
+                        @foreach ($departments as $dept)
+                            <option value="{{ $dept->id }}" {{ old('id_dept') == $dept->id ? 'selected' : '' }}>
+                                {{ $dept->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+            </div>
+            <br>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+                    <strong>Hospital unit dan Rekening sumber * :</strong>
+                    <select name="id_rek_sumber" class="form-control select2" required>
+                        <option value="">-- Pilih --</option>
+                        @foreach ($hu_rek_sumbers as $hu_rek_sumber)
+                            <option value="{{ $hu_rek_sumber->id }}" {{ old('id_rek_sumber') == $hu_rek_sumber->id ? 'selected' : '' }}>
+                                {{ $hu_rek_sumber->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+            </div>
+            <br>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+                    <strong>Payable To * :</strong>
+                    <select name="id_payable" class="form-control select2" required>
+                        <option value="">-- Pilih --</option>
+                        @foreach ($payabletos as $payableto)
+                            <option value="{{ $payableto->id }}" {{ old('id_payable') == $payableto->id ? 'selected' : '' }}>
+                                {{ $payableto->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+            </div>
+            <br>
+        </div>
+        <div class="tab-pane fade p-3" id="data3" role="tabpanel" aria-labelledby="data3-tab">
+
+
+            <div class="col-xs-4 col-sm-4 col-md-4">
+                        <strong>Rekening Tujuan * :</strong>
+                        <select name="id_rek_tujuan" class="form-control select2" required>
+                            <option value="">-- Pilih --</option>
+                            @foreach ($rek_tujuans as $rek_tujuan)
+                                <option value="{{ $rek_tujuan->id }}" {{ old('id_rek_tujuan') == $rek_tujuan->id ? 'selected' : '' }}>
+                                    {{ $rek_tujuan->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                </div>
+            <br>
+
+            <div class="col-xs-2 col-sm-2 col-md-2 ">
+                <div class="form-group">
+                    <strong>Invoice date * :</strong>
+                    <input type="date" name="invoice_date" value="{{ old('invoice_date', date('Y-m-d')) }}" class="form-control" placeholder="" required>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade p-3" id="data4" role="tabpanel" aria-labelledby="data4-tab">
+
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Document Number(s) * :</strong><br>
+                    <strong>Diperbolehkan lebih dari 1 dokumen contoh (12345678;456789123)</strong><br>
+
+                    <input id="doc_no" type="text" name="doc_no" value="{{ old('doc_no') }}" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()" placeholder="" required>
+                    <div id="docNoResult" class="mt-2"></div>
+                </div>
+            </div>
+            <br>
+
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Description * :</strong>
+                    <input type="text" name="description" value="{{ old('description') }}" class="form-control" placeholder="" required>
+                </div>
+            </div>
+            <br>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+                        <strong>Currency * :</strong>
+                        <select name="id_currency" class="form-control select2" required>
+                            <option value="">-- Pilih --</option>
+                            @foreach ($currencys as $currency)
+                                <option value="{{ $currency->id }}" {{ old('id_currency') == $currency->id ? 'selected' : '' }}>
+                                    {{ $currency->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                </div>
+            <br>
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="form-group">
+                    <strong>Upload File (PDF) * :</strong>
+                    <input type="file" name="file_softcopy" class="form-control" accept=".pdf" required>
+                    <small class="text-muted">File number limit 1 Single file size limit: 200MB Allowed file types: PDF</small>
+                </div>
+            </div>
+            <br>
+
+
+
+        </div>
+
+         <div class="tab-pane fade p-3" id="data5" role="tabpanel" aria-labelledby="data5-tab">
+
+            <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="form-group">
+                    <strong>Dpp * :</strong>   <br>
+                    <input type="text" id="dpp" name="dpp" value="{{ old('dpp') }}" class="form-control" placeholder="" required>
+                </div>
+            </div>
+
+            <div class="col-xs-3 col-sm-3 col-md-3">
+            <strong>Ppn (Pilih 0,1,11,Other) * :</strong>
+            <select name="id_ppn" id="id_ppn" class="form-control select2" required>
+                <option value="">-- Pilih --</option>
+                @foreach ($ppns as $ppn)
+                    <option value="{{ $ppn->id }}"
+                        data-ppn="{{ $ppn->ppn }}"
+                        data-flag="{{ $ppn->flag_ubah }}" {{ old('id_ppn') == $ppn->id ? 'selected' : '' }}>
+                        {{ $ppn->nama }}
+                    </option>
+                @endforeach
+            </select>
+            </div>
+
+             <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="form-group">
+                    <strong>Ppn% * :</strong>   <br>
+                    <input type="number" id="ppn_persen" name="persen_ppn" class="form-control" value="{{ old('persen_ppn', 0) }}" placeholder="" readonly>
+                </div>
+            </div>
+
+
+             <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="form-group">
+                    <strong>Nilai Ppn * :</strong>   <br>
+                    <input type="text" id="nilai_ppn" name="nilai_ppn" value="{{ old('nilai_ppn') }}" class="form-control" placeholder="" readonly>
+                </div>
+            </div>
+
+
+            <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="form-group">
+                    <strong>PPH * :</strong>   <br>
+                    <input type="text" id="pph" name="pph" class="form-control" value="{{ old('pph', 0) }}" placeholder="" required>
+                </div>
+            </div>
+
+
+            <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="form-group">
+                    <strong>Total Amount * :</strong>   <br>
+                    <input type="text" id="total_amount" name="total_amount" value="{{ old('total_amount') }}" class="form-control" placeholder="" readonly>
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+
+<div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                    <button id="submit" type="submit" class="btn btn-primary btn-sm mb-3 mt-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Submit
+                    </button>
+</div>
+
+
+</div>
+</form>
+
+<script>
+  window.DOCNO_CHECK = {
+    url: "{{ route('checkDocNo') }}",
+    type: "all",
+    filter_field: "id_payable",
+    filter_label: "Payable To",
+  };
+</script>
+
+<script src="{{ asset('js/docno-check.js') }}"></script>
+
+<script>
+    let cleaveDpp = new Cleave('#dpp', {
+        numeral: true,
+        numeralThousandsGroupStyle: 'thousand'
+    });
+
+    let cleavePph = new Cleave('#pph', {
+        numeral: true,
+        numeralThousandsGroupStyle: 'thousand'
+    });
+
+    let cleavePpn = new Cleave('#nilai_ppn', {
+        numeral: true,
+        numeralThousandsGroupStyle: 'thousand'
+    });
+
+    let cleaveTotal = new Cleave('#total_amount', {
+        numeral: true,
+        numeralThousandsGroupStyle: 'thousand'
+    });
+
+    function hitungTotal() {
+        let dpp = parseFloat(cleaveDpp.getRawValue()) || 0;
+        let pph = parseFloat(cleavePph.getRawValue()) || 0;
+        let ppnPersen = parseFloat(document.getElementById('ppn_persen').value) || 0;
+
+        let ppnNilai = 0;
+
+        if ($('#nilai_ppn').prop('readonly')) {
+            ppnNilai = (ppnPersen / 100) * dpp;
+            cleavePpn.setRawValue(ppnNilai);
+        } else {
+            ppnNilai = parseFloat(cleavePpn.getRawValue()) || 0;
+        }
+
+        let total = dpp + ppnNilai - pph;
+        cleaveTotal.setRawValue(total);
+    }
+
+// trigger saat input berubah
+    $('#dpp, #pph, #nilai_ppn, #ppn_persen').on('input', function () {
+        hitungTotal();
+    });
+
+    $('#id_ppn').on('change', function () {
+        hitungTotal();
+    });
+
+    document.getElementById('id_ppn').addEventListener('change', function() {
+
+        let selected = this.options[this.selectedIndex];
+
+        let persen = parseFloat(selected.getAttribute('data-ppn')) || 0;
+        let flag = parseInt(selected.getAttribute('data-flag')) || 0;
+
+        let ppnPersenInput = document.getElementById('ppn_persen');
+        let nilaiPpnInput = document.getElementById('nilai_ppn');
+
+        // set persen
+        ppnPersenInput.value = persen;
+
+        // atur readonly dulu (PENTING urutan ini)
+        if (flag === 0) {
+            nilaiPpnInput.readOnly = true;
+            nilaiPpnInput.value = 0; // reset dulu supaya bersih
+        } else {
+            nilaiPpnInput.readOnly = false;
+            nilaiPpnInput.value = 0; // reset juga supaya tidak bawa nilai lama
+        }
+
+        // hitung ulang setelah semua set
+        hitungTotal();
+    });
+
+    document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
+
+    $('form').on('submit', function (e) {
+        // Cek validasi manual untuk menangani Tabs
+        let requiredFields = $(this).find('[required]');
+        let emptyFields = [];
+        let firstEmptyField = null;
+
+        requiredFields.each(function() {
+            if ($(this).val() === '' || $(this).val() === null) {
+                // Ambil label dari elemen <strong> sebelumnya atau atribut placeholder/name
+                let label = $(this).closest('.form-group, .col-xs-4, .col-xs-6, .col-xs-3, .col-xs-12').find('strong').first().text().replace(' * :', '').replace('* :', '').trim();
+                if (!label) label = $(this).attr('placeholder') || $(this).attr('name');
+                emptyFields.push(label);
+                
+                if (!firstEmptyField) firstEmptyField = $(this);
+            }
+        });
+
+        if (emptyFields.length > 0) {
+            e.preventDefault(); // Batalkan submit
+            
+            alert("Harap isi field berikut:\n- " + emptyFields.join("\n- "));
+
+            // Jika field ada di dalam tab, pindah ke tab tersebut
+            let tabPane = firstEmptyField.closest('.tab-pane');
+            if (tabPane.length > 0) {
+                let tabId = tabPane.attr('id');
+                let tabButton = $('button[data-bs-target="#' + tabId + '"]');
+                if (tabButton.length > 0) {
+                    tabButton.tab('show');
+                }
+            }
+
+            // Fokus ke field
+            setTimeout(function() {
+                firstEmptyField.focus();
+                if (firstEmptyField.hasClass('select2-hidden-accessible')) {
+                    firstEmptyField.select2('open');
+                }
+            }, 300);
+            
+            return false;
+        }
+
+        // Jika valid, jalankan proses submit (cleave raw value)
+        $('#dpp').val(cleaveDpp.getRawValue());
+        $('#pph').val(cleavePph.getRawValue());
+        $('#nilai_ppn').val(cleavePpn.getRawValue());
+        $('#total_amount').val(cleaveTotal.getRawValue());
+    });
+</script>
+
+@endsection
+
+<script>
+    $(document).ready(function () {
+        $('.select2').select2({
+            placeholder: "-- Pilih Department --",
+            allowClear: true
+        });
+    });
+</script>
