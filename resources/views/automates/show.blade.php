@@ -84,7 +84,7 @@
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <strong>Nama Rekening Tujuan:</strong>
-                            {{ $finance->nama_rek_tujuan }}
+                            {{ $finance->nama_rekening_tujuan }}
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
