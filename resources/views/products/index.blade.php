@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="d-flex justify-content-end mb-3"> @can('product-import') <form action="/import-csv" method="POST" enctype="multipart/form-data" class="d-flex gap-2"> @csrf <input type="file" name="csv_file" class="form-control form-control-sm"> <button type="submit" class="btn btn-success btn-sm">Import CSV</button> </form> @endcan </div> <div class="d-flex justify-content-between align-items-center mb-3"> <h2>Products</h2>
+<div class="d-flex justify-content-end mb-3"> @can('product-import') <form action="/import-csv" method="POST" enctype="multipart/form-data" class="d-flex gap-2"> @csrf <input type="file" name="csv_file" class="form-control form-control-sm"> <button type="submit" class="btn btn-success btn-sm">Import CSV</button> </form> @endcan </div> <div class="d-flex justify-content-between align-items-center mb-3"> <h2>Master Product</h2>
 <div class="d-flex gap-2">
 
     @can('product-create')
