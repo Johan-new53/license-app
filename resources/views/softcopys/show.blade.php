@@ -151,13 +151,31 @@
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <strong>Dpp :</strong>
-                            {{ number_format($finance->dpp,0,'.',',') }}
+                            {{ number_format($finance->dpp,2,'.',',') }}
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <strong>Ppn(%) :</strong>
+                            {{ number_format($finance->persen_ppn,2,'.',',') }}
+                        </div>
+                    </div>
+                     <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <strong>Nilai Ppn :</strong>
+                            {{ number_format($finance->nilai_ppn,2,'.',',') }}
+                        </div>
+                    </div>
+                     <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <strong>Pph :</strong>
+                            {{ number_format($finance->pph,2,'.',',') }}
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <strong>Total Amount :</strong>
-                            {{ number_format($finance->total_amount,0,'.',',') }}
+                            {{ number_format($finance->total_amount,2,'.',',') }}
                         </div>
                     </div>
                 </div>
