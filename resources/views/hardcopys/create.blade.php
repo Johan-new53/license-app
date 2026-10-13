@@ -374,8 +374,13 @@ document.getElementById('id_ppn').addEventListener('change', function() {
 document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
 
 
-
+    let isSubmitting = false;
     $('form').on('submit', function (e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return;
+        }
+
         // Cek validasi manual untuk menangani Tabs
         let requiredFields = $(this).find('[required]');
         let emptyFields = [];
@@ -423,6 +428,11 @@ document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
         $('#pph').val(cleavePph.getRawValue());
         $('#nilai_ppn').val(cleavePpn.getRawValue());
         $('#total_amount').val(cleaveTotal.getRawValue());
+
+        isSubmitting = true;
+        $('#submit')
+            .prop('disabled', true)
+            .html('<i class="fa-solid fa-spinner fa-spin"></i> Submitting...');
     });
 </script>
 
@@ -436,4 +446,3 @@ document.getElementById('nilai_ppn').addEventListener('input', hitungTotal);
         });
     });
 </script>
-
