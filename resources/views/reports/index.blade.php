@@ -14,22 +14,31 @@
 
 <form action="{{ route('reports.index') }}" method="GET" class="mb-3">
     <div class="row g-2 align-items-end">
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <label class="form-label">Submission Date (From)</label>
             <input type="date" name="submission_date_from" value="{{ request('submission_date_from') }}" class="form-control">
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <label class="form-label">Submission Date (To)</label>
             <input type="date" name="submission_date_to" value="{{ request('submission_date_to') }}" class="form-control">
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <label class="form-label">Approved 2 Date (From)</label>
             <input type="date" name="approved2_date_from" value="{{ request('approved2_date_from') }}" class="form-control">
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <label class="form-label">Approved 2 Date (To)</label>
             <input type="date" name="approved2_date_to" value="{{ request('approved2_date_to') }}" class="form-control">
         </div>
+        <div class="col-lg-2">
+            <label class="form-label">Payment Date (From)</label>
+            <input type="date" name="payment_date_from" value="{{ request('payment_date_from') }}" class="form-control">
+        </div>
+        <div class="col-lg-2">
+            <label class="form-label">Payment Date (To)</label>
+            <input type="date" name="payment_date_to" value="{{ request('payment_date_to') }}" class="form-control">
+        </div>
+
 
         <div class="col-lg-3 mt-2">
             <label class="form-label">Type</label>
@@ -52,6 +61,10 @@
         <div class="col-lg-3 mt-2">
             <label class="form-label">Description</label>
             <input type="text" name="description" value="{{ request('description') }}" class="form-control" placeholder="Search">
+        </div>
+        <div class="col-lg-3 mt-2">
+            <label class="form-label">Activity Code</label>
+            <input type="text" name="activity_code" value="{{ request('activity_code') }}" class="form-control" placeholder="Search">
         </div>
 
         <div class="col-12 mt-2">
@@ -108,6 +121,7 @@
                 <th>Invoice Date</th>
                 <th>Document No</th>
                 <th>DESCRIPTION</th>
+                <th>ACTIVITY CODE</th>
                 <th>STATUS</th>
                 <th>APPROVED 1 DATE</th>
                 <th>APPROVED 2 DATE</th>
@@ -144,6 +158,9 @@
                 </td>
                 <td style="min-width: 400px; width: 500px; white-space: normal; word-break: break-word;">
                     {{ $finance->description }}
+                </td>
+                <td style="min-width: 150px; width: 500px; white-space: normal; word-break: break-word;">
+                    {{ $finance->activity_code ?? '-' }}
                 </td>
                 <td class="text-center">
                     @php

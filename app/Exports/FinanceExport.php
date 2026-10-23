@@ -36,6 +36,12 @@ class FinanceExport implements FromCollection, WithHeadings, WithMapping
         if (!empty($this->filters['approved2_date_to'])) {
             $query->whereRaw("COALESCE((SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1), finances.final_validation_time) <= ?", [$this->filters['approved2_date_to']]);
         }
+        if (!empty($this->filters['payment_date_from'])) {
+            $query->whereDate('finances.payment_date', '>=', $this->filters['payment_date_from']);
+        }
+        if (!empty($this->filters['payment_date_to'])) {
+            $query->whereDate('finances.payment_date', '<=', $this->filters['payment_date_to']);
+        }
         if (!empty($this->filters['date_from'])) {
             $query->whereDate('finances.invoice_date', '>=', $this->filters['date_from']);
         }

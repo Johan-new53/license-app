@@ -304,7 +304,12 @@ class AutomateController extends Controller
             'description' => 'required',
             'id_currency' => 'required',
             'journal_no' => 'nullable',
-            'dpp' => 'required',
+            'dpp' => 'required|numeric',
+            'id_ppn' => 'required',
+            'persen_ppn' => 'required|numeric',
+            'nilai_ppn' => 'required|numeric',
+            'pph' => 'required|numeric',
+            'total_amount' => 'required|numeric',
         ]);
 
         // cek doc number
@@ -322,6 +327,7 @@ class AutomateController extends Controller
         // set default field
         $data['status'] = 'requested';
         $data['type'] = 'automate';
+        $data['created_at'] = now();
 
         // upload file jika ada
         if ($request->hasFile('file_automate')) {
