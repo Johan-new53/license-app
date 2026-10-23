@@ -33,6 +33,14 @@ class ReportController extends Controller
             $query->whereRaw("COALESCE((SELECT DATE(created_at) FROM history_approval WHERE history_approval.id_finance = finances.id AND history_approval.status = 'approved 2' ORDER BY id DESC LIMIT 1), finances.final_validation_time) <= ?", [$request->approved2_date_to]);
         }
 
+        // Filter Payment Date
+        if ($request->filled('payment_date_from')) {
+            $query->whereDate('finances.payment_date', '>=', $request->payment_date_from);
+        }
+        if ($request->filled('payment_date_to')) {
+            $query->whereDate('finances.payment_date', '<=', $request->payment_date_to);
+        }
+
         // Filter Invoice Date
         if ($request->filled('date_from')) {
             $query->whereDate('finances.invoice_date', '>=', $request->date_from);

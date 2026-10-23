@@ -303,6 +303,7 @@ class HardcopyController extends Controller
         $data = $request->all();
         $data['status'] = 'requested';
         $data['type'] = 'hardcopy';
+        $data['created_at'] = now();
 
         DB::transaction(function () use ($data, $finance) {
             $finance->update($data);

@@ -324,6 +324,10 @@ class DigitalController extends Controller
 
                 $data['description'] = 'Journal Number : '.$request->journal_no;
 
+                 
+                $data['status'] = 'requested';     
+                $data['created_at'] = now();
+
                 $finance->update($data);
 
                 History_approval::create([

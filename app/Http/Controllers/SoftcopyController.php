@@ -343,6 +343,7 @@ class SoftcopyController extends Controller
 
     $data['status'] = 'requested';
     $data['type'] = 'softcopy';
+    $data['created_at'] = now();
 
     /*
      * Upload file baru ke SharePoint
